@@ -1,0 +1,19 @@
+{
+  "subject": "rhea",
+  "object": "hestia",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Hesíodo, Teogonía; concordante con la Ilíada",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "children-of-rhea-and-cronus",
+      "claim": "Entre los hijos que Rea da a luz (vv. 453–457).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

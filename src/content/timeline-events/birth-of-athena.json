@@ -1,0 +1,37 @@
+{
+  "kind": "mythic",
+  "title": "Nacimiento de Atenea",
+  "myth": "birth-of-athena",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "sequenceGroup": "hesiodic-succession",
+  "displayOrder": 3,
+  "after": [
+    {
+      "eventId": "zeus-becomes-king",
+      "evidence": [
+        {
+          "source": "hesiod-theogony",
+          "passageId": "metis-and-athena",
+          "claim": "Zeus figura ya como «rey de los dioses» cuando toma a Metis (v. 886).",
+          "role": "supports"
+        }
+      ]
+    }
+  ],
+  "entities": [
+    "zeus",
+    "metis",
+    "athena"
+  ],
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "athena-from-the-head",
+      "claim": "Atenea nace de la cabeza de Zeus.",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

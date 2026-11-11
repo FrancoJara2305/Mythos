@@ -1,0 +1,21 @@
+# SHA-256 de los TEI consultados el 2026-11-08 en PerseusDL/canonical-greekLit @ 282e6f5a3ec12e6ca67e44cd4fa3487526e3b421
+# URL de cada archivo: https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/{tlgNNNN}/{tlgNNN}/{archivo}
+# Los archivos no se guardan en el repositorio de MYTHOS: solo se conservan su versión y su hash.
+a7f3aa8c2e34efbd631e2c80a8c6705daa214262e07ccc9dd09ed66b59e8f0ee  tlg0012.tlg001.perseus-eng3.xml
+ae8b617018c6e5af14cbab9ce6082438c0f103eafd0a4c67bdae4588cca5eaa4  tlg0012.tlg001.perseus-grc2.xml
+199ed8cda2d5928253639afbed564d6beceee2ed4bd25036a2c1730b4738393b  tlg0012.tlg002.perseus-eng3.xml
+7d7ffafb6c51f8c230c0af3d6c0a6e5c7613cc0a016cc5681fb6e34972b86088  tlg0012.tlg002.perseus-grc2.xml
+be18cade7534442a74d94c9995bda79481d54b6071e53f84a6db08f8809c548b  tlg0013.tlg002.perseus-eng2.xml
+0aee6a85a1eda68fa99d33f0d5eb6bd14a7d6d6d2a0ec67be9b7cd75f8c5cad9  tlg0013.tlg002.perseus-grc2.xml
+c9910f2450077c083edcdb2f997547e3bb854b23fc2669468a4ded646f175f4c  tlg0013.tlg003.perseus-eng2.xml
+574c45a698497337fd05098e5a1e87d5cb19b9a37e3c68fcac87a488805d78e0  tlg0013.tlg003.perseus-grc2.xml
+52d35301254c76c32d60d7f535efe96d2165182995c8a0d21956864de7739fe8  tlg0013.tlg004.perseus-eng2.xml
+6ffd1253c95f83d7e05c8fe8a6307fd67307f03f35950912c8fcbbdb52b78128  tlg0013.tlg004.perseus-grc2.xml
+ad9de53800e7e4e828b251f9df0b8bea55ee4e848f24c6aea152a4e49b87a2b6  tlg0013.tlg005.perseus-eng2.xml
+794b99a41cca1baae016b650804144b4ae34c2e326b208ac3ef5de1a76aa0cf0  tlg0013.tlg005.perseus-grc2.xml
+d251bd0105621a5d7c246ea3d59ece2f12968cad2018af04095eff4c6d9b80c5  tlg0013.tlg007.perseus-eng2.xml
+e8e11f5b8eab8313bd2d17842f31077cad90b5c7aeee9f58b6c4646d0d5719e5  tlg0013.tlg007.perseus-grc2.xml
+214f53af7f06a17f247972aba1c87230d7cc4b9196819f88fb0a6cf24aed3509  tlg0013.tlg029.perseus-eng2.xml
+94187d3e0acf47baba679d90295c90ddd9b6f786bc2fccc1c612aff9f9a968e8  tlg0013.tlg029.perseus-grc2.xml
+25669e1fa3f9674f632c662440a1f212550f13a8240d933b349e3438f4ecba7c  tlg0020.tlg001.perseus-eng2.xml
+550bd27b82d0c1720d7592b9b170c18b6c0bf88d54318ab71a28eb2b17728826  tlg0020.tlg001.perseus-grc2.xml

@@ -1,0 +1,39 @@
+{
+  "subject": "zeus",
+  "object": "aphrodite",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Homero, Ilíada (también Odisea 8.308)",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "homer-iliad",
+      "passageId": "aphrodite-daughter-of-zeus-3",
+      "claim": "Διὸς θυγάτηρ Ἀφροδίτη (3.374).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-iliad",
+      "passageId": "aphrodite-daughter-of-zeus-5",
+      "claim": "Διὸς θυγάτηρ Ἀφροδίτη (5.312).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-iliad",
+      "passageId": "zeus-assigns-marriage",
+      "claim": "Zeus la llama «hija mía» (τέκνον ἐμόν, 5.428).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-odyssey",
+      "passageId": "hephaestus-blames-his-parents",
+      "claim": "Διὸς θυγάτηρ Ἀφροδίτη (8.308).",
+      "role": "supports"
+    }
+  ],
+  "variantGroup": "aphrodite-origin",
+  "variantOption": "iliadic",
+  "review": {
+    "status": "draft"
+  }
+}

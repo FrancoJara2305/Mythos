@@ -1,0 +1,22 @@
+{
+  "subject": "hera",
+  "object": "hephaestus",
+  "kind": "parent-of",
+  "label": "madre (sin unión)",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "hephaestus-without-union",
+      "claim": "Ἥρη δ’ Ἥφαιστον κλυτὸν οὐ φιλότητι μιγεῖσα γείνατο (vv. 927–928).",
+      "role": "supports"
+    }
+  ],
+  "variantGroup": "hephaestus-parentage",
+  "variantOption": "hesiodic",
+  "note": "Hesíodo afirma que Hera lo engendra sin unión amorosa: la ausencia de padre es parte del relato, no un dato faltante.",
+  "review": {
+    "status": "draft"
+  }
+}

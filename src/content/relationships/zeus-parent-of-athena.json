@@ -1,0 +1,26 @@
+{
+  "subject": "zeus",
+  "object": "athena",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Hesíodo, Teogonía; la Ilíada la llama hija de Zeus",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "athena-from-the-head",
+      "claim": "Zeus la engendra él mismo de su cabeza (v. 924).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-iliad",
+      "passageId": "athena-arms-herself",
+      "claim": "κούρη Διὸς αἰγιόχοιο (5.733).",
+      "role": "supports"
+    }
+  ],
+  "note": "En la Teogonía, Zeus la engendra de su cabeza tras guardar a Metis en su vientre.",
+  "review": {
+    "status": "draft"
+  }
+}

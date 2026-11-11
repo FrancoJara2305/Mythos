@@ -1,0 +1,26 @@
+{
+  "subject": "aphrodite",
+  "object": "ares",
+  "kind": "consort-of",
+  "label": "unión de la que nacen Fobos, Deimos y Harmonía",
+  "traditionLabel": "Hesíodo, Teogonía; Homero, Odisea",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "ares-and-cytherea",
+      "claim": "Citerea da a luz para Ares a Fobos, Deimos y Harmonía (vv. 933–937).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-odyssey",
+      "passageId": "song-of-ares-and-aphrodite",
+      "claim": "En la Odisea es una unión secreta en la casa de Hefesto (8.266–270).",
+      "role": "context"
+    }
+  ],
+  "note": "Ninguno de los pasajes la presenta como matrimonio; la Odisea la narra como adulterio en la casa de Hefesto.",
+  "review": {
+    "status": "draft"
+  }
+}

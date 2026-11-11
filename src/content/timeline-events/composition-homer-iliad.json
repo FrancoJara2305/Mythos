@@ -1,0 +1,13 @@
+{
+  "kind": "historical",
+  "title": "Composición de la Ilíada",
+  "subject": {
+    "collection": "sources",
+    "id": "homer-iliad"
+  },
+  "facet": "composition",
+  "entities": [],
+  "review": {
+    "status": "draft"
+  }
+}

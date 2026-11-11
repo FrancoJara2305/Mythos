@@ -1,0 +1,1103 @@
+---
+/**
+ * Portada: la Torre del Conocimiento (Narratorio, 2026-11-09).
+ *
+ * 1. Umbral: un portal de luz y geometría sagrada. «Adentrarse en el mito» lo atraviesa (zoom y
+ *    destello; src/scripts/tower.ts) y deja al lector en la cúspide. Sin JavaScript es un enlace normal
+ *    a la primera planta; con movimiento reducido, el salto es directo.
+ * 2. Descenso (scrollytelling): la torre baja del espacio profundo a la Tierra. Cúspide estelar
+ *    (Temática 1, GR-01 a GR-03) → bóveda olímpica (Temática 2, GR-04 a GR-06, con The Dodekatheon
+ *    como planta principal) → niveles inferiores hacia la superficie (capítulos futuros, sin rutas).
+ * 3. Altitud cósmica: indicador que acompaña el descenso y dice en qué nivel está el lector.
+ *
+ * Todo el contenido está en el HTML del build; el script solo añade la travesía del portal, la
+ * aparición de las plantas y la posición del altímetro. La estructura sale de src/config/saga.ts.
+ */
+import ActionLink from '../components/ui/ActionLink.astro';
+import { ACTIVE_CHAPTER, DODEKATHEON } from '../config/chapters.ts';
+import { isPublished } from '../config/navigation.ts';
+import { SAGA, SAGA_EARTH, SAGA_PART, sagaChapters } from '../config/saga.ts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadArchive } from '../lib/content/archive.ts';
+import { resolveRoster } from '../lib/content/integrity.ts';
+import { paths } from '../lib/routes.ts';
+import { cloudBand, landscape, sacredGeometry, tierRing, zodiacWheel } from '../lib/sky/tower-art.ts';
+
+const { visible } = await loadArchive();
+const visibleMyths = new Set(visible.myths.map((entry) => entry.id));
+const roster = resolveRoster(visible, DODEKATHEON);
+const wheel = zodiacWheel(roster.map((entry) => entry.deity.constellationConfig?.color ?? '#fde047'));
+const ring = tierRing();
+const chapters = sagaChapters();
+
+const levels = SAGA.map((theme) => ({
+  theme,
+  floors: chapters
+    .filter((chapter) => chapter.theme.id === theme.id)
+    .map((chapter) => ({
+      chapter,
+      href: paths.chapter(chapter.id),
+      ready: chapter.stories.filter((story) => story.mythIds.some((id) => visibleMyths.has(id))).length,
+    })),
+}));
+const altitudes = [...SAGA.map((theme) => ({ id: theme.id, anchor: theme.anchor, label: theme.altitude })), { id: 'earth', anchor: SAGA_EARTH.anchor, label: SAGA_EARTH.altitude }];
+const firstAnchor = SAGA[0]?.anchor ?? 'cosmos';
+const rooms = [
+  { href: paths.genealogy(ACTIVE_CHAPTER.id), label: 'Mapa de Linajes Estelares' },
+  { href: paths.atlas(ACTIVE_CHAPTER.id), label: 'Hilo del Destino' },
+].filter((room) => isPublished(room.href));
+---
+
+<BaseLayout
+  description="MYTHOS, un narratorio de mitología griega: desciende por la torre del conocimiento, del cosmos primordial al Olimpo y a la Tierra, y descubre a los dioses en una bóveda de constelaciones."
+  tier="cosmos"
+  preloadFont="/assets/fonts/cormorant-garamond-latin-wght-normal.woff2"
+>
+  <div class="hall" data-hall>
+    <section class="portal" aria-labelledby="portal-title" data-ambient data-ambient-state="paused" data-portal>
+      <div class="portal__geometry" set:html={sacredGeometry()} />
+      <div class="portal__copy">
+        <p class="eyebrow">{SAGA_PART.number} · {SAGA_PART.title}</p>
+        <h1 id="portal-title" class="portal__title">MYTHOS</h1>
+        <p class="portal__tagline">Un narratorio de mitología</p>
+        <p class="portal__lede">
+          Hay una torre suspendida en el cosmos donde se guardan las historias más antiguas. Empieza en lo más alto, donde
+          aún no había dioses, y baja piso a piso hasta la Tierra.
+        </p>
+        <p class="portal__actions">
+          <ActionLink href={`#${firstAnchor}`} hook="enter">Adentrarse en el mito</ActionLink>
+        </p>
+        <p class="portal__scroll" aria-hidden="true">o desciende desplazándote <span>↓</span></p>
+      </div>
+      <div class="portal__flash" aria-hidden="true"></div>
+    </section>
+
+    <div class="tower">
+      <nav class="altimeter" aria-label="Altitud cósmica" data-altimeter>
+        <p class="altimeter__title">Altitud cósmica</p>
+        <ol class="altimeter__stops" role="list">
+          {
+            altitudes.map((altitude, index) => (
+              <li>
+                <a class="altimeter__stop" href={`#${altitude.anchor}`} data-altitude-link={altitude.id} aria-current={index === 0 ? 'true' : undefined}>
+                  <span class="altimeter__dot" aria-hidden="true" />
+                  <span class="altimeter__label">{altitude.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="tower__levels">
+        <div class="tower__spine" aria-hidden="true"></div>
+        {
+          levels.map(({ theme, floors }) => (
+            <section id={theme.anchor} class:list={['level', `level--${theme.tier}`]} data-altitude={theme.id} aria-labelledby={`${theme.anchor}-titulo`}>
+              {theme.tier === 'olympus' && <div class="level__clouds level__clouds--top" set:html={cloudBand(41, 'gold')} />}
+              <header class="level__head">
+                <p class="eyebrow level__eyebrow">
+                  {theme.number} · {theme.altitude}
+                </p>
+                <h2 id={`${theme.anchor}-titulo`} class="level__title" tabindex="-1">
+                  {theme.title}
+                </h2>
+                <p class="level__summary">{theme.summary}</p>
+              </header>
+
+              <ol class="floors" role="list">
+                {floors.map(({ chapter, href, ready }) => (
+                  <li class:list={['floor', { 'floor--featured': chapter.featured === true }]} data-floor>
+                    <div class="floor__ring" set:html={ring} />
+                    <span class="floor__node" aria-hidden="true" />
+                    <article class="floor__card">
+                      {chapter.featured === true && <div class="floor__wheel" set:html={wheel} />}
+                      <p class="floor__code">
+                        <span class="floor__number">{chapter.chapter.number}</span>
+                        {chapter.featured === true && <span class="floor__badge">Capítulo principal</span>}
+                      </p>
+                      <h3 class="floor__title">
+                        <a href={href} lang={chapter.chapter.titleLang}>
+                          {chapter.chapter.title}
+                        </a>
+                        {chapter.featured === true && <span class="floor__subtitle">Los doce olímpicos</span>}
+                      </h3>
+                      <p class="floor__hook">{chapter.hook}</p>
+                      <ul class="floor__cast" role="list" aria-label={`Personajes de ${chapter.chapter.title}`}>
+                        {chapter.characters.map((character) => (
+                          <li>{character.name}</li>
+                        ))}
+                      </ul>
+                      <p class="floor__meta">
+                        {chapter.stories.length} historias
+                        {ready > 0 ? <> · {ready === 1 ? '1 ya puede leerse' : `${ready} ya pueden leerse`}</> : <> · próximamente</>}
+                      </p>
+                      <p class="floor__actions">
+                        {chapter.featured === true ? (
+                          <ActionLink href={href}>Entrar en la bóveda de los Doce</ActionLink>
+                        ) : (
+                          <a class="floor__enter" href={href}>
+                            Entrar al capítulo<span class="visually-hidden">: {chapter.chapter.title}</span>
+                            <span aria-hidden="true">→</span>
+                          </a>
+                        )}
+                      </p>
+                      {chapter.featured === true && rooms.length > 0 && (
+                        <ul class="floor__rooms" role="list">
+                          {rooms.map((room) => (
+                            <li>
+                              <a href={room.href}>{room.label}</a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </article>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))
+        }
+
+        <section id={SAGA_EARTH.anchor} class="level level--earth" data-altitude="earth" aria-labelledby="tierra-titulo">
+          <div class="level__clouds level__clouds--top" set:html={cloudBand(87, 'dusk')} />
+          <header class="level__head">
+            <p class="eyebrow level__eyebrow">Próximos niveles · {SAGA_EARTH.altitude}</p>
+            <h2 id="tierra-titulo" class="level__title" tabindex="-1">{SAGA_EARTH.title}</h2>
+            <p class="level__summary">{SAGA_EARTH.summary}</p>
+          </header>
+          <ul class="horizon" role="list">
+            {
+              SAGA_EARTH.upcoming.map((item) => (
+                <li class="horizon__item" data-floor>
+                  <p class="horizon__status">En construcción</p>
+                  <h3 class="horizon__title">{item.title}</h3>
+                  <p>{item.teaser}</p>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="level__land" set:html={landscape()} />
+        </section>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../scripts/tower.ts';
+</script>
+
+<style>
+  .hall {
+    position: relative;
+    overflow-x: clip;
+  }
+
+  /* La tierra no se corta en seco contra el pie: el suelo se funde con la noche. */
+  .hall::after {
+    content: '';
+    display: block;
+    block-size: clamp(3rem, 8vw, 6rem);
+    background: linear-gradient(to bottom, #0c1711, transparent);
+  }
+
+  /* ——————————————— Umbral: portal de luz y geometría sagrada ——————————————— */
+  .portal {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-block-size: calc(100svh - var(--topbar-block-size));
+    padding: var(--space-48) var(--gutter);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .portal__geometry {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    z-index: -1;
+    inline-size: min(150vw, 120svh, 68rem);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    color: var(--color-star-gold);
+    opacity: 0.5;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  .portal__geometry :global(svg) {
+    inline-size: 100%;
+    block-size: 100%;
+    filter: drop-shadow(0 0 0.6rem rgb(253 224 71 / 0.55));
+  }
+
+  .portal__geometry :global(.portal-ring) {
+    transform-origin: center;
+    transform-box: view-box;
+  }
+
+  .portal__geometry :global(.portal-core) {
+    opacity: 0;
+  }
+
+  /* Halo central: la luz por la que se entra. */
+  .portal::before {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    z-index: -2;
+    inline-size: min(110vw, 62rem);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(56 189 248 / 0.22), rgb(30 27 75 / 0.55) 45%, transparent 72%);
+  }
+
+  .portal[data-ambient-state='running'] :global(.portal-ring--a) {
+    animation: portal-spin 140s linear infinite;
+  }
+
+  .portal[data-ambient-state='running'] :global(.portal-ring--b) {
+    animation: portal-spin 95s linear infinite reverse;
+  }
+
+  .portal[data-ambient-state='running'] :global(.portal-ring--c) {
+    animation: portal-spin 60s linear infinite;
+  }
+
+  @keyframes portal-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .portal__copy {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-16);
+    max-inline-size: 44rem;
+  }
+
+  /* Con 15vw, «MYTHOS» y su espaciado caben en 320 px junto a los márgenes laterales. */
+  .portal__title {
+    font-size: min(var(--font-size-display), 15vw);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    padding-inline-start: 0.16em;
+    line-height: 0.95;
+    background: linear-gradient(180deg, #fffaf0 10%, var(--color-pale-gold) 55%, #c98a2b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 1.5rem rgb(253 224 71 / 0.35));
+  }
+
+  @media (forced-colors: active) {
+    .portal__title {
+      background: none;
+      color: CanvasText;
+    }
+  }
+
+  .portal__tagline {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+    font-style: italic;
+  }
+
+  .portal__lede {
+    max-inline-size: 36rem;
+    font-size: 1.125rem;
+    text-wrap: balance;
+  }
+
+  .portal__actions {
+    padding-block-start: var(--space-8);
+  }
+
+  .portal__actions :global(.action-link) {
+    padding: var(--space-12) var(--space-32);
+    font-size: 1.0625rem;
+  }
+
+  .portal__scroll {
+    font-size: var(--font-size-small);
+    letter-spacing: 0.04em;
+  }
+
+  .portal__scroll span {
+    display: inline-block;
+    color: var(--text-link);
+  }
+
+  .portal[data-ambient-state='running'] .portal__scroll span {
+    animation: portal-nudge 1.8s ease-in-out infinite;
+  }
+
+  @keyframes portal-nudge {
+    50% {
+      transform: translateY(0.3rem);
+    }
+  }
+
+  .portal__flash {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: radial-gradient(circle at 50% 50%, #fffdf5 0%, #fde047 22%, rgb(56 189 248 / 0.85) 48%, #050816 78%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Entrada al cargar: la geometría se ensambla y el título emerge. */
+  @media (prefers-reduced-motion: no-preference) {
+    .portal__geometry {
+      animation: portal-assemble 1600ms var(--ease-entrance) both;
+    }
+
+    .portal__copy > * {
+      animation: portal-rise var(--duration-entrance) var(--ease-entrance) both;
+    }
+
+    .portal__copy > :nth-child(2) {
+      animation-delay: 120ms;
+    }
+
+    .portal__copy > :nth-child(3) {
+      animation-delay: 220ms;
+    }
+
+    .portal__copy > :nth-child(4) {
+      animation-delay: 320ms;
+    }
+
+    .portal__copy > :nth-child(n + 5) {
+      animation-delay: 440ms;
+    }
+
+    /* Travesía: zoom a través de la geometría y destello; tower.ts fija `data-portal="entering"`. */
+    .portal[data-portal='entering'] .portal__geometry {
+      animation: portal-through var(--duration-portal) var(--ease-travel) both;
+    }
+
+    .portal[data-portal='entering'] .portal__copy {
+      animation: portal-dissolve calc(var(--duration-portal) * 0.5) ease-in both;
+    }
+
+    .portal[data-portal='entering'] .portal__flash {
+      animation: portal-flash var(--duration-portal) ease-in-out both;
+    }
+
+    .portal[data-portal='entering'] :global(.portal-core) {
+      animation: portal-core var(--duration-portal) ease-in both;
+    }
+  }
+
+  @keyframes portal-assemble {
+    from {
+      opacity: 0;
+      scale: 0.72;
+      rotate: -24deg;
+    }
+  }
+
+  @keyframes portal-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  @keyframes portal-through {
+    0% {
+      scale: 1;
+      opacity: 0.5;
+    }
+
+    70% {
+      opacity: 1;
+    }
+
+    100% {
+      scale: 9;
+      rotate: 60deg;
+      opacity: 0;
+    }
+  }
+
+  @keyframes portal-dissolve {
+    to {
+      opacity: 0;
+      transform: scale(1.12);
+      filter: blur(6px);
+    }
+  }
+
+  @keyframes portal-flash {
+    0%,
+    35% {
+      opacity: 0;
+    }
+
+    72% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes portal-core {
+    0%,
+    30% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* ——————————————— Torre ——————————————— */
+  .tower {
+    position: relative;
+  }
+
+  .tower__levels {
+    position: relative;
+  }
+
+  /* Eje del mundo: la columna de luz que une todos los pisos. */
+  .tower__spine {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--spine-x);
+    z-index: 1;
+    inline-size: 2px;
+    translate: -50% 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 0,
+      var(--color-ether-cyan) 4%,
+      var(--color-star-gold) 38%,
+      var(--color-bronze) 70%,
+      var(--color-terracotta) 90%,
+      transparent 100%
+    );
+    box-shadow: 0 0 1.25rem 0.125rem rgb(253 224 71 / 0.35);
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .hall {
+    --spine-x: 1.75rem;
+  }
+
+  .level {
+    position: relative;
+    display: grid;
+    gap: var(--space-48);
+    padding: clamp(4rem, 12vw, 9rem) var(--gutter) clamp(4rem, 10vw, 8rem);
+    padding-inline-start: calc(var(--spine-x) + var(--space-32));
+    scroll-margin-block-start: var(--topbar-block-size);
+  }
+
+  .level__head {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: var(--space-12);
+    max-inline-size: 46rem;
+  }
+
+  .level__title {
+    font-size: clamp(2.5rem, 1.6rem + 4.4vw, 5.5rem);
+    font-weight: 500;
+    line-height: 0.98;
+  }
+
+  .level__title:focus-visible {
+    outline-offset: 8px;
+  }
+
+  .level__summary {
+    max-inline-size: 38rem;
+    font-size: 1.125rem;
+  }
+
+  /* Cosmos: nebulosas sobre el cielo estrellado del fondo. */
+  .level--cosmos {
+    background:
+      radial-gradient(ellipse 60% 26% at 85% 18%, rgb(56 189 248 / 0.14), transparent 70%),
+      radial-gradient(ellipse 70% 30% at 12% 46%, rgb(124 58 237 / 0.22), transparent 72%),
+      radial-gradient(ellipse 60% 26% at 80% 80%, rgb(30 27 75 / 0.85), transparent 75%);
+  }
+
+  .level--cosmos .level__eyebrow {
+    color: var(--color-ether-cyan);
+  }
+
+  /* Olimpo: el cielo nocturno se aclara entre nubes con luz de bronce. */
+  .level--olympus {
+    background:
+      radial-gradient(ellipse 70% 22% at 50% 0%, rgb(217 119 6 / 0.22), transparent 70%),
+      radial-gradient(ellipse 60% 30% at 88% 55%, rgb(253 224 71 / 0.08), transparent 70%),
+      linear-gradient(to bottom, transparent 0, #0f172a 9rem, #0f172a 78%, #172544 100%);
+  }
+
+  /* Tierra: atardecer mediterráneo, bosque y piedra. */
+  .level--earth {
+    padding-block-end: 0;
+    background: linear-gradient(to bottom, #172544 0, #2a2a4a 26%, #5a3a3c 52%, #a85a34 74%, #c2562c 84%, #14321f 92%, #0c1711 100%);
+  }
+
+  .level--earth .level__eyebrow {
+    color: #f6c9a0;
+  }
+
+  .level__clouds {
+    position: absolute;
+    inset: -7rem 0 auto;
+    z-index: 0;
+    block-size: 16rem;
+    pointer-events: none;
+  }
+
+  .level__clouds :global(svg) {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .level__land {
+    position: relative;
+    /* Por encima del eje: la torre se hunde detrás de las colinas al tocar la Tierra. */
+    z-index: 2;
+    margin-inline: calc(var(--gutter) * -1);
+    margin-inline-start: calc((var(--spine-x) + var(--space-32)) * -1);
+    block-size: clamp(14rem, 34vw, 26rem);
+  }
+
+  .level__land :global(svg) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /* ——————————————— Pisos ——————————————— */
+  .floors {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: clamp(3rem, 8vw, 7rem);
+  }
+
+  .floor {
+    position: relative;
+    display: grid;
+  }
+
+  .floor__ring {
+    display: none;
+    color: var(--color-pale-gold);
+  }
+
+  /* Nodo del piso sobre el eje. */
+  .floor__node {
+    position: absolute;
+    inset-block-start: 2.25rem;
+    inset-inline-start: calc(var(--space-32) * -1);
+    z-index: 3;
+    inline-size: 0.875rem;
+    aspect-ratio: 1;
+    translate: -50% 0;
+    border-radius: 50%;
+    background-color: var(--color-star-gold);
+    box-shadow:
+      0 0 0 0.3rem rgb(253 224 71 / 0.18),
+      0 0 1.25rem 0.25rem rgb(253 224 71 / 0.6);
+  }
+
+  .floor__card {
+    position: relative;
+    display: grid;
+    gap: var(--space-12);
+    align-content: start;
+    max-inline-size: 36rem;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgb(56 189 248 / 0.1), transparent 60%),
+      var(--surface-glass);
+    backdrop-filter: blur(10px);
+    transition:
+      border-color var(--duration-hover) ease-out,
+      box-shadow var(--duration-hover) ease-out;
+  }
+
+  .floor__card:hover,
+  .floor__card:focus-within {
+    border-color: color-mix(in srgb, var(--color-star-gold) 60%, transparent);
+    box-shadow: 0 0 2.5rem rgb(253 224 71 / 0.12);
+  }
+
+  .level--olympus .floor__card {
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgb(217 119 6 / 0.14), transparent 60%),
+      rgb(19 28 51 / 0.78);
+  }
+
+  .floor__code {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-12);
+  }
+
+  .floor__number {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.12em;
+    color: var(--text-link);
+  }
+
+  .floor__badge {
+    padding: 0.125rem var(--space-12);
+    border: 1px solid var(--color-bronze);
+    border-radius: var(--radius-pill);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .floor__title {
+    font-size: clamp(1.875rem, 1.4rem + 2vw, 3rem);
+    font-weight: 500;
+    line-height: 1.02;
+  }
+
+  .floor__title a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  /* Toda la tarjeta abre el capítulo; el foco se dibuja en el título. */
+  .floor__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+
+  .floor__title a:hover {
+    color: var(--text-link);
+  }
+
+  .floor__subtitle {
+    display: block;
+    margin-block-start: var(--space-4);
+    font-size: 0.5em;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .floor__hook {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-style: italic;
+    line-height: 1.3;
+  }
+
+  .floor__cast {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  .floor__cast li {
+    padding: 0.125rem var(--space-12);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-meta);
+    background-color: rgb(243 236 223 / 0.05);
+  }
+
+  .floor__meta {
+    font-size: var(--font-size-small);
+  }
+
+  .floor__actions,
+  .floor__rooms {
+    position: relative;
+    z-index: 1;
+  }
+
+  .floor__enter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+  }
+
+  .floor__rooms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-24);
+    font-size: var(--font-size-small);
+  }
+
+  .floor__rooms a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  /* Planta principal: más ancha, con la rueda de las doce constelaciones. */
+  .floor--featured .floor__card {
+    max-inline-size: 44rem;
+    border-color: color-mix(in srgb, var(--color-bronze) 70%, transparent);
+    box-shadow: 0 0 3.5rem rgb(217 119 6 / 0.16);
+  }
+
+  .floor--featured .floor__title {
+    font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  }
+
+  .floor__wheel {
+    inline-size: 7.5rem;
+    aspect-ratio: 1;
+    color: var(--color-pale-gold);
+  }
+
+  .hall :global([data-ambient-state='running']) .floor__wheel,
+  .floor--featured.is-visible .floor__wheel {
+    animation: portal-spin 90s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .floor--featured.is-visible .floor__wheel {
+      animation: none;
+    }
+  }
+
+  /* Aparición de cada piso al entrar en pantalla (solo si tower.ts la arma y hay movimiento). */
+  @media (prefers-reduced-motion: no-preference) {
+    .hall[data-reveal='armed'] [data-floor] {
+      opacity: 0;
+      transform: translateY(2.5rem);
+      transition:
+        opacity 700ms var(--ease-entrance),
+        transform 700ms var(--ease-entrance);
+    }
+
+    .hall[data-reveal='armed'] [data-floor].is-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ——————————————— Horizonte: capítulos futuros ——————————————— */
+  .horizon {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: var(--space-16);
+    max-inline-size: 60rem;
+  }
+
+  .horizon__item {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+    padding: var(--space-24);
+    border: 1px dashed rgb(246 201 160 / 0.55);
+    border-radius: var(--radius-card);
+    /* Casi opaco: el eje de luz pasa por detrás sin cruzar el texto. */
+    background-color: rgb(28 22 30 / 0.86);
+    backdrop-filter: blur(6px);
+  }
+
+  .horizon__status {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: #f6c9a0;
+  }
+
+  .horizon__title {
+    font-size: 1.75rem;
+  }
+
+  /* ——————————————— Altitud cósmica ——————————————— */
+  .altimeter {
+    position: sticky;
+    inset-block-start: var(--topbar-block-size);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding-inline: var(--space-16);
+    background-color: color-mix(in srgb, var(--surface-stone) 88%, transparent);
+    border-block-end: 1px solid var(--rule-soft);
+    backdrop-filter: blur(12px);
+  }
+
+  .altimeter__title {
+    flex: none;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .altimeter__stops {
+    display: flex;
+    flex: 1;
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .altimeter__stop {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-8);
+    color: var(--text-primary);
+    font-size: var(--font-size-meta);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .altimeter__dot {
+    flex: none;
+    inline-size: 0.5rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--text-link);
+    border-radius: 50%;
+    transition:
+      background-color var(--duration-select) ease-out,
+      box-shadow var(--duration-select) ease-out;
+  }
+
+  .altimeter__stop[aria-current] {
+    font-weight: 700;
+    color: var(--text-link);
+  }
+
+  .altimeter__stop[aria-current] .altimeter__dot {
+    background-color: var(--color-star-gold);
+    box-shadow: 0 0 0.75rem 0.125rem rgb(253 224 71 / 0.7);
+  }
+
+  .altimeter__stop:hover .altimeter__label {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (max-width: 30rem) {
+    .altimeter__title {
+      display: none;
+    }
+  }
+
+  /* ——————————————— Desde 48rem: horizonte en tres columnas ——————————————— */
+  @media (min-width: 48rem) {
+    .horizon {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ——————————————— Desde 64rem: eje central, pisos alternos y altímetro lateral ——————————————— */
+  @media (min-width: 64rem) {
+    .hall {
+      --spine-x: 50%;
+    }
+
+    .tower {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .level {
+      justify-items: center;
+      padding-inline: var(--gutter);
+    }
+
+    .level__head {
+      justify-items: center;
+      padding: var(--space-24) var(--space-32);
+      text-align: center;
+      /* El rótulo del nivel se apoya sobre un paño: el eje pasa por detrás. */
+      background: radial-gradient(closest-side, color-mix(in srgb, var(--surface-canvas) 92%, transparent) 60%, transparent);
+    }
+
+    /* El resumen de la Tierra es largo: un paño más alto y opaco para que el eje no cruce sus líneas. */
+    .level--earth .level__head {
+      padding-block: var(--space-48);
+      background: radial-gradient(closest-side, rgb(23 37 68 / 0.9) 84%, transparent);
+    }
+
+    .floors {
+      inline-size: 100%;
+      max-inline-size: 78rem;
+    }
+
+    .floor {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: clamp(5rem, 12vw, 11rem);
+      align-items: center;
+      min-block-size: 16rem;
+    }
+
+    .floor__card {
+      grid-column: 1;
+      justify-self: end;
+    }
+
+    .floor:nth-child(even) .floor__card {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    /* Anillo de columnas: el piso de la torre, centrado en el eje, detrás de la tarjeta. */
+    .floor__ring {
+      display: block;
+      position: absolute;
+      inset: 50% auto auto 50%;
+      z-index: -1;
+      inline-size: clamp(20rem, 34vw, 30rem);
+      translate: -50% -50%;
+      opacity: 0.55;
+      filter: drop-shadow(0 0 0.5rem rgb(253 224 71 / 0.35));
+    }
+
+    .level--cosmos .floor__ring {
+      color: var(--color-ether-cyan);
+    }
+
+    .floor__node {
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+    }
+
+    .floor--featured {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      padding-block: var(--space-48);
+    }
+
+    .floor--featured .floor__card {
+      grid-column: 1;
+      justify-self: center;
+      justify-items: center;
+      max-inline-size: 50rem;
+      padding: var(--space-48);
+      text-align: center;
+      background:
+        radial-gradient(90% 70% at 50% 0%, rgb(217 119 6 / 0.2), transparent 65%),
+        rgb(15 23 42 / 0.9);
+    }
+
+    .floor--featured .floor__ring {
+      inline-size: clamp(34rem, 62vw, 56rem);
+    }
+
+    .floor--featured .floor__node {
+      display: none;
+    }
+
+    .floor--featured .floor__cast,
+    .floor--featured .floor__code,
+    .floor--featured .floor__rooms {
+      justify-content: center;
+    }
+
+    .horizon {
+      margin-block-end: var(--space-32);
+    }
+
+    .level__land {
+      justify-self: stretch;
+      margin-inline: calc(var(--gutter) * -1);
+    }
+
+    /* Altímetro: riel vertical fijo en el borde derecho mientras se recorre la torre. */
+    .altimeter {
+      position: sticky;
+      inset-block-start: 30svh;
+      z-index: 20;
+      justify-self: end;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-8);
+      block-size: 0;
+      margin-inline-end: clamp(var(--space-16), 2vw, var(--space-32));
+      padding: 0;
+      border: 0;
+      background: none;
+      backdrop-filter: none;
+      overflow: visible;
+    }
+
+    .altimeter__title {
+      padding: 0.125rem var(--space-12);
+      border-radius: var(--radius-pill);
+      background-color: color-mix(in srgb, var(--surface-stone) 86%, transparent);
+    }
+
+    .altimeter__stops {
+      position: relative;
+      flex: none;
+      flex-direction: column;
+      gap: clamp(2.5rem, 9svh, 5rem);
+      overflow: visible;
+      padding-inline-end: 0.25rem;
+    }
+
+    /* Riel entre las paradas. */
+    .altimeter__stops::before {
+      content: '';
+      position: absolute;
+      inset-block: 1.375rem;
+      inset-inline-end: calc(0.5rem - 0.5px);
+      inline-size: 1px;
+      background: linear-gradient(to bottom, var(--color-ether-cyan), var(--color-star-gold), var(--color-terracotta));
+      opacity: 0.7;
+    }
+
+    .altimeter__stop {
+      flex-direction: row-reverse;
+      padding: 0 0 0 var(--space-12);
+      border-radius: var(--radius-pill);
+    }
+
+    .altimeter__label {
+      padding: 0.25rem var(--space-12);
+      border-radius: var(--radius-pill);
+      background-color: color-mix(in srgb, var(--surface-stone) 86%, transparent);
+      border: 1px solid transparent;
+    }
+
+    .altimeter__stop[aria-current] .altimeter__label {
+      border-color: color-mix(in srgb, var(--color-star-gold) 60%, transparent);
+    }
+
+    .altimeter__dot {
+      position: relative;
+      z-index: 1;
+      inline-size: 0.5rem;
+      background-color: var(--surface-stone);
+    }
+  }
+</style>

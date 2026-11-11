@@ -1,0 +1,450 @@
+---
+/**
+ * Genealogy Explorer (Phase 5). Primer render en el build con el mismo marcado que usa la isla
+ * (`renderView`): sin JS se ve la familia de la primera figura del capítulo y el selector enlaza a
+ * la lista completa de la página. Los datos viajan como JSON mínimo dentro del elemento.
+ */
+import { serializeForScript } from '../../lib/genealogy/build-data.ts';
+import type { GenealogyData } from '../../lib/genealogy/model.ts';
+import { renderView } from '../../lib/genealogy/render.ts';
+import { defaultState, FAMILY_ANCHOR_PREFIX } from '../../lib/genealogy/state.ts';
+
+interface Props {
+  data: GenealogyData;
+}
+
+const { data } = Astro.props;
+const names = new Map(data.entities.map((entity) => [entity.id, entity.name]));
+const initial = renderView(data, defaultState(data), { interactive: false });
+---
+
+<mythos-genealogy class="genealogy">
+  <nav class="genealogy__picker" aria-labelledby="genealogy-picker-title" data-picker>
+    <h2 id="genealogy-picker-title" class="genealogy__picker-title">Elige una estrella</h2>
+    <ul role="list">
+      {
+        data.roster.map((id) => (
+          <li>
+            <a href={`#${FAMILY_ANCHOR_PREFIX}${id}`} data-deity={id} aria-current={id === data.defaultFocus ? 'true' : undefined}>
+              {names.get(id) ?? id}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <p class="visually-hidden" role="status" data-status></p>
+  <div class="genealogy__view" data-view set:html={initial} />
+  <script type="application/json" is:inline data-genealogy set:html={serializeForScript(data)}></script>
+</mythos-genealogy>
+
+<script>
+  import './genealogy-explorer.ts';
+</script>
+
+<style>
+  .genealogy {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  .genealogy__picker {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .genealogy__picker-title {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-meta);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Selector: una regla de doce nombres; la figura elegida, subrayada en oro. */
+  .genealogy__picker ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-4);
+    border-block-end: 1px solid var(--rule-soft);
+  }
+
+  .genealogy__picker a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-12);
+    border-block-end: 2px solid transparent;
+    margin-block-end: -1px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-hover) ease-out,
+      color var(--duration-hover) ease-out;
+  }
+
+  .genealogy__picker a:hover {
+    border-block-end-color: var(--decoration-bronze);
+  }
+
+  .genealogy__picker a[aria-current='true'] {
+    border-block-end-color: var(--text-link);
+    color: var(--text-link);
+    font-weight: 600;
+  }
+
+  /* Marcado inyectado por renderView (build y cliente): estilos globales acotados a la isla. */
+  .genealogy :global(.gv) {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .genealogy :global(.gv__title) {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 500;
+  }
+
+  .genealogy :global(.gv__summary) {
+    font-size: var(--font-size-small);
+    color: var(--text-link);
+  }
+
+  /* Panel de detalle: versiones (si las hay) y relaciones citadas de la figura elegida. */
+  .genealogy :global(.gv__panel) {
+    display: grid;
+    gap: var(--space-24);
+    padding: clamp(var(--space-16), 4vw, var(--space-24));
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    background-color: var(--surface-glass);
+  }
+
+  .genealogy :global(.gv__summary),
+  .genealogy :global(.gv-variants-note),
+  .genealogy :global(.gv-variants-intro) {
+    max-inline-size: var(--measure);
+  }
+
+  .genealogy :global(.gv-variants) {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .genealogy :global(.gv-variants) {
+    padding: clamp(var(--space-12), 4vw, var(--space-24));
+    border: 1px solid color-mix(in srgb, var(--color-bronze) 60%, transparent);
+    border-radius: var(--radius-card);
+    background: radial-gradient(90% 70% at 50% 0%, rgb(217 119 6 / 0.16), transparent 70%);
+  }
+
+  .genealogy :global(.gv-variants-eyebrow) {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .genealogy :global(.gv-variant) {
+    display: grid;
+    gap: var(--space-12);
+    padding: 0;
+    border: 0;
+  }
+
+  .genealogy :global(.gv-variant legend) {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+  }
+
+  /* Cada tradición es una tarjeta que se elige entera; la elegida se ilumina. */
+  .genealogy :global(.gv-option) {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding: var(--space-12) var(--space-16);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+    transition:
+      border-color var(--duration-select) ease-out,
+      background-color var(--duration-select) ease-out;
+  }
+
+  .genealogy :global(.gv-option:has(input:checked)) {
+    border-color: var(--color-star-gold);
+    background-color: rgb(253 224 71 / 0.08);
+    box-shadow: 0 0 1.5rem rgb(253 224 71 / 0.12);
+  }
+
+  .genealogy :global(.gv-option__teller) {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  /* Las dos piezas del rótulo saltan de línea enteras: sin wrap, en columnas angostas se partían
+     en dos columnas paralelas. */
+  .genealogy :global(.gv-source summary) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--space-4);
+    min-block-size: var(--target-min);
+    color: var(--text-accent);
+    font-size: var(--font-size-small);
+    cursor: pointer;
+  }
+
+  .genealogy :global(.gv-source[open] summary) {
+    color: var(--text-link);
+  }
+
+  .genealogy :global(.gv-variant legend) {
+    padding-inline: var(--space-8);
+    font-weight: 600;
+  }
+
+  @media (min-width: 48rem) {
+    .genealogy :global(.gv-variant) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-32);
+    }
+  }
+
+  .genealogy :global(.gv-option__label) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    cursor: pointer;
+  }
+
+  .genealogy :global(.gv-option__label input) {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    accent-color: var(--color-pale-gold);
+  }
+
+  .genealogy :global(.gv-option__evidence) {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+
+  .genealogy :global(.gv__figure) {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  /* Escenario del diagrama: luz cálida detrás de la figura elegida, retícula tenue de archivo. */
+  .genealogy :global(.gv__scroll) {
+    overflow-x: auto;
+    padding-block: var(--space-16);
+    background:
+      radial-gradient(ellipse 38% 46% at 50% 48%, rgb(253 224 71 / 0.14), transparent 72%),
+      url('/sky.svg') center / 40rem,
+      linear-gradient(to bottom, #070b1c, #111a3a);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+  }
+
+  /* Texto del diagrama legible: por debajo de ~80 % de su tamaño natural, desplazamiento horizontal. */
+  .genealogy :global(.gv-svg) {
+    display: block;
+    inline-size: 100%;
+    min-inline-size: calc(var(--natural-width) * 0.8px);
+    block-size: auto;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 64rem) {
+    .genealogy :global(.gv-svg) {
+      max-inline-size: calc(var(--natural-width) * 1px);
+    }
+  }
+
+  .genealogy :global(.gv-edge) {
+    fill: none;
+    stroke: var(--decoration-bronze);
+    stroke-width: 2;
+  }
+
+  .genealogy :global(.gv-edge--consort) {
+    stroke: var(--decoration-laurel);
+    stroke-width: 3;
+    stroke-dasharray: 1 6;
+    stroke-linecap: round;
+  }
+
+  .genealogy :global(.gv-edge--variant) {
+    stroke: var(--text-link);
+    stroke-dasharray: 8 6;
+  }
+
+  .genealogy :global(#gv-arrow path) {
+    fill: var(--decoration-bronze);
+  }
+
+  .genealogy :global(.gv-node rect) {
+    fill: rgb(13 19 46 / 0.88);
+    stroke: color-mix(in srgb, var(--color-ether-cyan) 70%, transparent);
+    stroke-width: 1;
+  }
+
+  .genealogy :global(.gv-node__star) {
+    fill: var(--color-ether-cyan);
+    filter: drop-shadow(0 0 4px var(--color-ether-cyan));
+  }
+
+  .genealogy :global(.gv-node--focus rect) {
+    fill: #2a2408;
+    stroke: var(--color-star-gold);
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 10px rgb(253 224 71 / 0.6));
+  }
+
+  .genealogy :global(.gv-node--focus .gv-node__star) {
+    fill: var(--color-star-gold);
+    filter: drop-shadow(0 0 6px var(--color-star-gold));
+  }
+
+  .genealogy :global(.gv-node--focus .gv-node__name) {
+    font-weight: 700;
+  }
+
+  .genealogy :global(.gv-node[data-deity]) {
+    cursor: pointer;
+  }
+
+  .genealogy :global(.gv-node[data-deity]:hover rect) {
+    stroke: var(--text-link);
+  }
+
+  .genealogy :global(.gv-node text) {
+    fill: var(--text-primary);
+    text-anchor: middle;
+  }
+
+  .genealogy :global(.gv-node__name) {
+    font-family: var(--font-display);
+    font-size: 19px;
+  }
+
+  .genealogy :global(.gv-node__role) {
+    font-family: var(--font-text);
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .genealogy :global(.gv-legend ul) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8) var(--space-24);
+    font-size: var(--font-size-small);
+  }
+
+  .genealogy :global(.gv-legend li) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+  }
+
+  .genealogy :global(.gv-legend svg) {
+    flex: none;
+    inline-size: 2.5rem;
+    block-size: 0.75rem;
+  }
+
+  .genealogy :global(.gv__lists) {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  @media (min-width: 64rem) {
+    .genealogy :global(.gv__lists) {
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      column-gap: var(--space-32);
+      align-items: start;
+    }
+  }
+
+  .genealogy :global(.gv-group) {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .genealogy :global(.gv-group__title) {
+    font-family: var(--font-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .genealogy :global(.gv-relations) {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .genealogy :global(.gv-relation) {
+    display: grid;
+    gap: var(--space-4);
+    padding-block-start: var(--space-8);
+    border-block-start: 1px solid var(--surface-raised);
+  }
+
+  .genealogy :global(.gv-relation__head) {
+    font-weight: 600;
+  }
+
+  .genealogy :global(.gv-meta),
+  .genealogy :global(.gv-note),
+  .genealogy :global(.gv-cites),
+  .genealogy :global(.gv-omitted),
+  .genealogy :global(.gv-empty) {
+    font-size: var(--font-size-small);
+  }
+
+  .genealogy :global(.gv-muted) {
+    font-weight: 400;
+    font-size: var(--font-size-small);
+  }
+
+  .genealogy :global(.gv-variant-tag) {
+    color: var(--text-link);
+  }
+
+  .genealogy :global(.gv-cites) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-16);
+  }
+
+  .genealogy :global(.gv a),
+  .genealogy :global(.gv-refocus) {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .genealogy :global(.gv-refocus) {
+    justify-self: start;
+    padding-inline: var(--space-16);
+    border: 1px solid var(--decoration-bronze);
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--text-link);
+    font: inherit;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+  }
+
+  .genealogy :global(a.gv-refocus) {
+    text-decoration: none;
+  }
+</style>

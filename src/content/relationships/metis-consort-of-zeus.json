@@ -1,0 +1,19 @@
+{
+  "subject": "metis",
+  "object": "zeus",
+  "kind": "consort-of",
+  "label": "primera esposa (ἄλοχος)",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "metis-and-athena",
+      "claim": "πρώτην ἄλοχον θέτο Μῆτιν (v. 886).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

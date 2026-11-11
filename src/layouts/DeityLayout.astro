@@ -1,0 +1,139 @@
+---
+/**
+ * Layout de ficha (Deity Archives), en tres niveles de consulta:
+ *
+ * 1. Descubrir: primera vista con la escena de la deidad, nombre, nombre griego, dominio, síntesis y
+ *    una acción (src/components/deity/DeityHero.astro).
+ * 2. Explorar: identidad, símbolos, relatos, genealogía y objetos en bloques editoriales distintos.
+ * 3. Investigar: fuentes completas y figuras de contexto, plegadas pero enlazables.
+ *
+ * El índice «En esta página» y el selector de fichas viven en la barra superior y en su panel
+ * (src/components/ui/SiteNav.astro). Orden del DOM = orden de lectura.
+ */
+import DeityHero from '../components/deity/DeityHero.astro';
+import { deityTheme, themeStyle } from '../config/deity-themes.ts';
+import type { DeityNavigation, PageSection } from '../config/navigation.ts';
+import type { ArtifactLink, DeityArchive } from '../lib/content/deity-archive.ts';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  archive: DeityArchive;
+  /** Lo que dibuja el emblema editorial (base de la escena). */
+  emblemDepicts: string;
+  /** Objeto fotografiado que representa a la deidad con identificación explícita o probable. */
+  representation: ArtifactLink | undefined;
+  sections: readonly PageSection[];
+  navigation: DeityNavigation;
+  unreviewed: boolean;
+  /** Rótulo del encabezado: «Los Doce» o la tradición a la que pertenece la deidad. */
+  eyebrow: string;
+}
+
+const { archive, emblemDepicts, representation, sections, navigation, unreviewed, eyebrow } = Astro.props;
+const { data } = archive;
+const theme = deityTheme(archive.id);
+---
+
+<BaseLayout
+  title={data.name}
+  description={`${data.name} (${data.greekName ?? ''}): ${data.tagline ?? data.summary ?? ''} Su historia, sus grandes relatos, sus símbolos y los secretos de su nombre.`}
+  unreviewed={unreviewed}
+  tier="olympus"
+  sections={sections}
+  deity={navigation}
+  preloadFont="/assets/fonts/cormorant-garamond-latin-wght-normal.woff2"
+>
+  <article class:list={['deity', `deity--${theme.family}`]} style={themeStyle(theme)} aria-labelledby="deity-title">
+    <DeityHero
+      id={archive.id}
+      name={data.name}
+      greekName={data.greekName}
+      transliteration={data.transliteration}
+      tagline={data.tagline}
+      domains={data.domains.map((domain) => domain.label)}
+      eyebrow={eyebrow}
+      theme={theme}
+      emblemDepicts={emblemDepicts}
+      position={navigation.current.position}
+      total={navigation.current.total}
+      representation={representation}
+      action={{ label: 'Comenzar el relato', href: '#relato' }}
+    />
+
+    <div class="deity__body">
+      <slot />
+    </div>
+
+    <nav class="deity__steps" aria-label="Otras constelaciones">
+      <a class="deity__step" href={navigation.previous.href} rel="prev">
+        <span class="deity__step-label">← Constelación anterior</span>
+        <span class="deity__step-name">{navigation.previous.name}</span>
+      </a>
+      <a class="deity__step deity__step--next" href={navigation.next.href} rel="next">
+        <span class="deity__step-label">Siguiente constelación →</span>
+        <span class="deity__step-name">{navigation.next.name}</span>
+      </a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .deity {
+    display: grid;
+    /* El héroe decide su composición según el ancho real de la ficha (src/components/deity/DeityHero.astro). */
+    container: deity / inline-size;
+  }
+
+  .deity__body {
+    display: grid;
+    gap: clamp(4rem, 3rem + 4vw, 7rem);
+    padding: clamp(3rem, 2rem + 4vw, 6rem) var(--gutter) var(--space-64);
+    inline-size: 100%;
+    max-inline-size: 78rem;
+    margin-inline: auto;
+  }
+
+  .deity__steps {
+    display: grid;
+    /* minmax(0, …): el rótulo en versalitas no debe ensanchar la columna más allá de la pantalla. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-block-start: 1px solid var(--rule-soft);
+  }
+
+  .deity__step {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-24) var(--gutter);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background-color var(--duration-hover) ease-out;
+  }
+
+  .deity__step:hover {
+    background-color: rgb(243 236 223 / 0.05);
+  }
+
+  .deity__step--next {
+    text-align: end;
+    border-inline-start: 1px solid var(--rule-soft);
+  }
+
+  .deity__step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .deity__step-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+  }
+
+  .deity__step:hover .deity__step-name {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+</style>

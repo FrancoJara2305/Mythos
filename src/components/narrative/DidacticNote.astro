@@ -1,0 +1,111 @@
+---
+/**
+ * Cápsula didáctica: una curiosidad, una pregunta para pensar, un concepto griego explicado o un
+ * «nombre secreto» (epíteto). El tipo se dice con texto («¿Sabías que…?», «Para pensar»…), no solo con
+ * color. El slot recibe, si existe, el cajón «¿Cómo sabemos esto?» de la cápsula.
+ */
+import type { DidacticNote } from '../../types/content.ts';
+import MixedText from '../ui/MixedText.astro';
+import StoryBody from './StoryBody.astro';
+
+interface Props {
+  note: DidacticNote;
+  /** Nivel del título dentro de la página. */
+  level?: 3 | 4;
+}
+
+const { note, level = 3 } = Astro.props;
+const KIND_LABELS: Record<DidacticNote['kind'], string> = {
+  curiosity: '¿Sabías que…?',
+  question: 'Para pensar',
+  concept: 'Palabra griega',
+  name: 'Nombre secreto',
+};
+const Heading = `h${level}` as 'h3' | 'h4';
+---
+
+<article class:list={['capsule', `capsule--${note.kind}`]}>
+  <p class="capsule__kind">{KIND_LABELS[note.kind]}</p>
+  {
+    note.term !== undefined && (
+      <p class="capsule__term" lang="grc">
+        {note.term}
+      </p>
+    )
+  }
+  <Heading class="capsule__title"><MixedText text={note.title} /></Heading>
+  <div class="capsule__body">
+    <StoryBody body={note.body} />
+  </div>
+  <slot />
+</article>
+
+<style>
+  .capsule {
+    --capsule-accent: var(--color-ether-cyan);
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-8);
+    padding: var(--space-24);
+    border: 1px solid color-mix(in srgb, var(--capsule-accent) 45%, transparent);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--capsule-accent) 16%, transparent), transparent 62%),
+      var(--surface-glass);
+  }
+
+  .capsule--name {
+    --capsule-accent: var(--theme-accent, var(--color-star-gold));
+  }
+
+  .capsule--question {
+    --capsule-accent: var(--color-star-gold);
+    border-style: dashed;
+  }
+
+  .capsule--curiosity {
+    --capsule-accent: #c4b5fd;
+  }
+
+  .capsule__kind {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+
+  .capsule__kind::before {
+    content: '✦';
+    margin-inline-end: var(--space-8);
+    color: var(--capsule-accent);
+  }
+
+  .capsule__term {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+    line-height: 1.2;
+    color: var(--text-link);
+  }
+
+  .capsule__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  .capsule__body {
+    display: grid;
+    gap: var(--space-8);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .capsule--question .capsule__body {
+    font-family: var(--font-display);
+    font-size: 1.3125rem;
+    font-style: italic;
+    line-height: 1.35;
+  }
+</style>

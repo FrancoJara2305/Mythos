@@ -1,0 +1,67 @@
+{
+  "title": "Marble head of a goddess",
+  "institution": "The Metropolitan Museum of Art",
+  "externalId": "256431",
+  "accessionNumber": "2012.477.1",
+  "catalogueUrl": "https://www.metmuseum.org/art/collection/search/256431",
+  "date": {
+    "kind": "range",
+    "start": -200,
+    "end": -1,
+    "label": "siglos II–I a. C.",
+    "precision": "century",
+    "basis": "Siglos II–I a. C. derivados de la datación textual de la ficha («2nd–1st century BCE»); el índice de la API publica -199/-1.",
+    "evidence": [
+      {
+        "kind": "catalogue",
+        "url": "https://www.metmuseum.org/art/collection/search/256431",
+        "title": "Marble head of a goddess",
+        "authorOrInstitution": "The Metropolitan Museum of Art",
+        "locator": "Collection API, objects/256431 (campos objectDate, objectBeginDate, objectEndDate)",
+        "checkedAt": "2026-11-08"
+      }
+    ]
+  },
+  "material": "Mármol (ficha: «Marble»)",
+  "culture": "Griega, período helenístico (ficha: «Greek», «Hellenistic»)",
+  "findspot": "No consta en los datos de la API consultada.",
+  "provenance": {
+    "summary": "La API pública no expone el historial de propiedad y la ficha web respondió HTTP 429 el 2026-11-08: procedencia pendiente de cotejo. La línea de crédito registra solo la forma de adquisición.",
+    "catalogueUrl": "https://www.metmuseum.org/art/collection/search/256431",
+    "certainty": "unknown"
+  },
+  "creditLine": "Bequest of Armida B. Colt, 2011",
+  "identifications": [],
+  "catalogueNotes": [
+    "Sin identificación registrada: la API solo da «Head of a goddess» y la etiqueta «Goddess».",
+    "La planificación (asset_manifest A03) anotó, a partir de la descripción web, «posiblemente Afrodita o Artemisa» y una mención de alabastro calcítico frente al campo «Marble». La API no incluye la descripción: cotejar la ficha antes de usar cualquiera de los dos datos.",
+    "La API marca el objeto con isPublicDomain: true; según la política Open Access del Met, sus imágenes abiertas son CC0. Imagen adquirida el 2026-11-09 (references/artifacts/images.md); derechos pendientes de confirmar en la ficha web."
+  ],
+  "review": {
+    "status": "draft"
+  },
+  "media": [
+    {
+      "type": "image",
+      "assetId": "met-256431-dp328155",
+      "localPath": "src/assets/images/artifacts/met-256431-dp328155.jpg",
+      "width": 1600,
+      "height": 1600,
+      "alt": "Cabeza femenina de mármol vista de frente, con el cabello recogido bajo una banda ancha. El museo la titula «cabeza de una diosa» sin nombrarla.",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC0 1.0 (Open Access de The Met), pendiente de confirmar en la ficha",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "creator": "The Metropolitan Museum of Art",
+        "institution": "The Metropolitan Museum of Art",
+        "sourceUrl": "https://images.metmuseum.org/CRDImages/gr/original/DP328155.jpg",
+        "creditLine": "The Metropolitan Museum of Art, Bequest of Armida B. Colt, 2011, 2012.477.1 (Open Access)",
+        "modifications": [
+          "Reescalado a 1600 px de lado largo y recompresión JPEG (mozjpeg, calidad 85); sin recorte ni retoque."
+        ],
+        "checkedAt": "2026-11-09",
+        "evidencePath": "references/artifacts/images.md"
+      }
+    }
+  ]
+}

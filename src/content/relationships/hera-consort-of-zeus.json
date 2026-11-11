@@ -1,0 +1,19 @@
+{
+  "subject": "hera",
+  "object": "zeus",
+  "kind": "consort-of",
+  "label": "esposa (ἄκοιτις)",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "hera-hebe-ares-eileithyia",
+      "claim": "Ἥρην θαλερὴν ποιήσατ’ ἄκοιτιν (v. 921).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

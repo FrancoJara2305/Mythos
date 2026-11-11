@@ -1,0 +1,176 @@
+/*
+ * Tokens de diseño de MYTHOS — «Cosmic Mythic Wonder» (Narratorio, 2026-11-09).
+ * Fuente: docs/design_guidelines.md («Narratorio: maravilla mítica cósmica»).
+ *
+ * La paleta evoluciona con la altura del lector en el cosmos (`<html data-tier>`):
+ *   cosmos  — espacio profundo / cosmogonía (GR-01 a GR-03): azul abisal, violeta nebulosa, oro pálido y cian.
+ *   olympus — cumbre olímpica / Dodekatheon (GR-04 a GR-06): azul celeste nocturno, mármol cálido y bronce dorado.
+ *   earth   — tierra / ciclos heroicos (futuro): terracota, verde bosque profundo y piedra mediterránea.
+ *
+ * Contrastes (luminancia relativa sRGB, colores opacos), recalculados el 2026-11-09:
+ *   marble/abyss 16,98 · marble/olympus 15,20 · marble/raised 14,50 · marble/nebula 13,61
+ *   pale-gold/abyss 14,42 · pale-gold/olympus 12,91 · abyss sobre pale-gold (botón) 14,42
+ *   cyan/abyss 9,31 · cyan/olympus 8,33 · bronze/abyss 6,26 · bronze/olympus 5,60 (filetes y bordes de control)
+ *   marble/earth 15,59 · pale-gold/earth 13,24 · terracotta/earth 4,07 (solo decoración y bordes)
+ *   El oro estelar puro (#fde047) se reserva a destellos, estrellas y trazos; el texto usa el oro pálido.
+ */
+@layer tokens {
+  :root {
+    color-scheme: dark;
+
+    /* Paleta base: cosmos */
+    --color-abyss: #050816; /* azul abisal */
+    --color-nebula: #1e1b4b; /* violeta nebulosa */
+    --color-star-gold: #fde047; /* destello estelar: solo luz, nunca texto corrido */
+    --color-ether-cyan: #38bdf8; /* cian etéreo */
+    /* Paleta base: Olimpo */
+    --color-olympus: #0f172a; /* azul celeste nocturno */
+    --color-marble: #f3ecdf; /* mármol cálido */
+    --color-pale-gold: #f5d98b; /* oro pálido legible */
+    --color-bronze: #d97706; /* bronce dorado */
+    /* Paleta base: tierra */
+    --color-terracotta: #c2562c;
+    --color-forest: #14321f; /* verde bosque profundo */
+    --color-stone: #b9ae9c; /* piedra mediterránea */
+
+    /* Laurel: señal decorativa (variantes del Mapa de Linajes, notas de catálogo), siempre con etiqueta */
+    --color-laurel: #3f7a5a;
+
+    /* Roles semánticos */
+    --surface-canvas: var(--color-abyss);
+    --surface-raised: #111a3a;
+    --surface-stone: #0b1026; /* paneles y barra; marble 16,01 / pale-gold 13,60 */
+    --surface-glass: rgb(13 19 46 / 0.72); /* paneles sobre el cielo: siempre con backdrop-filter y borde */
+    --text-primary: var(--color-marble); /* el texto secundario baja tamaño/jerarquía, no opacidad */
+    --text-link: var(--color-pale-gold);
+    --text-accent: var(--color-ether-cyan); /* rótulos didácticos; nunca único indicador */
+    --focus-ring: var(--color-star-gold);
+    --decoration-bronze: var(--color-bronze);
+    --decoration-laurel: var(--color-laurel);
+    --action-primary-bg: var(--color-pale-gold);
+    --action-primary-text: var(--color-abyss);
+    --border-error: var(--color-marble); /* error = icono + texto + borde; no depender del rojo */
+    --rule-soft: rgb(243 236 223 / 0.14); /* filetes decorativos, nunca único límite de un control */
+    --glow-gold: rgb(253 224 71 / 0.35);
+    --glow-cyan: rgb(56 189 248 / 0.3);
+
+    /* Cielo de fondo de cada nivel (src/styles/base.css, `body::before`) */
+    --sky-top: #050816;
+    --sky-mid: #0b0f2e;
+    --sky-low: #1e1b4b;
+    --sky-haze: rgb(56 189 248 / 0.1);
+
+    /*
+     * Familias autohospedadas (src/styles/fonts.css; T01–T03, SIL OFL 1.1, docs/asset_manifest.md §6).
+     * Títulos: Cormorant Garamond, serifa clásica de alto contraste, con versalitas simuladas por
+     * espaciado en rótulos. Relatos y cápsulas: Noto Sans, humanista y muy legible (también el griego).
+     */
+    --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-text: 'Noto Sans', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-greek: 'Noto Sans', 'Segoe UI', system-ui, sans-serif; /* griego politónico: subconjuntos greek y greek-ext */
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, 'SFMono-Regular', Menlo, monospace;
+
+    /* Escala tipográfica (rem: respeta el tamaño elegido por el usuario) */
+    --font-size-body: 1.0625rem; /* 17 px móvil → 18 px desde 768 px */
+    --line-height-body: 1.65; /* → 1,7 desde 768 px: lectura de relatos */
+    --font-size-control: 1rem;
+    --font-size-small: 0.875rem; /* 14 px */
+    --font-size-meta: 0.8125rem; /* 13 px: metadatos */
+    --font-size-h3: clamp(1.375rem, 1.15rem + 0.8vw, 1.875rem);
+    --font-size-h2: clamp(1.875rem, 1.4rem + 1.9vw, 3rem);
+    --font-size-h1: clamp(2.75rem, 1.9rem + 4vw, 6rem);
+    --font-size-display: clamp(4rem, 1.78rem + 11.1vw, 9.5rem); /* solo el umbral */
+    --line-height-heading: 1.06;
+    --measure: 66ch; /* 60–70 caracteres */
+    --tracking-caps: 0.2em; /* rótulos en mayúsculas espaciadas */
+
+    /* Espaciado: 4, 8, 12, 16, 24, 32, 48, 64, 96 px */
+    --space-4: 0.25rem;
+    --space-8: 0.5rem;
+    --space-12: 0.75rem;
+    --space-16: 1rem;
+    --space-24: 1.5rem;
+    --space-32: 2rem;
+    --space-48: 3rem;
+    --space-64: 4rem;
+    --space-96: 6rem;
+
+    /* Layout: contenedor 1440 px; márgenes 24 px móvil → 48–80 px escritorio */
+    --container-max: 90rem;
+    --gutter: clamp(1.5rem, 0.5rem + 4.5vw, 5rem);
+    --grid-columns: 1;
+    --grid-gap: var(--space-24);
+    --radius-card: 1.25rem;
+    --radius-pill: 999px;
+
+    /* Armazón: una barra superior translúcida en todos los anchos (el índice se abre en un panel) */
+    --topbar-block-size: 3.5rem; /* 56 px */
+    --anchor-offset: calc(var(--topbar-block-size) + var(--space-16)); /* anclas visibles bajo la barra fija */
+
+    /* Foco y objetivos táctiles */
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 4px;
+    --target-min: 2.75rem; /* 44 px */
+
+    /* Movimiento (docs/design_guidelines.md, «Movimiento») */
+    --ease-entrance: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --ease-travel: cubic-bezier(0.65, 0, 0.35, 1); /* viajes de cámara y del portal */
+    --duration-hover: 150ms;
+    --duration-select: 140ms;
+    --duration-filter: 190ms;
+    --duration-page: 210ms;
+    --duration-appear: 320ms;
+    --duration-entrance: 700ms;
+    --duration-portal: 1400ms;
+  }
+
+  /* ——— Niveles de la torre ——— */
+  :root[data-tier='olympus'] {
+    --surface-canvas: var(--color-olympus);
+    --surface-raised: #1b2644;
+    --surface-stone: #131c33;
+    --surface-glass: rgb(19 28 51 / 0.74);
+    --sky-top: #0b1122;
+    --sky-mid: #0f172a;
+    --sky-low: #1d2a4d;
+    --sky-haze: rgb(217 119 6 / 0.12);
+  }
+
+  :root[data-tier='earth'] {
+    --surface-canvas: #0c1711;
+    --surface-raised: #1a2a20;
+    --surface-stone: #101d15;
+    --surface-glass: rgb(16 29 21 / 0.76);
+    --sky-top: #0f172a;
+    --sky-mid: #14321f;
+    --sky-low: #3b2416;
+    --sky-haze: rgb(194 86 44 / 0.16);
+    --decoration-bronze: var(--color-terracotta);
+  }
+
+  @media (min-width: 48rem) {
+    :root {
+      --font-size-body: 1.125rem;
+      --line-height-body: 1.7;
+      --grid-columns: 6;
+    }
+  }
+
+  @media (min-width: 75rem) {
+    :root {
+      --grid-columns: 12;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --duration-hover: 0ms;
+      --duration-select: 0ms;
+      --duration-filter: 0ms;
+      --duration-page: 0ms;
+      --duration-appear: 0ms;
+      --duration-entrance: 0ms;
+      --duration-portal: 0ms;
+    }
+  }
+}

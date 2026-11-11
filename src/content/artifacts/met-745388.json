@@ -1,0 +1,67 @@
+{
+  "title": "Terracotta fragments of a neck-amphora of Panathenaic shape",
+  "institution": "The Metropolitan Museum of Art",
+  "externalId": "745388",
+  "accessionNumber": "2011.604.3.481a, b",
+  "catalogueUrl": "https://www.metmuseum.org/art/collection/search/745388",
+  "date": {
+    "kind": "range",
+    "start": -550,
+    "end": -526,
+    "label": "tercer cuarto del siglo VI a. C.",
+    "precision": "approximate",
+    "basis": "Tercer cuarto del siglo VI a. C. (550–526 a. C.) derivado de la datación textual («third quarter of the 6th century BCE»); el índice de la API publica -650/-400, mucho más amplio, que no se usa.",
+    "evidence": [
+      {
+        "kind": "catalogue",
+        "url": "https://www.metmuseum.org/art/collection/search/745388",
+        "title": "Terracotta fragments of a neck-amphora of Panathenaic shape",
+        "authorOrInstitution": "The Metropolitan Museum of Art",
+        "locator": "Collection API, objects/745388 (campos objectDate, objectBeginDate, objectEndDate)",
+        "checkedAt": "2026-11-08"
+      }
+    ]
+  },
+  "material": "Terracota (ficha: «Terracotta»)",
+  "culture": "Griega, ática, período arcaico (ficha: «Greek, Attic», «Archaic»)",
+  "findspot": "No consta en los datos de la API consultada.",
+  "provenance": {
+    "summary": "La API pública no expone el historial de propiedad y la ficha web respondió HTTP 429 el 2026-11-08: procedencia pendiente de cotejo. La línea de crédito registra solo la forma de adquisición.",
+    "catalogueUrl": "https://www.metmuseum.org/art/collection/search/745388",
+    "certainty": "unknown"
+  },
+  "creditLine": "Gift of Dietrich von Bothmer, Distinguished Research Curator, Greek and Roman Art, 2011",
+  "identifications": [],
+  "catalogueNotes": [
+    "Sin identificación registrada: la API no incluye descripción ni etiquetas.",
+    "La planificación (asset_manifest A05) anotó a Atenea con casco, égida, escudo y lanza según la descripción web; la forma panatenaica no basta para inferirlo. Cotejar la ficha.",
+    "La API marca el objeto con isPublicDomain: true; según la política Open Access del Met, sus imágenes abiertas son CC0. Imagen adquirida el 2026-11-09 (references/artifacts/images.md); derechos pendientes de confirmar en la ficha web."
+  ],
+  "review": {
+    "status": "draft"
+  },
+  "media": [
+    {
+      "type": "image",
+      "assetId": "met-745388-dvb11671-1-ff",
+      "localPath": "src/assets/images/artifacts/met-745388-dvb11671-1-ff.jpg",
+      "width": 1600,
+      "height": 977,
+      "alt": "Dos fragmentos de un ánfora de figuras negras fotografiados sobre papel cuadriculado con una escala métrica; en el mayor, una figura con casco de cimera alta y lanza junto a una banda vertical de palmetas.",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC0 1.0 (Open Access de The Met), pendiente de confirmar en la ficha",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "creator": "The Metropolitan Museum of Art",
+        "institution": "The Metropolitan Museum of Art",
+        "sourceUrl": "https://images.metmuseum.org/CRDImages/gr/original/DVB11671_1_ff.jpg",
+        "creditLine": "The Metropolitan Museum of Art, Gift of Dietrich von Bothmer, Distinguished Research Curator, Greek and Roman Art, 2011, 2011.604.3.481a, b (Open Access)",
+        "modifications": [
+          "Reescalado a 1600 px de lado largo y recompresión JPEG (mozjpeg, calidad 85); sin recorte ni retoque."
+        ],
+        "checkedAt": "2026-11-09",
+        "evidencePath": "references/artifacts/images.md"
+      }
+    }
+  ]
+}

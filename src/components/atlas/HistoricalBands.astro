@@ -1,0 +1,113 @@
+---
+/**
+ * Modo histórico del atlas: dos bandas separadas (composición de textos y fabricación de objetos)
+ * sobre una escala de siglos que cruza correctamente a. C./d. C. (sin año 0). Cada intervalo es una
+ * barra; si su precisión no es de año, los extremos se difuminan. Vista de la lista (`aria-hidden`):
+ * cada barra enlaza a su tarjeta, que contiene la misma información.
+ */
+import type { HistoricalEntry } from '../../lib/timeline/entries.ts';
+import { centuryScale, positionOf } from '../../lib/timeline/scale.ts';
+
+interface Props {
+  entries: readonly HistoricalEntry[];
+}
+
+const { entries } = Astro.props;
+const WIDTH = 960;
+// Márgenes para que las etiquetas centradas de los extremos del eje no se corten.
+const LEFT = 48;
+const RIGHT = 48;
+const PLOT = WIDTH - LEFT - RIGHT;
+const BAND_TITLE = 34;
+const LANE = 50;
+const BAND_GAP = 28;
+const EMPTY = 44;
+const AXIS = 44;
+
+const ranged = entries.flatMap((entry) => (entry.date.kind === 'range' ? [{ entry, start: entry.date.start, end: entry.date.end, precise: entry.date.precision === 'year' }] : []));
+const scale = centuryScale(ranged.map(({ start, end }) => ({ start, end })));
+
+const bands = [
+  { facet: 'composition', title: 'Composición de los textos', empty: 'Sin intervalos: ninguna obra tiene aún una datación cotejada con una referencia académica.' },
+  { facet: 'object-production', title: 'Fabricación de los objetos', empty: 'Sin intervalos registrados.' },
+] as const;
+
+let cursor = 12;
+const layout = bands.map((band) => {
+  const items = ranged.filter((item) => item.entry.facet === band.facet);
+  const top = cursor;
+  const lanesTop = top + BAND_TITLE;
+  const height = BAND_TITLE + (items.length === 0 ? EMPTY : items.length * LANE);
+  cursor += height + BAND_GAP;
+  return {
+    ...band,
+    top,
+    height,
+    bars: items.map((item, index) => {
+      const x1 = LEFT + (scale === undefined ? 0 : positionOf(item.start, scale, PLOT));
+      const x2 = LEFT + (scale === undefined ? 0 : positionOf(item.end, scale, PLOT));
+      const width = Math.max(10, x2 - x1);
+      const x = width === 10 ? (x1 + x2) / 2 - 5 : x1;
+      const y = lanesTop + index * LANE + 24;
+      const anchorEnd = x > LEFT + PLOT * 0.62;
+      return { ...item, x, width, y, labelX: anchorEnd ? x + width : x, anchor: anchorEnd ? 'end' : 'start' };
+    }),
+  };
+});
+const plotBottom = cursor - BAND_GAP + 8;
+const height = plotBottom + AXIS;
+const r = (value: number) => Math.round(value * 10) / 10;
+---
+
+<svg
+  class="atlas-svg"
+  viewBox={`0 0 ${WIDTH} ${r(height)}`}
+  width={WIDTH}
+  height={r(height)}
+  style={`--natural-width: ${WIDTH}`}
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <linearGradient id="ta-fuzzy" x1="0" x2="1" y1="0" y2="0">
+      <stop class="ta-stop" offset="0" stop-opacity="0.2"></stop>
+      <stop class="ta-stop" offset="0.22" stop-opacity="1"></stop>
+      <stop class="ta-stop" offset="0.78" stop-opacity="1"></stop>
+      <stop class="ta-stop" offset="1" stop-opacity="0.2"></stop>
+    </linearGradient>
+  </defs>
+  {
+    scale?.ticks.map((tick) => {
+      const x = r(LEFT + positionOf(tick.year, scale, PLOT));
+      return (
+        <g class="ta-tick">
+          <line x1={x} x2={x} y1={8} y2={r(plotBottom)} />
+          <text x={x} y={r(plotBottom + 26)}>{tick.label}</text>
+        </g>
+      );
+    })
+  }
+  {
+    layout.map((band) => (
+      <g class="ta-band">
+        <rect class="ta-band__bg" x={0} y={r(band.top)} width={WIDTH} height={r(band.height)} />
+        <text class="ta-band__title" x={LEFT} y={r(band.top + 22)}>
+          {band.title}
+        </text>
+        {band.bars.length === 0 && (
+          <text class="ta-band__empty" x={LEFT} y={r(band.top + BAND_TITLE + 24)}>
+            {band.empty}
+          </text>
+        )}
+        {band.bars.map((bar) => (
+          <a href={`#evento-${bar.entry.id}`} tabindex="-1" class="ta-mark" data-entities={bar.entry.entities.join(' ')}>
+            <text class="ta-mark__label" x={r(bar.labelX)} y={r(bar.y - 8)} text-anchor={bar.anchor}>
+              {bar.entry.title}
+            </text>
+            <rect class:list={['ta-mark__bar', { 'ta-mark__bar--fuzzy': !bar.precise }]} x={r(bar.x)} y={r(bar.y)} width={r(bar.width)} height={14} rx={3} />
+          </a>
+        ))}
+      </g>
+    ))
+  }
+</svg>

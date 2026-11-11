@@ -1,0 +1,215 @@
+{
+  "title": "Odisea",
+  "workUrn": "urn:cts:greekLit:tlg0012.tlg002",
+  "attribution": {
+    "name": "Homero",
+    "status": "traditional",
+    "note": "Atribución tradicional. MYTHOS todavía no resume la discusión sobre su autoría ni la fecha: falta cotejar una referencia académica."
+  },
+  "compositionDate": {
+    "kind": "unknown",
+    "label": "Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que lo date."
+  },
+  "editions": [
+    {
+      "id": "perseus-grc2",
+      "editor": "Augustus Taber Murray",
+      "language": "grc",
+      "title": "The Odyssey, with an English Translation",
+      "publisher": "William Heinemann Ltd. (Londres); G. P. Putnam's Sons (Nueva York). Loeb Classical Library",
+      "year": 1919,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "urn": "urn:cts:greekLit:tlg0012.tlg002.perseus-grc2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+        "creditLine": "Ὀδύσσεια, ed. A. T. Murray (Loeb, 1919). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    },
+    {
+      "id": "perseus-eng3",
+      "translator": "Augustus Taber Murray",
+      "language": "en",
+      "title": "The Odyssey",
+      "publisher": "William Heinemann Ltd. (Londres); G. P. Putnam's Sons (Nueva York). Loeb Classical Library",
+      "year": 1919,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-eng3.xml",
+      "urn": "urn:cts:greekLit:tlg0012.tlg002.perseus-eng3",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-eng3.xml",
+        "creditLine": "Odyssey, trad. A. T. Murray (Loeb, 1919). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": "pylos-sacrifice",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 3,
+        "lineStart": 1,
+        "lineEnd": 8,
+        "display": "Odisea 3.1–8",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:3.1-3.8/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "En la playa de Pilos se sacrifican toros enteramente negros al «sacudidor de la tierra, de cabellera oscura».",
+      "relatedEntities": [
+        "poseidon"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "athena-prays-to-poseidon",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 3,
+        "lineStart": 43,
+        "lineEnd": 61,
+        "display": "Odisea 3.43–61",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:3.43-3.61/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "Atenea, bajo la figura de Méntor, dirige una plegaria a Poseidón «que abarca la tierra».",
+      "relatedEntities": [
+        "athena",
+        "poseidon"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hermes-messenger",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 28,
+        "lineEnd": 32,
+        "display": "Odisea 5.28–32",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:5.28-5.32/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "Zeus encarga a Hermes, su hijo, que como mensajero comunique a la ninfa su decisión infalible.",
+      "relatedEntities": [
+        "hermes",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hermes-sandals-and-wand",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 43,
+        "lineEnd": 49,
+        "display": "Odisea 5.43–49",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:5.43-5.49/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "El mensajero Argifonte se ata las sandalias inmortales de oro que lo llevan sobre el mar y la tierra, y toma la vara con la que hechiza los ojos de los hombres.",
+      "relatedEntities": [
+        "hermes"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "artemis-the-archer",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 6,
+        "lineStart": 102,
+        "lineEnd": 104,
+        "display": "Odisea 6.102–104",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:6.102-6.104/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "Ártemis flechadora recorre los montes, el Taigeto o el Erimanto, deleitándose con jabalíes y ciervos veloces.",
+      "relatedEntities": [
+        "artemis"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "song-of-ares-and-aphrodite",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 8,
+        "lineStart": 266,
+        "lineEnd": 270,
+        "display": "Odisea 8.266–270",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:8.266-8.270/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "Demódoco canta los amores de Ares y Afrodita «de bella corona», que se unieron en secreto en la casa de Hefesto y deshonraron su lecho.",
+      "relatedEntities": [
+        "ares",
+        "aphrodite",
+        "hephaestus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-blames-his-parents",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 8,
+        "lineStart": 306,
+        "lineEnd": 312,
+        "display": "Odisea 8.306–312",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:8.306-8.312/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "Hefesto invoca a «padre Zeus» y a los dioses: Afrodita, «hija de Zeus», lo desprecia por cojo y ama a Ares; no culpa a nadie más que a sus dos progenitores.",
+      "relatedEntities": [
+        "hephaestus",
+        "zeus",
+        "aphrodite",
+        "ares"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "athena-renowned-for-metis",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 13,
+        "lineStart": 296,
+        "lineEnd": 299,
+        "display": "Odisea 13.296–299",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg002.perseus-grc2:13.296-13.299/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg002/tlg0012.tlg002.perseus-grc2.xml",
+      "summary": "Atenea le dice a Odiseo que ella es célebre entre todos los dioses por su astucia (μῆτις) y sus recursos.",
+      "relatedEntities": [
+        "athena"
+      ],
+      "verifiedAt": "2026-11-08"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

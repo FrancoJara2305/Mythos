@@ -1,0 +1,577 @@
+---
+/**
+ * Navegación del Narratorio: un solo `<header>` (landmark banner) con una barra superior translúcida
+ * en todos los anchos, para que el cielo y los relatos ocupen la página entera.
+ *
+ * - Barra: la marca, las cuatro paradas de la travesía en línea (desde 64rem), la ubicación dentro de
+ *   la página («En esta página», si la página tiene índice) y «Explorar» (por debajo de 64rem).
+ * - Panel: el índice completo (travesía, selector de divinidades e índice de la página) en un
+ *   `popover` nativo: funciona sin JavaScript (Escape y clic fuera cierran; el foco vuelve al botón).
+ *   src/scripts/site-nav.ts añade el seguimiento de sección (`aria-current="location"`) y cierra el
+ *   panel al elegir un destino.
+ *
+ * Sin `popover` (navegadores antiguos), el panel se muestra en línea bajo la barra: nada queda oculto.
+ * El repositorio documental no aparece aquí: se enlaza desde el pie (src/components/ui/SiteFooter.astro).
+ */
+import { archiveNavigation, availableItems, type DeityNavigation, type PageSection } from '../../config/navigation.ts';
+import { ariaCurrent, paths } from '../../lib/routes.ts';
+
+interface Props {
+  /** Índice contextual de la página (anclas reales del documento). */
+  sections?: readonly PageSection[] | undefined;
+  /** Navegación entre fichas de deidad, dentro de «Los Doce». */
+  deity?: DeityNavigation | undefined;
+}
+
+const { sections = [], deity } = Astro.props;
+const pathname = Astro.url.pathname;
+const items = availableItems(archiveNavigation);
+const siblingHrefs = items.map((item) => item.href);
+const vaultHref = items.find((item) => item.label === 'Los Doce')?.href;
+const firstSection = sections[0];
+// Una ficha de deidad está dentro de «Los Doce» aunque su ruta no cuelgue de la del capítulo.
+const currentOf = (href: string) => ariaCurrent(pathname, href, siblingHrefs) ?? (href === vaultHref && deity !== undefined ? 'true' : undefined);
+---
+
+<header class="site-header">
+  <div class="topbar">
+    <a class="brand topbar__brand" href={paths.home()} aria-current={ariaCurrent(pathname, paths.home())}>MYTHOS</a>
+    <nav class="topbar__links" aria-label="Travesía">
+      <ul role="list">
+        {
+          items.map((item) => (
+            <li>
+              <a class="topbar__link" href={item.href} aria-current={currentOf(item.href)}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    {
+      firstSection !== undefined && (
+        <button class="topbar__button topbar__where" type="button" popovertarget="site-panel" data-panel-focus="context">
+          <span class="topbar__where-label">En esta página</span>
+          <span class="topbar__where-value" data-nav-current>
+            {firstSection.label}
+          </span>
+        </button>
+      )
+    }
+    <button class="topbar__button topbar__menu" type="button" popovertarget="site-panel" data-panel-focus="archive">
+      <svg class="topbar__icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path d="M10 2l1.8 5.4L17 9l-5.2 1.6L10 16l-1.8-5.4L3 9l5.2-1.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path>
+      </svg>
+      Explorar
+    </button>
+  </div>
+
+  <div id="site-panel" class="panel" popover>
+    <div class="panel__head">
+      <p class="panel__tagline">Narratorio de mitología</p>
+      <button class="panel__close" type="button" popovertarget="site-panel" popovertargetaction="hide">
+        Cerrar <span class="visually-hidden">el índice</span>
+      </button>
+    </div>
+
+    {
+      items.length > 0 && (
+        <nav class="panel__group" aria-labelledby="nav-travesia" data-panel-group="archive">
+          <p id="nav-travesia" class="panel__label">
+            Travesía
+          </p>
+          <ol role="list" class="panel__list">
+            {items.map((item) => {
+              const isVault = item.href === vaultHref;
+              const current = currentOf(item.href);
+              return (
+                <li class:list={['panel__item', { 'panel__item--current': current !== undefined }]}>
+                  <a class="panel__link" href={item.href} aria-current={current}>
+                    <span class="panel__link-text">{item.label}</span>
+                    {current === 'page' && (
+                      <span class="panel__here" aria-hidden="true">
+                        aquí
+                      </span>
+                    )}
+                  </a>
+                  {item.hint !== undefined && <p class="panel__hint">{item.hint}</p>}
+                  {isVault && deity !== undefined && (
+                    <div class="deity-switch">
+                      <p class="deity-switch__current">
+                        <span class="deity-switch__name">{deity.current.name}</span>
+                        <span class="deity-switch__position">
+                          <span class="visually-hidden">constelación </span>
+                          {deity.current.position} / {deity.current.total}
+                        </span>
+                      </p>
+                      <ul role="list" class="deity-switch__steps">
+                        <li>
+                          <a class="deity-switch__step" href={deity.previous.href} rel="prev">
+                            <span aria-hidden="true">←</span>
+                            <span class="visually-hidden">Anterior: </span>
+                            {deity.previous.name}
+                          </a>
+                        </li>
+                        <li>
+                          <a class="deity-switch__step deity-switch__step--next" href={deity.next.href} rel="next">
+                            <span class="visually-hidden">Siguiente: </span>
+                            {deity.next.name}
+                            <span aria-hidden="true">→</span>
+                          </a>
+                        </li>
+                      </ul>
+                      <details class="deity-switch__all">
+                        <summary>Cambiar de divinidad</summary>
+                        <ol role="list" class="deity-switch__roster">
+                          {deity.roster.map((entry) => (
+                            <li>
+                              <a href={entry.href} aria-current={entry.id === deity.current.id ? 'page' : undefined}>
+                                {entry.name}
+                              </a>
+                            </li>
+                          ))}
+                        </ol>
+                      </details>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+      )
+    }
+
+    {
+      sections.length > 0 && (
+        <nav class="panel__group panel__group--context" aria-labelledby="nav-pagina" data-panel-group="context" data-toc>
+          <p id="nav-pagina" class="panel__label">
+            En esta página
+          </p>
+          <ol role="list" class="panel__list panel__list--context">
+            {sections.map((section) => (
+              <li class="panel__item">
+                <a class="panel__link panel__link--context" href={`#${section.id}`}>
+                  {section.label}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  /* ——— Barra ——— */
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 30;
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--surface-canvas) 92%, transparent), color-mix(in srgb, var(--surface-canvas) 68%, transparent));
+    border-block-end: 1px solid var(--rule-soft);
+    backdrop-filter: blur(14px) saturate(1.2);
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    block-size: var(--topbar-block-size);
+    padding-inline: clamp(var(--space-16), 3vw, var(--space-32));
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color var(--duration-hover) ease-out;
+  }
+
+  .brand:hover {
+    color: var(--text-link);
+  }
+
+  .topbar__brand {
+    flex: none;
+    margin-inline-end: auto;
+  }
+
+  .topbar__links {
+    display: none;
+  }
+
+  .topbar__links ul {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .topbar__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-12);
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    text-decoration: none;
+    transition: color var(--duration-hover) ease-out;
+  }
+
+  .topbar__link::after {
+    content: '';
+    position: absolute;
+    inset-inline: var(--space-12);
+    inset-block-end: 0.5rem;
+    block-size: 1px;
+    background: linear-gradient(to right, transparent, var(--color-star-gold), transparent);
+    opacity: 0;
+    transition: opacity var(--duration-hover) ease-out;
+  }
+
+  .topbar__link:hover,
+  .topbar__link[aria-current] {
+    color: var(--text-link);
+  }
+
+  .topbar__link:hover::after,
+  .topbar__link[aria-current]::after {
+    opacity: 1;
+  }
+
+  .topbar__link[aria-current] {
+    font-weight: 600;
+  }
+
+  .topbar__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-16);
+    border: 1px solid color-mix(in srgb, var(--decoration-bronze) 80%, transparent);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    transition:
+      border-color var(--duration-hover) ease-out,
+      color var(--duration-hover) ease-out;
+  }
+
+  .topbar__button:hover {
+    border-color: var(--text-link);
+    color: var(--text-link);
+  }
+
+  .topbar__icon {
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+  }
+
+  .topbar__where {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    padding-block: 0;
+    border-color: transparent;
+    border-radius: 0.5rem;
+    line-height: 1.15;
+  }
+
+  .topbar__where-label {
+    white-space: nowrap;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .topbar__where-value {
+    max-inline-size: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar__menu {
+    flex: none;
+  }
+
+  @media (min-width: 64rem) {
+    .topbar__brand {
+      margin-inline-end: var(--space-24);
+    }
+
+    .topbar__links {
+      display: block;
+      margin-inline-end: auto;
+    }
+
+    /* Con las paradas a la vista, «Explorar» sobra; el panel sigue abriéndose desde «En esta página». */
+    .topbar__menu {
+      display: none;
+    }
+  }
+
+  @media (max-width: 22rem) {
+    .topbar__where-label {
+      display: none;
+    }
+  }
+
+  /* ——— Panel ——— */
+  .panel {
+    display: grid;
+    align-content: start;
+    gap: var(--space-24);
+    padding: var(--space-16) var(--space-16) var(--space-32);
+    background:
+      radial-gradient(120% 40% at 0% 0%, var(--glow-cyan), transparent 70%),
+      var(--surface-stone);
+    color: var(--text-primary);
+  }
+
+  .panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+  }
+
+  .panel__tagline {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.125rem;
+  }
+
+  .panel__close {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-16);
+    border: 1px solid color-mix(in srgb, var(--decoration-bronze) 80%, transparent);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+  }
+
+  .panel__group {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .panel__label {
+    padding-inline-start: var(--space-16);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .panel__list {
+    display: grid;
+  }
+
+  .panel__item {
+    position: relative;
+  }
+
+  .panel__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-16) var(--space-8);
+    color: var(--text-primary);
+    font-size: var(--font-size-control);
+    text-decoration: none;
+    transition:
+      color var(--duration-hover) ease-out,
+      background-color var(--duration-hover) ease-out;
+  }
+
+  /* Filete de la parada actual: marcador visible además del texto «aquí» y de aria-current. */
+  .panel__link::before {
+    content: '';
+    position: absolute;
+    inset-block: var(--space-8);
+    inset-inline-start: 0;
+    inline-size: 2px;
+    background-color: transparent;
+    transition: background-color var(--duration-hover) ease-out;
+  }
+
+  .panel__link:hover {
+    background-color: rgb(243 236 223 / 0.06);
+  }
+
+  .panel__link:hover .panel__link-text,
+  .panel__link--context:hover {
+    text-decoration-line: underline;
+    text-decoration-color: var(--text-link);
+  }
+
+  .panel__link[aria-current] {
+    font-weight: 600;
+  }
+
+  .panel__link[aria-current]::before,
+  .panel__link--context[aria-current='location']::before {
+    background-color: var(--color-star-gold);
+  }
+
+  .panel__link[aria-current='page'] {
+    background-color: rgb(253 224 71 / 0.08);
+  }
+
+  .panel__here {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .panel__hint {
+    padding-inline-start: var(--space-16);
+    padding-block-end: var(--space-8);
+    font-size: var(--font-size-meta);
+    line-height: 1.3;
+  }
+
+  .panel__link--context {
+    font-size: 0.9375rem;
+  }
+
+  .panel__link--context[aria-current='location'] {
+    font-weight: 600;
+    background-color: rgb(243 236 223 / 0.06);
+  }
+
+  /* Selector de divinidades dentro de «Los Doce» */
+  .deity-switch {
+    display: grid;
+    gap: var(--space-4);
+    margin-block: var(--space-4) var(--space-8);
+    margin-inline-start: var(--space-16);
+    padding-inline-start: var(--space-12);
+    border-inline-start: 1px solid var(--rule-soft);
+  }
+
+  .deity-switch__current {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding-inline-end: var(--space-8);
+  }
+
+  .deity-switch__name {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  .deity-switch__position {
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.08em;
+  }
+
+  .deity-switch__steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .deity-switch__step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-block-size: var(--target-min);
+    font-size: var(--font-size-small);
+    color: var(--text-primary);
+    text-decoration-color: var(--decoration-bronze);
+  }
+
+  .deity-switch__step--next {
+    justify-content: flex-end;
+    padding-inline-end: var(--space-8);
+  }
+
+  .deity-switch__step:hover {
+    color: var(--text-link);
+  }
+
+  .deity-switch__all summary {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-size: var(--font-size-small);
+    color: var(--text-link);
+    cursor: pointer;
+  }
+
+  .deity-switch__roster {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-block-end: var(--space-8);
+  }
+
+  .deity-switch__roster a {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-size: var(--font-size-small);
+    color: var(--text-primary);
+  }
+
+  .deity-switch__roster a[aria-current] {
+    color: var(--text-link);
+    font-weight: 600;
+  }
+
+  /* Con popover nativo, el panel es una hoja lateral sobre la página. */
+  @supports selector(:popover-open) {
+    .panel:not(:popover-open) {
+      display: none;
+    }
+
+    .panel:popover-open {
+      position: fixed;
+      inset: 0 0 0 auto;
+      inline-size: min(24rem, 100vw - 2.5rem);
+      block-size: 100dvh;
+      max-block-size: none;
+      margin: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border: 0;
+      border-inline-start: 1px solid var(--rule-soft);
+    }
+
+    .panel::backdrop {
+      background-color: rgb(2 4 12 / 0.7);
+      backdrop-filter: blur(3px);
+    }
+  }
+</style>

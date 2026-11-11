@@ -1,0 +1,22 @@
+{
+  "subject": "uranus",
+  "object": "aphrodite",
+  "kind": "parent-of",
+  "label": "origen (sin madre)",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "birth-of-aphrodite",
+      "claim": "Afrodita nace de la espuma que rodea los genitales cercenados de Urano (vv. 188–206).",
+      "role": "supports"
+    }
+  ],
+  "variantGroup": "aphrodite-origin",
+  "variantOption": "hesiodic",
+  "note": "Hesíodo no menciona madre: Afrodita nace de la espuma en torno a los genitales de Urano. No es un dato faltante.",
+  "review": {
+    "status": "draft"
+  }
+}

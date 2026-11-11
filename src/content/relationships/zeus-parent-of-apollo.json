@@ -1,0 +1,19 @@
+{
+  "subject": "zeus",
+  "object": "apollo",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "leto-apollo-artemis",
+      "claim": "Leto los dio a luz unida a Zeus portador de la égida (v. 920).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

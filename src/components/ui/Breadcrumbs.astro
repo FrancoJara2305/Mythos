@@ -1,0 +1,58 @@
+---
+/** Migas de pan: enlaces normales; el último elemento es la página actual. */
+export interface Crumb {
+  label: string;
+  href?: string | undefined;
+  lang?: string | undefined;
+}
+
+interface Props {
+  items: readonly Crumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+  <ol role="list">
+    {
+      items.map((item, index) =>
+        index === items.length - 1 || item.href === undefined ? (
+          <li>
+            <span aria-current="page" lang={item.lang}>
+              {item.label}
+            </span>
+          </li>
+        ) : (
+          <li>
+            <a href={item.href} lang={item.lang}>
+              {item.label}
+            </a>
+          </li>
+        ),
+      )
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--space-8);
+    font-size: var(--font-size-small);
+  }
+
+  .breadcrumbs li:not(:last-child)::after {
+    content: '/';
+    margin-inline-start: var(--space-8);
+    color: var(--decoration-bronze);
+  }
+
+  .breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+</style>

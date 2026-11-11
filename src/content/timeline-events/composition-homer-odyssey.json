@@ -1,0 +1,13 @@
+{
+  "kind": "historical",
+  "title": "Composición de la Odisea",
+  "subject": {
+    "collection": "sources",
+    "id": "homer-odyssey"
+  },
+  "facet": "composition",
+  "entities": [],
+  "review": {
+    "status": "draft"
+  }
+}

@@ -1,0 +1,35 @@
+9/11/26, 5:51 MYTHOS — An Interactive Archive of Mythology
+M Y T H O S
+Colección Atlas Fuentes
+CHAPTER I — THE DODEKATHEON
+M Y T H O S
+An Interactive Archive of Mythology
+localhost:4322 1/3
+
+9/11/26, 5:51 MYTHOS — An Interactive Archive of Mythology
+Entrar al archivo Explorar las fuentes
+Imagen: composición original de MYTHOS. Interpretación artística; no reconstruye ningún edificio.
+Un archivo con sus fuentes a la vista
+MYTHOS presenta la mitología griega como un museo presenta su colección: cada
+pieza con su cartela y cada afirmación con su procedencia. El primer capítulo reúne
+a doce divinidades del panteón griego en una selección editorial, no en un canon
+antiguo único.
+Las fichas remiten a pasajes localizados de la Teogonía de Hesíodo, de la Ilíada y
+laOdisea y de varios Himnos homéricos. El archivo separa el orden de los relatos de
+la historia de los testimonios: un mito no tiene año, pero el poema que lo cuenta y
+el objeto que lo representa sí tienen una fecha, a menudo incierta.
+Hall of the Twelve
+Las 12 divinidades del capítulo y el acceso a sus fichas.
+Source Chamber
+9 obras y 61 pasajes localizados en ediciones identificadas.
+Genealogy Explorer
+Parentescos con su fuente, sin mezclar versiones incompatibles.
+Temporal Atlas
+El orden de los relatos, separado de la historia de los testimonios.
+Imágenes, ediciones y licencias: créditos del archivo.
+localhost:4322 2/3
+
+9/11/26, 5:51 MYTHOS — An Interactive Archive of Mythology
+MYTHOS An Interactive Archive of Mythology Créditos
+Entorno: desarrollo. Esta versión no se indexa en buscadores.
+localhost:4322 3/3

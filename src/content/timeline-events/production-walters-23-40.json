@@ -1,0 +1,26 @@
+{
+  "kind": "historical",
+  "title": "Relieve de la procesión de doce dioses (Walters 23.40)",
+  "subject": {
+    "collection": "artifacts",
+    "id": "walters-23-40"
+  },
+  "facet": "object-production",
+  "entities": [
+    "hestia",
+    "hermes",
+    "aphrodite",
+    "ares",
+    "demeter",
+    "hephaestus",
+    "hera",
+    "poseidon",
+    "athena",
+    "zeus",
+    "artemis",
+    "apollo"
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

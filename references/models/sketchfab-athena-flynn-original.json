@@ -1,0 +1,26 @@
+{
+  "retrievedAt": "2026-11-08",
+  "endpoint": "https://api.sketchfab.com/v3/models/946eef1fbff748939f6b328649356d80",
+  "responseSha256": "230ff8a648a047ae02c179017c5944e7c0b2fa4ecfede0f86c1fb24243ac37bd",
+  "uid": "946eef1fbff748939f6b328649356d80",
+  "name": "Bust of Athena, British Museum",
+  "viewerUrl": "https://sketchfab.com/3d-models/bust-of-athena-british-museum-946eef1fbff748939f6b328649356d80",
+  "publishedAt": "2014-09-17T14:17:33",
+  "user": {
+    "username": "nebulousflynn",
+    "displayName": "Thomas Flynn",
+    "profileUrl": "https://sketchfab.com/nebulousflynn"
+  },
+  "isDownloadable": true,
+  "license": {
+    "label": "CC Attribution",
+    "slug": "by",
+    "url": "http://creativecommons.org/licenses/by/4.0/"
+  },
+  "faceCount": 31376,
+  "vertexCount": 16201,
+  "tags": [
+    "noai"
+  ],
+  "descriptionExcerpts": []
+}

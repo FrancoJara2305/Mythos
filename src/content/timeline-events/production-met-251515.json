@@ -1,0 +1,15 @@
+{
+  "kind": "historical",
+  "title": "Cabeza de mármol, ¿Afrodita? (Met 24.97.88b)",
+  "subject": {
+    "collection": "artifacts",
+    "id": "met-251515"
+  },
+  "facet": "object-production",
+  "entities": [
+    "aphrodite"
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

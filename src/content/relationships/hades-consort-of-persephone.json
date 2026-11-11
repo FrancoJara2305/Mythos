@@ -1,0 +1,26 @@
+{
+  "subject": "hades",
+  "object": "persephone",
+  "kind": "consort-of",
+  "label": "esposo (ἀκοίτης)",
+  "traditionLabel": "Himno homérico a Deméter",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hymn-demeter",
+      "passageId": "hades-promise",
+      "claim": "Hades dice que no será un esposo (ἀκοίτης) indigno (v. 363).",
+      "role": "supports"
+    },
+    {
+      "source": "hymn-demeter",
+      "passageId": "abduction-of-persephone",
+      "claim": "La unión sigue a un rapto (vv. 1–21).",
+      "role": "context"
+    }
+  ],
+  "note": "El himno presenta la unión tras un rapto que Zeus había concedido; no se infiere consentimiento de Perséfone.",
+  "review": {
+    "status": "draft"
+  }
+}

@@ -1,0 +1,168 @@
+/*
+ * Impresión y «Guardar como PDF». El Narratorio es una noche estrellada; el papel es blanco y los
+ * navegadores no imprimen fondos. Sin esta hoja, el texto claro queda casi invisible, la barra superior
+ * se repite a media página y la escena 3D deja un hueco vacío.
+ *
+ * Fuera de capas a propósito: los estilos de componente de Astro no tienen capa y ganarían a cualquier
+ * regla dentro de @layer. Por eso hay !important: en papel manda la legibilidad.
+ */
+@media print {
+  :root,
+  :root[data-tier] {
+    --surface-canvas: #fff !important;
+    --surface-raised: #f6f2ea !important;
+    --surface-stone: #f6f2ea !important;
+    --surface-glass: #fff !important;
+    --text-primary: #1c1b22 !important;
+    --text-link: #7a4700 !important;
+    --text-accent: #0b5872 !important;
+    --rule-soft: #d6cfbf !important;
+    --decoration-bronze: #9a5f1c !important;
+    --theme-accent: #7a4700 !important;
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #1c1b22 !important;
+  }
+
+  /*
+   * Regla general: ningún fondo de pantalla llega al papel (aunque se active «Gráficos de fondo») y
+   * todo el texto pasa a tinta. Hay colores claros fijados en componentes (rótulos dorados, el atardecer
+   * de la Tierra) que sobre blanco serían ilegibles; los enlaces conservan un tono propio.
+   * Imágenes, SVG y lienzos quedan fuera: son contenido (ilustraciones, genealogía, objetos).
+   */
+  *,
+  *::before,
+  *::after {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  body *:not(img, svg, svg *, picture, canvas),
+  body *::before,
+  body *::after {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #1c1b22 !important;
+  }
+
+  body a,
+  body a * {
+    color: #7a4700 !important;
+  }
+
+  /* Los pisos de la torre aparecen al hacer scroll: en papel, todos visibles desde el principio. */
+  [data-floor] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Decoración y controles que en papel no significan nada. */
+  body::before,
+  body::after,
+  .topbar__button,
+  .topbar__links,
+  #site-panel,
+  .altimeter,
+  .portal__geometry,
+  .portal__flash,
+  .portal::before,
+  .portal__scroll,
+  .level__clouds,
+  .level__land,
+  .tower__spine,
+  .floor__ring,
+  .floor__node,
+  .hero__scene,
+  .hero__caption,
+  .planetarium__sky,
+  .planetarium__controls,
+  .planetarium__drag,
+  .why__close,
+  .sky-card__close,
+  .sky-card__tabs {
+    display: none !important;
+  }
+
+  .site-header {
+    position: static !important;
+    background: none !important;
+    border-block-end: 1px solid #d6cfbf !important;
+  }
+
+  /* El título dorado está recortado sobre un degradado: en papel, tinta normal. */
+  .portal__title {
+    background: none !important;
+    color: #1c1b22 !important;
+    -webkit-text-fill-color: currentColor;
+    filter: none !important;
+  }
+
+  /* Portada de la Torre y héroe de cada ficha: sin la escena decorativa, solo el rótulo. */
+  .portal,
+  .hero {
+    min-block-size: auto !important;
+  }
+
+  /* Bóveda de los Doce: la lista completa de constelaciones, como sin JavaScript. */
+  .planetarium[data-state='live'] {
+    block-size: auto !important;
+    min-block-size: 0 !important;
+    overflow: visible !important;
+    background: none !important;
+  }
+
+  .planetarium[data-state='live'] .planetarium__head,
+  .planetarium[data-state='live'] .planetarium__roster,
+  .planetarium[data-state='live'] .why {
+    position: static !important;
+    display: block !important;
+    inline-size: auto !important;
+    max-block-size: none !important;
+    overflow: visible !important;
+  }
+
+  .planetarium[data-state='live'] .planetarium__head {
+    padding-inline: var(--gutter) !important;
+  }
+
+  .planetarium .sky-card,
+  .planetarium .sky-card[hidden],
+  .planetarium .facet,
+  .planetarium .facet[hidden] {
+    display: block !important;
+    block-size: auto !important;
+    max-block-size: none !important;
+    overflow: visible !important;
+    break-inside: avoid-page;
+  }
+
+  /* Paneles de cristal: en papel, un filete basta (el fondo ya lo quita la regla general). */
+  .sky-card,
+  .floor__card,
+  .horizon__item,
+  .capsule,
+  .tale-card,
+  .family__group,
+  .bards,
+  .knot--ready,
+  .gv__panel,
+  .gv-variants {
+    border-color: #d6cfbf !important;
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  a {
+    color: #7a4700 !important;
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "title": "Himno homérico 3, a Apolo",
+  "workUrn": "urn:cts:greekLit:tlg0013.tlg003",
+  "corpus": "homeric-hymns",
+  "attribution": {
+    "name": "Anónimo (Himnos homéricos)",
+    "status": "anonymous",
+    "note": "La colección se transmitió asociada a Homero; la cabecera TEI la registra como «Anonymous». No se asigna autor ni fecha única al conjunto."
+  },
+  "compositionDate": {
+    "kind": "unknown",
+    "label": "Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que lo date."
+  },
+  "editions": [
+    {
+      "id": "perseus-grc2",
+      "editor": "Hugh G. Evelyn-White",
+      "language": "grc",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg003/tlg0013.tlg003.perseus-grc2.xml",
+      "urn": "urn:cts:greekLit:tlg0013.tlg003.perseus-grc2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg003/tlg0013.tlg003.perseus-grc2.xml",
+        "creditLine": "Hymn 3 To Apollo, ed. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    },
+    {
+      "id": "perseus-eng2",
+      "translator": "Hugh G. Evelyn-White",
+      "language": "en",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg003/tlg0013.tlg003.perseus-eng2.xml",
+      "urn": "urn:cts:greekLit:tlg0013.tlg003.perseus-eng2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg003/tlg0013.tlg003.perseus-eng2.xml",
+        "creditLine": "Hymn 3 To Delian Apollo, trad. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": "birth-on-delos",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 3,
+        "lineStart": 14,
+        "lineEnd": 18,
+        "display": "Himno a Apolo 14–18",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg003.perseus-grc2:14-18/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg003/tlg0013.tlg003.perseus-grc2.xml",
+      "summary": "Leto da a luz a Apolo y a Ártemis flechadora: a ella en Ortigia, a él en la rocosa Delos, junto al monte Cinto y una palmera.",
+      "relatedEntities": [
+        "leto",
+        "apollo",
+        "artemis"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "lyre-bow-and-oracle",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 3,
+        "lineStart": 131,
+        "lineEnd": 132,
+        "display": "Himno a Apolo 131–132",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg003.perseus-grc2:131-132/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg003/tlg0013.tlg003.perseus-grc2.xml",
+      "summary": "El recién nacido reclama la cítara y el arco curvo, y anuncia que revelará a los hombres la voluntad infalible de Zeus.",
+      "relatedEntities": [
+        "apollo",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

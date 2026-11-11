@@ -1,0 +1,25 @@
+{
+  "subject": "demeter",
+  "object": "persephone",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Hesíodo, Teogonía; Himno homérico a Deméter",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "demeter-and-persephone",
+      "claim": "Deméter da a luz a Perséfone (v. 913).",
+      "role": "supports"
+    },
+    {
+      "source": "hymn-demeter",
+      "passageId": "abduction-of-persephone",
+      "claim": "Perséfone es hija de Deméter (vv. 1–2).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

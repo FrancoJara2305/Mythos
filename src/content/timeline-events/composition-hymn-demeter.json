@@ -1,0 +1,16 @@
+{
+  "kind": "historical",
+  "title": "Composición del Himno homérico a Deméter",
+  "subject": {
+    "collection": "sources",
+    "id": "hymn-demeter"
+  },
+  "facet": "composition",
+  "entities": [
+    "demeter",
+    "persephone"
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

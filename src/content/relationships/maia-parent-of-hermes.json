@@ -1,0 +1,25 @@
+{
+  "subject": "maia",
+  "object": "hermes",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Hesíodo, Teogonía; Himno homérico a Hermes",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "maia-and-hermes",
+      "claim": "Maya da a luz a Hermes (v. 938).",
+      "role": "supports"
+    },
+    {
+      "source": "hymn-hermes",
+      "passageId": "son-of-zeus-and-maia",
+      "claim": "ὃν τέκε Μαῖα (v. 3).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

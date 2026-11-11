@@ -1,0 +1,15 @@
+{
+  "kind": "historical",
+  "title": "Ánfora ática de tipo B (Met 56.171.14)",
+  "subject": {
+    "collection": "artifacts",
+    "id": "met-254872"
+  },
+  "facet": "object-production",
+  "entities": [
+    "dionysus"
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

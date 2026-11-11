@@ -1,0 +1,138 @@
+9/11/26, 5:51 Source Chamber · MYTHOS
+M Y T H O S
+Colección Atlas Fuentes
+Borrador curatorial. Este contenido aún no ha superado la revisión humana; por eso no se publica
+en producción.
+Inicio / Fuentes
+BIBLIOTECA
+Source Chamber
+9 obras y 61 pasajes localizados. Cada pasaje tiene un resumen propio de MYTHOS
+y un enlace a la edición digital que lo contiene; no se reproducen traducciones
+modernas ni textos completos.
+Por obra Por divinidad
+Por obra
+Teogonía
+Hesíodo · atribución tradicional
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+19 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica
+que lo date.
+Ilíada
+Homero · atribución tradicional
+Ediciones: David B. Monro; Thomas W. Allen (1908–1920 (según la cabecera TEI)); Augustus
+Taber Murray (1924–1925)
+16 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica
+que lo date.
+localhost:4322/sources/ 1/6
+
+9/11/26, 5:51 Source Chamber · MYTHOS
+Odisea
+Homero · atribución tradicional
+Ediciones: Augustus Taber Murray (1919); Augustus Taber Murray (1919)
+8 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+Himno homérico 5, a Afrodita
+Anónimo (Himnos homéricos) · anónimo
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+4 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+Himno homérico 3, a Apolo
+Anónimo (Himnos homéricos) · anónimo
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+2 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+Himno homérico 2, a Deméter
+Anónimo (Himnos homéricos) · anónimo
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+5 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+Himno homérico 7, a Dioniso
+Anónimo (Himnos homéricos) · anónimo
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+3 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+localhost:4322/sources/ 2/6
+
+9/11/26, 5:51 Source Chamber · MYTHOS
+Himno homérico 4, a Hermes
+Anónimo (Himnos homéricos) · anónimo
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+3 pasajes · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+Himno homérico 29, a Hestia
+Anónimo (Himnos homéricos) · anónimo
+Ediciones: Hugh G. Evelyn-White (1914); Hugh G. Evelyn-White (1914)
+1 pasaje · Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que
+lo date.
+Por divinidad
+Pasajes citados en cada ficha o que mencionan a la divinidad, agrupados por obra.
+Zeus
+Teogonía: 453–458 · 459–460 · 478–480 · 485–486 · 501–506 · 881–885 · 886–900 · 912–914 · 918–920 ·
+921–923 · 924–926 · 927–929 · 938–939 · 940–942 · 943–944
+Ilíada: 1.571–579 · 1.590–594 · 3.374 · 4.51–54 · 5.312 · 5.426–430 · 5.733–742 · 5.888–898 · 15.187–193 ·
+18.395–397
+Odisea: 5.28–32 · 8.266–270 · 8.306–312
+Himno homérico 5, a Afrodita: 21–25
+Himno homérico 3, a Apolo: 14–18 · 131–132
+Himno homérico 2, a Deméter: 1–21 · 305–313 · 334–347 · 362–365 · 470–473
+Himno homérico 7, a Dioniso: 1–8 · 34–42 · 55–57
+Himno homérico 4, a Hermes: 1–7 · 24–25 · 47–51
+localhost:4322/sources/ 3/6
+
+9/11/26, 5:51 Source Chamber · MYTHOS
+Hera
+Teogonía: 453–458 · 459–460 · 478–480 · 485–486 · 921–923 · 927–929
+Ilíada: 1.571–579 · 1.590–594 · 4.51–54 · 5.888–898 · 18.395–397
+Poseidón
+Teogonía: 453–458 · 459–460 · 478–480 · 485–486
+Ilíada: 15.187–193
+Odisea: 3.1–8 · 3.43–61
+Himno homérico 5, a Afrodita: 21–25
+Deméter
+Teogonía: 453–458 · 459–460 · 478–480 · 485–486 · 912–914
+Himno homérico 2, a Deméter: 1–21 · 305–313 · 334–347 · 362–365 · 470–473
+Atenea
+Teogonía: 886–900 · 924–926
+Ilíada: 5.426–430 · 5.733–742
+Odisea: 3.43–61 · 13.296–299
+Himno homérico 5, a Afrodita: 7–9 · 16–18 · 21–25
+Apolo
+Teogonía: 918–920
+Ilíada: 1.37 · 1.43–48
+localhost:4322/sources/ 4/6
+
+9/11/26, 5:51 Source Chamber · MYTHOS
+Himno homérico 5, a Afrodita: 21–25
+Himno homérico 3, a Apolo: 14–18 · 131–132
+Ártemis
+Teogonía: 918–920
+Odisea: 6.102–104
+Himno homérico 5, a Afrodita: 7–9 · 16–18 · 21–25
+Himno homérico 3, a Apolo: 14–18 · 131–132
+Ares
+Teogonía: 921–923 · 933–937
+Ilíada: 5.426–430 · 5.888–898
+Odisea: 8.266–270 · 8.306–312
+Afrodita
+Teogonía: 176–187 · 188–206 · 933–937
+Ilíada: 3.374 · 5.312 · 5.370–372 · 5.426–430
+Odisea: 8.266–270 · 8.306–312
+Himno homérico 5, a Afrodita: 1–3 · 7–9 · 16–18 · 21–25
+Hefesto
+Teogonía: 927–929
+Ilíada: 1.571–579 · 1.590–594 · 18.369–371 · 18.395–397 · 18.468–477
+localhost:4322/sources/ 5/6
+
+9/11/26, 5:51 Source Chamber · MYTHOS
+Odisea: 8.266–270 · 8.306–312
+Hermes
+Teogonía: 912–914 · 938–939
+Odisea: 5.28–32 · 5.43–49
+Himno homérico 2, a Deméter: 1–21 · 305–313 · 334–347 · 362–365 · 470–473
+Himno homérico 4, a Hermes: 1–7 · 24–25 · 47–51
+Dioniso
+Teogonía: 940–942 · 947–949
+Ilíada: 6.130–137
+Himno homérico 7, a Dioniso: 1–8 · 34–42 · 55–57
+MYTHOS An Interactive Archive of Mythology Créditos
+Entorno: desarrollo. Esta versión no se indexa en buscadores.
+localhost:4322/sources/ 6/6

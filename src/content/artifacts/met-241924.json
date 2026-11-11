@@ -1,0 +1,88 @@
+{
+  "title": "Limestone inscribed relief",
+  "institution": "The Metropolitan Museum of Art",
+  "externalId": "241924",
+  "accessionNumber": "74.51.2370",
+  "catalogueUrl": "https://www.metmuseum.org/art/collection/search/241924",
+  "date": {
+    "kind": "range",
+    "start": -300,
+    "end": -201,
+    "label": "ca. siglo III a. C.",
+    "precision": "century",
+    "basis": "Siglo III a. C. derivado de la datación textual de la ficha («ca. 3rd century BCE»); el índice de la API publica -299/-200 con su propia convención, que no se copia.",
+    "evidence": [
+      {
+        "kind": "catalogue",
+        "url": "https://www.metmuseum.org/art/collection/search/241924",
+        "title": "Limestone inscribed relief",
+        "authorOrInstitution": "The Metropolitan Museum of Art",
+        "locator": "Collection API, objects/241924 (campos objectDate, objectBeginDate, objectEndDate)",
+        "checkedAt": "2026-11-08"
+      }
+    ]
+  },
+  "material": "Caliza (ficha: «Limestone»)",
+  "culture": "Chipriota, período helenístico (ficha: «Cypriot», «Hellenistic»)",
+  "findspot": "No consta en los datos de la API consultada.",
+  "provenance": {
+    "summary": "La API pública no expone el historial de propiedad y la ficha web respondió HTTP 429 el 2026-11-08: procedencia pendiente de cotejo. La línea de crédito registra solo la forma de adquisición.",
+    "catalogueUrl": "https://www.metmuseum.org/art/collection/search/241924",
+    "certainty": "unknown"
+  },
+  "creditLine": "The Cesnola Collection, Purchased by subscription, 1874–76",
+  "identifications": [
+    {
+      "entity": "zeus",
+      "certainty": "possible",
+      "attributionLabel": "Etiqueta temática de la ficha: «Zeus»",
+      "basisUrl": "https://www.metmuseum.org/art/collection/search/241924",
+      "note": "Las etiquetas temáticas no equivalen a una identificación razonada; la descripción de la ficha no pudo leerse (HTTP 429). Cotejar antes de revisar."
+    },
+    {
+      "entity": "apollo",
+      "certainty": "possible",
+      "attributionLabel": "Etiqueta temática de la ficha: «Apollo»",
+      "basisUrl": "https://www.metmuseum.org/art/collection/search/241924",
+      "note": "Las etiquetas temáticas no equivalen a una identificación razonada; la descripción de la ficha no pudo leerse (HTTP 429). Cotejar antes de revisar."
+    },
+    {
+      "entity": "hermes",
+      "certainty": "possible",
+      "attributionLabel": "Etiqueta temática de la ficha: «Hermes»",
+      "basisUrl": "https://www.metmuseum.org/art/collection/search/241924",
+      "note": "Las etiquetas temáticas no equivalen a una identificación razonada; la descripción de la ficha no pudo leerse (HTTP 429). Cotejar antes de revisar."
+    }
+  ],
+  "catalogueNotes": [
+    "objectName en la API: «Relief of a deity and worshippers». Etiquetas: Apollo, Hermes, Zeus, Horses.",
+    "La API marca el objeto con isPublicDomain: true; según la política Open Access del Met, sus imágenes abiertas son CC0. Imagen adquirida el 2026-11-09 (references/artifacts/images.md); derechos pendientes de confirmar en la ficha web."
+  ],
+  "review": {
+    "status": "draft"
+  },
+  "media": [
+    {
+      "type": "image",
+      "assetId": "met-241924-dp-40407-001",
+      "localPath": "src/assets/images/artifacts/met-241924-dp-40407-001.jpg",
+      "width": 1600,
+      "height": 1280,
+      "alt": "Relieve de caliza con restos de pigmento rojo: una figura sentada en el centro entre figuras de pie, sobre una base con varias líneas de inscripción. Las etiquetas del museo mencionan a Zeus, Apolo y Hermes; no se ha registrado qué figura corresponde a cada uno.",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC0 1.0 (Open Access de The Met), pendiente de confirmar en la ficha",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "creator": "The Metropolitan Museum of Art",
+        "institution": "The Metropolitan Museum of Art",
+        "sourceUrl": "https://images.metmuseum.org/CRDImages/gr/original/DP-40407-001.jpg",
+        "creditLine": "The Metropolitan Museum of Art, The Cesnola Collection, Purchased by subscription, 1874–76, 74.51.2370 (Open Access)",
+        "modifications": [
+          "Reescalado a 1600 px de lado largo y recompresión JPEG (mozjpeg, calidad 85); sin recorte ni retoque."
+        ],
+        "checkedAt": "2026-11-09",
+        "evidencePath": "references/artifacts/images.md"
+      }
+    }
+  ]
+}

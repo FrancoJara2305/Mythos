@@ -1,0 +1,150 @@
+{
+  "title": "Procession of Twelve Gods and Goddesses",
+  "institution": "The Walters Art Museum",
+  "externalId": "23.40",
+  "accessionNumber": "23.40",
+  "catalogueUrl": "https://art.thewalters.org/object/23.40/",
+  "date": {
+    "kind": "range",
+    "start": -100,
+    "end": 100,
+    "label": "siglo I a. C. – siglo I d. C. (helenístico)",
+    "precision": "century",
+    "basis": "Intervalo de los dos siglos indicados en la ficha («1st century BCE-1st century CE (Hellenistic)»): -100 a 100, sin año 0.",
+    "evidence": [
+      {
+        "kind": "catalogue",
+        "url": "https://art.thewalters.org/object/23.40/",
+        "title": "Procession of Twelve Gods and Goddesses",
+        "authorOrInstitution": "The Walters Art Museum",
+        "locator": "Ficha en línea, objeto 23.40",
+        "checkedAt": "2026-11-08"
+      }
+    ]
+  },
+  "material": "Mármol pentélico (ficha: «Pentelic marble»)",
+  "culture": "Griega, helenística (ficha: «Greek», «Hellenistic»)",
+  "findspot": "Tarento (Taranto), Italia («Place of Discovery» en la ficha)",
+  "provenance": {
+    "summary": "Jakob Hirsch, París [fecha y modo de adquisición desconocidos]; Henry Walters, Baltimore, 1913, por compra; Walters Art Museum, 1931, por legado (según la ficha).",
+    "catalogueUrl": "https://art.thewalters.org/object/23.40/",
+    "certainty": "explicit"
+  },
+  "creditLine": "Acquired by Henry Walters, 1913",
+  "identifications": [
+    {
+      "entity": "hestia",
+      "certainty": "explicit",
+      "attributionLabel": "Hestia (goddess of the hearth), with scepter",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 1 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "hermes",
+      "certainty": "explicit",
+      "attributionLabel": "Hermes (messenger of the gods), with cap and staff",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 2 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "aphrodite",
+      "certainty": "explicit",
+      "attributionLabel": "Aphrodite (goddess of love and beauty), with veil",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 3 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "ares",
+      "certainty": "explicit",
+      "attributionLabel": "Ares (god of war), with helmet and spear",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 4 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "demeter",
+      "certainty": "explicit",
+      "attributionLabel": "Demeter (goddess of agriculture), with scepter and wheat sheaf",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 5 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "hephaestus",
+      "certainty": "explicit",
+      "attributionLabel": "Hephaestus (god of fire and metal-working), with staff",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 6 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "hera",
+      "certainty": "explicit",
+      "attributionLabel": "Hera (queen of the gods), with scepter",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 7 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "poseidon",
+      "certainty": "explicit",
+      "attributionLabel": "Poseidon (god of the sea), with trident",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 8 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "athena",
+      "certainty": "explicit",
+      "attributionLabel": "Athena (goddess of wisdom and the arts), with owl and helmet",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 9 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "zeus",
+      "certainty": "explicit",
+      "attributionLabel": "Zeus (king of the gods), with thunderbolt and staff",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 10 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "artemis",
+      "certainty": "explicit",
+      "attributionLabel": "Artemis (goddess of the hunt and moon), with bow and quiver",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 11 de 12, de izquierda a derecha, según la descripción de la ficha."
+    },
+    {
+      "entity": "apollo",
+      "certainty": "explicit",
+      "attributionLabel": "Apollo (god of the sun), with \"kithara.\"",
+      "basisUrl": "https://art.thewalters.org/object/23.40/",
+      "note": "Figura 12 de 12, de izquierda a derecha, según la descripción de la ficha."
+    }
+  ],
+  "catalogueNotes": [
+    "La ficha enumera doce figuras con Hestia y sin Dioniso: respalda la selección alternativa de src/config/chapters.ts.",
+    "La ficha describe a Ártemis como «goddess of the hunt and moon» y a Apolo como «god of the sun»; MYTHOS no adopta esas equivalencias sin contexto documentado (content_model §1).",
+    "La ficha marca la imagen como Creative Commons Zero y ofrece descarga; vista frontal adquirida sin modificar el 2026-11-09 (references/artifacts/images.md)."
+  ],
+  "review": {
+    "status": "draft"
+  },
+  "media": [
+    {
+      "type": "image",
+      "assetId": "walters-23-40-front",
+      "localPath": "src/assets/images/artifacts/walters-23-40-front.jpg",
+      "width": 1799,
+      "height": 635,
+      "alt": "Relieve de mármol alargado con doce figuras de pie que avanzan en procesión hacia la derecha; varias sostienen cetros o bastones y la mitad inferior derecha de la losa está rota. La ficha del museo las identifica, de izquierda a derecha, como Hestia, Hermes, Afrodita, Ares, Deméter, Hefesto, Hera, Poseidón, Atenea, Zeus, Ártemis y Apolo.",
+      "rights": {
+        "status": "verified",
+        "licenseName": "CC0 1.0 Universal (dedicación al dominio público)",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "creator": "The Walters Art Museum",
+        "institution": "The Walters Art Museum",
+        "sourceUrl": "https://art.thewalters.org/images/art/PL1_23.40_Fnt_TR_T92.jpg",
+        "creditLine": "The Walters Art Museum, Baltimore, 23.40 (imagen CC0)",
+        "modifications": [],
+        "checkedAt": "2026-11-09",
+        "evidencePath": "references/artifacts/images.md"
+      }
+    }
+  ]
+}

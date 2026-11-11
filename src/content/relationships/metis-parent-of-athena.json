@@ -1,0 +1,19 @@
+{
+  "subject": "metis",
+  "object": "athena",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "metis-and-athena",
+      "claim": "Metis iba a dar a luz a Atenea cuando Zeus la guardó en su vientre (vv. 888–890).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "subject": "hera",
+  "object": "hephaestus",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Homero, Ilíada",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "homer-iliad",
+      "passageId": "hephaestus-speaks-to-hera",
+      "claim": "μητρὶ φίλῃ… Ἥρῃ (1.572).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-iliad",
+      "passageId": "hephaestus-and-his-mother",
+      "claim": "Su madre quiso ocultarlo (18.396–397).",
+      "role": "supports"
+    }
+  ],
+  "variantGroup": "hephaestus-parentage",
+  "variantOption": "homeric",
+  "review": {
+    "status": "draft"
+  }
+}

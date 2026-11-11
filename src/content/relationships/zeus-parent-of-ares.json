@@ -1,0 +1,25 @@
+{
+  "subject": "zeus",
+  "object": "ares",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Hesíodo, Teogonía; Homero, Ilíada",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "hera-hebe-ares-eileithyia",
+      "claim": "Hera da a luz a Ares unida al rey de dioses y hombres (vv. 922–923).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-iliad",
+      "passageId": "zeus-rebukes-ares",
+      "claim": "«De mí eres linaje» (5.896).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

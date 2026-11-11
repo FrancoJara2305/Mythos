@@ -1,0 +1,19 @@
+{
+  "subject": "cronus",
+  "object": "demeter",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Hesíodo, Teogonía; concordante con la épica y los himnos citados",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "children-of-rhea-and-cronus",
+      "claim": "Entre los hijos que Rea, sometida a Crono, da a luz (vv. 453–457).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

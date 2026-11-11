@@ -1,0 +1,25 @@
+{
+  "subject": "semele",
+  "object": "dionysus",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Hesíodo, Teogonía; Himno homérico 7",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "semele-and-dionysus",
+      "claim": "Sémele, mortal, da a luz a un inmortal (vv. 940–942).",
+      "role": "supports"
+    },
+    {
+      "source": "hymn-dionysus",
+      "passageId": "dionysus-on-the-shore",
+      "claim": "Σεμέλης ἐρικυδέος υἱόν (v. 1).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

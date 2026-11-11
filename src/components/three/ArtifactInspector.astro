@@ -1,0 +1,415 @@
+---
+/**
+ * Inspector 3D de un objeto (Phase 6). HTML completo sin JavaScript: póster (slot `poster`), aviso de
+ * peso, requisitos y la lista de anotaciones con su evidencia. La isla `<mythos-inspector>` habilita
+ * los controles al inicializarse y solo importa Three.js tras «Explorar en 3D» (ADR-04).
+ *
+ * El lienzo es una vista: toda anotación está también en la lista, y los marcadores del modelo son
+ * atajos de puntero (`aria-hidden`).
+ */
+import MixedText from '../ui/MixedText.astro';
+import { serializeForScript } from '../../lib/genealogy/build-data.ts';
+import { formatBytes, formatCount, type InspectorConfig, type InspectorHotspotView } from '../../lib/three/config.ts';
+
+interface Props {
+  /** Prefijo único de los ids de la instancia. */
+  id: string;
+  /** Nombre del objeto para las etiquetas accesibles del visor. */
+  title: string;
+  config: InspectorConfig;
+  triangles: number;
+  /** En el mismo orden que `config.hotspots`. */
+  hotspots: InspectorHotspotView[];
+}
+
+const { id, title, config, triangles, hotspots } = Astro.props;
+const ids = new Set(config.hotspots.map((hotspot) => hotspot.id));
+if (hotspots.length !== config.hotspots.length || hotspots.some((hotspot) => !ids.has(hotspot.id))) {
+  throw new Error(`ArtifactInspector ${id}: las anotaciones visibles no coinciden con las posiciones del modelo.`);
+}
+const keysId = `${id}-teclado`;
+const notesId = `${id}-anotaciones`;
+---
+
+<mythos-inspector class="inspector">
+  <script type="application/json" data-inspector-config is:inline set:html={serializeForScript(config)} />
+  <div class="inspector__viewer" data-viewer>
+    <div class="inspector__stage" data-stage role="group" aria-label={`Visor 3D: ${title}`} aria-describedby={keysId}>
+      <div class="inspector__poster" data-poster><slot name="poster" /></div>
+      <div class="inspector__markers" data-markers aria-hidden="true">
+        {
+          hotspots.map((hotspot, index) => (
+            <span class="inspector__marker" data-marker={hotspot.id} hidden>
+              {index + 1}
+            </span>
+          ))
+        }
+      </div>
+      <div class="inspector__progress" data-progress hidden>
+        <progress max="100" value="0" aria-label="Descarga del modelo 3D"></progress>
+        <span data-progress-label aria-hidden="true">0 %</span>
+      </div>
+    </div>
+
+    <div class="inspector__bar">
+      <div class="inspector__actions">
+        <button type="button" class="inspector__primary" data-action="activate" hidden>Explorar en 3D</button>
+        <p class="inspector__weight" data-weight>
+          Modelo 3D: descarga de {formatBytes(config.bytes)} · {formatCount(triangles)} triángulos.
+        </p>
+        <button type="button" class="inspector__button" data-action="cancel" hidden>Cancelar la carga</button>
+        <button type="button" class="inspector__button" data-action="retry" hidden>Reintentar</button>
+      </div>
+      <div class="inspector__controls" role="group" aria-label="Controles del visor 3D" data-controls hidden>
+        <div class="inspector__group">
+          <button type="button" class="inspector__button inspector__icon" data-action="rotate-left" aria-label="Girar a la izquierda">←</button>
+          <button type="button" class="inspector__button inspector__icon" data-action="rotate-right" aria-label="Girar a la derecha">→</button>
+          <button type="button" class="inspector__button inspector__icon" data-action="tilt-up" aria-label="Ver desde más arriba">↑</button>
+          <button type="button" class="inspector__button inspector__icon" data-action="tilt-down" aria-label="Ver desde más abajo">↓</button>
+          <button type="button" class="inspector__button inspector__icon" data-action="zoom-in" aria-label="Acercar">+</button>
+          <button type="button" class="inspector__button inspector__icon" data-action="zoom-out" aria-label="Alejar">−</button>
+        </div>
+        <div class="inspector__group">
+          <button type="button" class="inspector__button" data-action="reset">Restablecer vista</button>
+          <button type="button" class="inspector__button" data-action="enlarge" aria-pressed="false"><span data-label>Ampliar</span></button>
+          <button type="button" class="inspector__button" data-action="close">Cerrar el visor 3D</button>
+        </div>
+        <p class="inspector__keys" id={keysId}>
+          Con el visor enfocado: flechas para girar, + y − para acercar o alejar, 0 para restablecer.
+        </p>
+      </div>
+      <p class="inspector__status" role="status" data-status tabindex="-1"></p>
+      <p class="inspector__note" data-requirements>
+        El visor 3D necesita JavaScript y WebGL2. La imagen y las anotaciones están disponibles sin él.
+      </p>
+    </div>
+  </div>
+
+  <dialog class="inspector__dialog" data-dialog aria-label={`Visor 3D ampliado: ${title}`}>
+    <div class="inspector__dialog-body" data-dialog-body></div>
+  </dialog>
+
+  <section class="inspector__notes" aria-labelledby={notesId}>
+    <h3 id={notesId}>Anotaciones del modelo</h3>
+    {
+      hotspots.length === 0 ? (
+        <p>El modelo aún no tiene anotaciones registradas.</p>
+      ) : (
+        <ol class="hotspots" role="list">
+          {hotspots.map((hotspot, index) => (
+            <li class="hotspot" data-hotspot={hotspot.id}>
+              <p class="hotspot__head">
+                <span class="hotspot__n">{index + 1}</span>
+                <span data-hotspot-label>{hotspot.label}</span>
+                {hotspot.kindLabel !== undefined && <span class="hotspot__kind">{hotspot.kindLabel}</span>}
+              </p>
+              <p class="hotspot__text">
+                <MixedText text={hotspot.description} />
+              </p>
+              {hotspot.evidence !== undefined && (
+                <p class="hotspot__evidence">
+                  Evidencia:{' '}
+                  <a href={hotspot.evidence.href} rel={hotspot.evidence.external === true ? 'external' : undefined}>
+                    {hotspot.evidence.label}
+                  </a>
+                </p>
+              )}
+              <button
+                type="button"
+                class="inspector__button hotspot__show"
+                data-hotspot-button={hotspot.id}
+                aria-label={`Mostrar en el modelo: ${hotspot.label}`}
+                aria-pressed="false"
+                hidden
+              >
+                Mostrar en el modelo
+              </button>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+  </section>
+</mythos-inspector>
+
+<script>
+  import './inspector.ts';
+</script>
+
+<style>
+  .inspector {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  .inspector__viewer {
+    display: grid;
+    gap: var(--space-12);
+    min-inline-size: 0;
+  }
+
+  .inspector__stage {
+    position: relative;
+    overflow: hidden;
+    inline-size: 100%;
+    aspect-ratio: 1;
+    max-block-size: min(80vh, 44rem);
+    border: 1px solid var(--decoration-bronze);
+    background:
+      radial-gradient(ellipse at 50% 35%, var(--surface-raised), transparent 70%),
+      var(--surface-canvas);
+  }
+
+  .inspector__stage:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring);
+    outline-offset: calc(var(--focus-ring-width) * -1 - 2px);
+  }
+
+  .inspector__poster {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .inspector__poster :global(img),
+  .inspector__poster :global(svg) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+
+  .is-live .inspector__poster {
+    visibility: hidden;
+  }
+
+  .inspector__stage :global(.inspector__canvas) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .inspector__stage:not(.is-live) :global(.inspector__canvas) {
+    visibility: hidden;
+  }
+
+  /* Por encima del lienzo, que se añade después. */
+  .inspector__markers {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .inspector__marker {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: grid;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    margin: -0.875rem 0 0 -0.875rem;
+    border: 1px solid var(--color-abyss);
+    border-radius: 50%;
+    background: var(--action-primary-bg);
+    color: var(--action-primary-text);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    font-weight: 700;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .inspector__marker[hidden] {
+    display: none;
+  }
+
+  .inspector__marker.is-occluded {
+    opacity: 0.35;
+  }
+
+  .inspector__marker.is-selected {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+
+  .inspector__progress {
+    position: absolute;
+    z-index: 1;
+    inset-inline: var(--space-16);
+    inset-block-end: var(--space-16);
+    display: flex;
+    gap: var(--space-12);
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+  }
+
+  .inspector__progress[hidden] {
+    display: none;
+  }
+
+  .inspector__progress progress {
+    flex: 1;
+    accent-color: var(--action-primary-bg);
+  }
+
+  .inspector__bar,
+  .inspector__actions,
+  .inspector__controls {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .inspector__actions {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), max-content));
+    align-items: center;
+  }
+
+  .inspector__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  .inspector__primary,
+  .inspector__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--target-min);
+    min-inline-size: var(--target-min);
+    padding-inline: var(--space-16);
+    border: 1px solid var(--decoration-bronze);
+    background: none;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-control);
+    cursor: pointer;
+  }
+
+  .inspector__primary {
+    border-color: var(--action-primary-bg);
+    background: var(--action-primary-bg);
+    color: var(--action-primary-text);
+    font-weight: 600;
+  }
+
+  .inspector__icon {
+    padding-inline: 0;
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+  }
+
+  .inspector__button[aria-pressed='true'] {
+    border-color: var(--text-link);
+    background-color: var(--surface-raised);
+    color: var(--text-link);
+  }
+
+  .inspector__primary[hidden],
+  .inspector__button[hidden],
+  .inspector__controls[hidden],
+  .inspector__weight[hidden],
+  .inspector__note[hidden] {
+    display: none;
+  }
+
+  .inspector__weight,
+  .inspector__keys,
+  .inspector__note,
+  .inspector__status {
+    font-size: var(--font-size-small);
+  }
+
+  .inspector__status:empty {
+    display: none;
+  }
+
+  .inspector__dialog {
+    /* El reset global anula el margin:auto del navegador que centra un diálogo modal. */
+    margin: auto;
+    inline-size: min(96vw, 80rem);
+    max-inline-size: 96vw;
+    block-size: min(94vh, 64rem);
+    max-block-size: 94vh;
+    padding: var(--space-16);
+    border: 1px solid var(--decoration-bronze);
+    background: var(--surface-canvas);
+    color: var(--text-primary);
+  }
+
+  .inspector__dialog::backdrop {
+    background: rgb(0 0 0 / 0.82);
+  }
+
+  .inspector__dialog-body {
+    block-size: 100%;
+  }
+
+  .inspector__dialog .inspector__viewer {
+    block-size: 100%;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .inspector__dialog .inspector__stage {
+    aspect-ratio: auto;
+    block-size: 100%;
+    max-block-size: none;
+  }
+
+  .hotspots {
+    display: grid;
+    gap: var(--space-16);
+    padding: 0;
+    list-style: none;
+  }
+
+  .hotspot {
+    display: grid;
+    gap: var(--space-4);
+    padding-block-start: var(--space-12);
+    border-block-start: 1px solid var(--decoration-bronze);
+  }
+
+  .hotspot__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    align-items: baseline;
+    font-weight: 600;
+  }
+
+  .hotspot__n {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: 50%;
+    background: var(--action-primary-bg);
+    color: var(--action-primary-text);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+  }
+
+  .hotspot__kind {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .hotspot__evidence a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .hotspot__show {
+    justify-self: start;
+  }
+</style>

@@ -1,0 +1,544 @@
+---
+/**
+ * Página de obra: el panel de lectura de El Códice de las Fuentes. A la izquierda (escritorio), la lista
+ * compacta de la biblioteca con la obra actual marcada; a la derecha, la obra: atribución, datación,
+ * pasajes anclados (`#{passageId}`) con resumen propio, «Consultar edición» y las fichas que los citan.
+ * Las ediciones y sus derechos quedan plegados (nivel «Investigar»); sus anclas `#edicion-…` abren el
+ * desplegable (navegador y src/scripts/site-nav.ts).
+ */
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import MixedText from '../../components/ui/MixedText.astro';
+import { DODEKATHEON } from '../../config/chapters.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { passageBacklinks } from '../../lib/content/backlinks.ts';
+import { RIGHTS_LABELS } from '../../lib/content/labels.ts';
+import { formatHistoricalYear } from '../../lib/content/dates.ts';
+import { paths } from '../../lib/routes.ts';
+import { WORK_FAMILY_LABELS, workFamily } from '../../lib/sources/identity.ts';
+
+export async function getStaticPaths() {
+  const { visible } = await loadArchive();
+  return visible.sources.map((entry) => ({ params: { source: entry.id } }));
+}
+
+const { source } = Astro.params;
+const { visible } = await loadArchive();
+const entry = visible.sources.find((item) => item.id === source);
+if (entry === undefined) throw new Error(`Obra no visible: ${source}`);
+const { data } = entry;
+const backlinks = passageBacklinks(visible, DODEKATHEON);
+const editions = new Map(data.editions.map((edition) => [edition.id, edition]));
+const deities = new Map(visible.deities.map((deity) => [deity.id, deity.data]));
+const LANGUAGE = { grc: 'griego antiguo', en: 'inglés', es: 'español', la: 'latín' } as const;
+const ATTRIBUTION = { named: 'autor nombrado', traditional: 'atribución tradicional', anonymous: 'anónimo', disputed: 'atribución discutida' } as const;
+const date = data.compositionDate;
+const unreviewed = data.review.status !== 'published';
+const family = workFamily(entry.id);
+const library = visible.sources.map((item) => ({ id: item.id, title: item.data.title, family: workFamily(item.id), passages: item.data.passages.length }));
+---
+
+<BaseLayout
+  title={data.title}
+  description={`${data.title}: ediciones identificadas y ${data.passages.length} pasajes localizados en la biblioteca de MYTHOS.`}
+  unreviewed={unreviewed}
+>
+  <div class="container reading">
+    <Breadcrumbs
+      items={[
+        { label: 'La Torre', href: paths.home() },
+        { label: 'El Códice de las Fuentes', href: paths.sources() },
+        { label: data.title },
+      ]}
+    />
+
+    <div class="reading__layout">
+    <nav class="reading__shelf" aria-labelledby="estanteria-titulo">
+      <p id="estanteria-titulo" class="reading__shelf-title">Biblioteca</p>
+      <ol role="list">
+        {
+          library.map((item) => (
+            <li>
+              <a
+                class:list={['shelf-link', `shelf-link--${item.family}`]}
+                href={paths.source(item.id)}
+                aria-current={item.id === entry.id ? 'page' : undefined}
+              >
+                <span class="shelf-link__title">{item.title}</span>
+                <span class="shelf-link__count">{item.passages}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+  <article class:list={['work', `work--${family}`]} aria-labelledby="work-title">
+    <header class="work__header">
+      <p class="work__eyebrow">{WORK_FAMILY_LABELS[family]}</p>
+      <h1 id="work-title" class="work__title">{data.title}</h1>
+      <dl class="facts">
+        <div>
+          <dt>Atribución</dt>
+          <dd>
+            {data.attribution.name} ({ATTRIBUTION[data.attribution.status]}). {data.attribution.note}
+          </dd>
+        </div>
+        <div>
+          <dt>Composición</dt>
+          <dd>
+            {date.kind === 'range' ? `${formatHistoricalYear(date.start)} – ${formatHistoricalYear(date.end)}: ${date.label}` : date.label}
+          </dd>
+        </div>
+        {
+          data.workUrn !== undefined && (
+            <div>
+              <dt>URN CTS</dt>
+              <dd>
+                <code>{data.workUrn}</code>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </header>
+
+    <details class="work__editions">
+      <summary>
+        <h2 id="ediciones-titulo">Ediciones</h2>
+        <span class="work__editions-hint">{data.editions.length} identificadas, con sus derechos</span>
+      </summary>
+      <ul role="list" class="editions">
+        {
+          data.editions.map((edition) => (
+            <li id={`edicion-${edition.id}`} class="edition">
+              <p class="edition__title">{edition.title}</p>
+              <p>
+                {edition.editor !== undefined && <>Edición: {edition.editor}. </>}
+                {edition.translator !== undefined && <>Traducción: {edition.translator}. </>}
+                {edition.publisher}, {edition.yearLabel ?? edition.year}. Texto en {LANGUAGE[edition.language]}.
+              </p>
+              <p class="edition__rights">
+                Copia digital: <MixedText text={edition.rights.creditLine} /> {edition.rights.licenseName} ({RIGHTS_LABELS[edition.rights.status]}).
+              </p>
+              <p>
+                <a href={edition.url} rel="external">
+                  Consultar edición (TEI fijado)
+                </a>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </details>
+
+    <section class="work__section" aria-labelledby="pasajes-titulo">
+      <div class="work__section-head">
+        <h2 id="pasajes-titulo">Pasajes</h2>
+        <p>
+          Resúmenes de MYTHOS. Los localizadores se cotejaron con el TEI fijado de la edición indicada; el texto se lee en la
+          edición enlazada.
+        </p>
+      </div>
+      <ol role="list" class="passages">
+        {
+          data.passages.map((passage) => {
+            const edition = editions.get(passage.editionId);
+            const cited = backlinks.get(`${entry.id}#${passage.id}`) ?? [];
+            return (
+              <li id={passage.id} class="passage">
+                <h3 class="passage__locator">{passage.locator.display}</h3>
+                <div class="passage__body">
+                <p class="passage__summary">
+                  <MixedText text={passage.summary} />
+                </p>
+                {passage.relatedEntities.length > 0 && (
+                  <p class="passage__meta">
+                    Menciona:{' '}
+                    {passage.relatedEntities.map((entity, index) => {
+                      const deity = deities.get(entity.id);
+                      return (
+                        <>
+                          {index > 0 && ', '}
+                          {deity?.profile === 'full' ? <a href={paths.deity(entity.id)}>{deity.name}</a> : <span>{deity?.name ?? entity.id}</span>}
+                        </>
+                      );
+                    })}
+                  </p>
+                )}
+                <p class="passage__actions">
+                  <a href={passage.canonicalUrl} rel="external">
+                    Consultar edición
+                  </a>
+                  {passage.backupUrl !== undefined && (
+                    <a href={passage.backupUrl} rel="external">
+                      Copia TEI fijada
+                    </a>
+                  )}
+                </p>
+                <p class="passage__meta">
+                  {edition !== undefined && <>Edición: <a href={`#edicion-${edition.id}`}>{edition.editor ?? edition.translator}</a>. </>}
+                  {passage.verifiedAt !== undefined ? <>Localizador cotejado el {passage.verifiedAt}.</> : <>Localizador sin cotejar.</>}
+                </p>
+                {cited.length > 0 && (
+                  <div class="passage__cited">
+                    <p class="passage__cited-label">Citado en</p>
+                    <ul role="list">
+                      {cited.map((link) => (
+                        <li>
+                          <a href={link.href}>
+                            <MixedText text={link.label} />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                </div>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+  </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .reading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-24);
+    padding-block: var(--space-24) var(--space-48);
+  }
+
+  .reading__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-32);
+  }
+
+  /* Lista compacta de la biblioteca: en móvil, una franja desplazable; en escritorio, columna fija. */
+  .reading__shelf {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+  }
+
+  .reading__shelf-title {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .reading__shelf ol {
+    display: flex;
+    gap: var(--space-8);
+    overflow-x: auto;
+    padding-block-end: var(--space-8);
+  }
+
+  .shelf-link {
+    --cover: #5a4126;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+    min-block-size: var(--target-min);
+    min-inline-size: 11rem;
+    padding: var(--space-8) var(--space-12);
+    border-inline-start: 4px solid var(--cover);
+    background-color: var(--surface-stone);
+    color: var(--text-primary);
+    font-size: var(--font-size-small);
+    text-decoration: none;
+  }
+
+  .shelf-link--hesiod {
+    --cover: #a07a3e;
+  }
+
+  .shelf-link--iliad {
+    --cover: #a2483b;
+  }
+
+  .shelf-link--odyssey {
+    --cover: #3f8295;
+  }
+
+  .shelf-link--hymn {
+    --cover: #74874f;
+  }
+
+  .shelf-link:hover {
+    background-color: var(--surface-raised);
+  }
+
+  .shelf-link[aria-current='page'] {
+    background-color: var(--surface-raised);
+    color: var(--text-link);
+    font-weight: 600;
+  }
+
+  .shelf-link__count {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: var(--font-size-meta);
+    opacity: 0.8;
+  }
+
+  @media (min-width: 64rem) {
+    .reading__layout {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: var(--space-48);
+      align-items: start;
+    }
+
+    .reading__shelf {
+      position: sticky;
+      inset-block-start: var(--space-24);
+    }
+
+    .reading__shelf ol {
+      flex-direction: column;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .shelf-link {
+      min-inline-size: 0;
+    }
+  }
+
+  .work {
+    --cover: #5f421e;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-48);
+  }
+
+  .work--iliad {
+    --cover: #6b2a22;
+  }
+
+  .work--odyssey {
+    --cover: #1d4652;
+  }
+
+  .work--hymn {
+    --cover: #3f4e2f;
+  }
+
+  /* Cabecera de la obra: la cubierta de su volumen a todo el ancho del panel. */
+  .work__header {
+    padding: var(--space-32) clamp(1.25rem, 3vw, 2.5rem);
+    color: #f3ece0;
+    background:
+      linear-gradient(to bottom, transparent 0 14px, rgb(214 182 120 / 0.55) 14px 15px, transparent 15px),
+      repeating-linear-gradient(100deg, rgb(255 255 255 / 0.025) 0 2px, transparent 2px 7px),
+      linear-gradient(160deg, color-mix(in srgb, var(--cover) 100%, #fff 8%), color-mix(in srgb, var(--cover) 60%, #000));
+  }
+
+  .work__header .work__eyebrow {
+    color: #e6cf9c;
+  }
+
+  .work__title {
+    font-size: clamp(2.5rem, 1.6rem + 3vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .work__editions {
+    border-block: 1px solid var(--rule-soft);
+  }
+
+  .work__editions summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-4) var(--space-16);
+    min-block-size: var(--target-min);
+    padding-block: var(--space-12);
+    cursor: pointer;
+  }
+
+  .work__editions summary h2 {
+    display: inline;
+    font-size: var(--font-size-h3);
+  }
+
+  .work__editions-hint,
+  .work__section-head p {
+    font-size: var(--font-size-small);
+    color: var(--text-link);
+  }
+
+  .work__editions[open] {
+    padding-block-end: var(--space-24);
+  }
+
+  .work__section-head {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 46rem;
+  }
+
+  .work__section-head h2 {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 500;
+  }
+
+  .work__header,
+  .work__section {
+    display: grid;
+    gap: var(--space-16);
+    align-content: start;
+  }
+
+  .work__eyebrow,
+  .passage__cited-label {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .facts {
+    display: grid;
+    gap: var(--space-8);
+    max-inline-size: var(--measure);
+  }
+
+  .facts > div {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 40rem) {
+    .facts > div {
+      grid-template-columns: 9rem 1fr;
+      column-gap: var(--space-24);
+    }
+  }
+
+  .facts dt {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    text-transform: uppercase;
+    color: #e6cf9c;
+  }
+
+  .work__header .facts dd {
+    min-inline-size: 0;
+    color: #f3ece0;
+    overflow-wrap: anywhere;
+  }
+
+  .editions {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 48rem) {
+    .editions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-24);
+    }
+  }
+
+  .edition {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+    padding: var(--space-16) var(--space-24);
+    background-color: var(--surface-raised);
+    font-size: var(--font-size-small);
+    scroll-margin-block-start: var(--space-16);
+  }
+
+  .edition__title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-style: italic;
+  }
+
+  .edition__rights {
+    font-size: var(--font-size-meta);
+  }
+
+  .passages {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  /* Pasaje: localizador en su columna y lectura a la derecha (escritorio). */
+  .passage {
+    display: grid;
+    gap: var(--space-8) var(--space-32);
+    padding-block-start: var(--space-16);
+    border-block-start: 1px solid var(--rule-soft);
+    scroll-margin-block-start: var(--anchor-offset);
+  }
+
+  @media (min-width: 48rem) {
+    .passage {
+      grid-template-columns: 11rem minmax(0, 1fr);
+    }
+  }
+
+  .passage__body {
+    display: grid;
+    gap: var(--space-8);
+    max-inline-size: 44rem;
+  }
+
+  .passage__summary {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  .passage:target {
+    padding-inline: var(--space-16);
+    background-color: var(--surface-raised);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .passage__locator {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-link);
+  }
+
+  .passage__meta {
+    font-size: var(--font-size-small);
+  }
+
+  .passage__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-24);
+  }
+
+  .work a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .work__header a {
+    color: #f3ece0;
+  }
+
+  .passage__cited {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+</style>

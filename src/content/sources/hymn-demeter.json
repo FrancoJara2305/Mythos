@@ -1,0 +1,166 @@
+{
+  "title": "Himno homérico 2, a Deméter",
+  "workUrn": "urn:cts:greekLit:tlg0013.tlg002",
+  "corpus": "homeric-hymns",
+  "attribution": {
+    "name": "Anónimo (Himnos homéricos)",
+    "status": "anonymous",
+    "note": "La colección se transmitió asociada a Homero; la cabecera TEI la registra como «Anonymous». No se asigna autor ni fecha única al conjunto."
+  },
+  "compositionDate": {
+    "kind": "unknown",
+    "label": "Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que lo date."
+  },
+  "editions": [
+    {
+      "id": "perseus-grc2",
+      "editor": "Hugh G. Evelyn-White",
+      "language": "grc",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+      "urn": "urn:cts:greekLit:tlg0013.tlg002.perseus-grc2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+        "creditLine": "Hymn 2 To Demeter, ed. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    },
+    {
+      "id": "perseus-eng2",
+      "translator": "Hugh G. Evelyn-White",
+      "language": "en",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-eng2.xml",
+      "urn": "urn:cts:greekLit:tlg0013.tlg002.perseus-eng2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-eng2.xml",
+        "creditLine": "Hymn 2 To Demeter, trad. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": "abduction-of-persephone",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 2,
+        "lineStart": 1,
+        "lineEnd": 21,
+        "display": "Himno a Deméter 1–21",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg002.perseus-grc2:1-21/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+      "summary": "Perséfone recoge flores con las hijas de Océano cuando la tierra se abre y Aidoneo, hijo de Crono, la arrebata en su carro de oro; Zeus se la había concedido. Ella clama a su padre, el Crónida.",
+      "relatedEntities": [
+        "demeter",
+        "persephone",
+        "hades",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "the-famine",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 2,
+        "lineStart": 305,
+        "lineEnd": 313,
+        "display": "Himno a Deméter 305–313",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg002.perseus-grc2:305-313/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+      "summary": "Deméter oculta la semilla: la tierra no da fruto y la humanidad habría perecido de hambre, privando a los dioses de sus ofrendas, si Zeus no lo hubiera advertido.",
+      "relatedEntities": [
+        "demeter",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hermes-sent-to-erebus",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 2,
+        "lineStart": 334,
+        "lineEnd": 347,
+        "display": "Himno a Deméter 334–347",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg002.perseus-grc2:334-347/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+      "summary": "Zeus envía al Argifonte de vara de oro al Érebo para que convenza a Hades y devuelva a Perséfone junto a su madre; Hermes la encuentra sentada junto a Hades.",
+      "relatedEntities": [
+        "zeus",
+        "hermes",
+        "hades",
+        "persephone",
+        "demeter"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hades-promise",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 2,
+        "lineStart": 362,
+        "lineEnd": 365,
+        "display": "Himno a Deméter 362–365",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg002.perseus-grc2:362-365/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+      "summary": "Hades le dice a Perséfone que no será entre los inmortales un esposo indigno, pues es hermano de Zeus; allí reinará sobre todo lo que vive y se mueve.",
+      "relatedEntities": [
+        "hades",
+        "persephone",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "demeter-restores-the-crops",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 2,
+        "lineStart": 470,
+        "lineEnd": 473,
+        "display": "Himno a Deméter 470–473",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg002.perseus-grc2:470-473/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg002/tlg0013.tlg002.perseus-grc2.xml",
+      "summary": "Tras las palabras de Rea, Deméter «de bella corona» hace brotar de nuevo el fruto de los campos y la tierra se cubre de hojas y flores.",
+      "relatedEntities": [
+        "demeter",
+        "rhea"
+      ],
+      "verifiedAt": "2026-11-08"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

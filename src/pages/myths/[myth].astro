@@ -1,0 +1,450 @@
+---
+/**
+ * Relato mítico (Narratorio): una página por relato visible de la colección `myths`, escrita para
+ * leerse como un cuento. La procedencia queda en una sola línea («Lo cuenta…») y la evidencia, en el
+ * cajón «¿Cómo sabemos esto?». Los relatos se encadenan en el orden de la saga (src/config/saga.ts).
+ * Sin JavaScript propio.
+ */
+import DidacticNote from '../../components/narrative/DidacticNote.astro';
+import SourceHint from '../../components/narrative/SourceHint.astro';
+import StoryBody from '../../components/narrative/StoryBody.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import MixedText from '../../components/ui/MixedText.astro';
+import { DODEKATHEON } from '../../config/chapters.ts';
+import { isPublished } from '../../config/navigation.ts';
+import { sagaEpisodes } from '../../config/saga.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { PassageIndex } from '../../lib/content/citations.ts';
+import { paths } from '../../lib/routes.ts';
+
+export async function getStaticPaths() {
+  const { visible } = await loadArchive();
+  return visible.myths.map((entry) => ({ params: { myth: entry.id } }));
+}
+
+const { myth: id } = Astro.params as { myth: string };
+const { visible } = await loadArchive();
+const entry = visible.myths.find((item) => item.id === id);
+if (entry === undefined) throw new Error(`Relato no visible: ${id}`);
+const { data } = entry;
+const citations = new PassageIndex(visible).citeAll(data.evidence);
+const deities = new Map(visible.deities.map((item) => [item.id, item.data]));
+
+const episodes = sagaEpisodes().filter((episode) => visible.myths.some((item) => item.id === episode.mythId));
+const position = episodes.findIndex((episode) => episode.mythId === id);
+const episode = episodes[position];
+const titleOf = (mythId: string) => visible.myths.find((item) => item.id === mythId)?.data.title ?? mythId;
+const previous = position > 0 ? episodes[position - 1] : undefined;
+const next = position >= 0 ? episodes[position + 1] : undefined;
+
+// Otra tradición del mismo asunto: los demás relatos del grupo de variantes y su rótulo.
+const variant =
+  data.variantGroup !== undefined && data.variantOption !== undefined
+    ? {
+        label: DODEKATHEON.variantLabels[data.variantGroup]?.label ?? data.variantGroup,
+        option: DODEKATHEON.variantLabels[data.variantGroup]?.options[data.variantOption] ?? data.variantOption,
+        others: Object.entries(DODEKATHEON.variantLabels[data.variantGroup]?.options ?? {}).filter(([option]) => option !== data.variantOption),
+        siblings: visible.myths.filter((item) => item.id !== id && item.data.variantGroup === data.variantGroup),
+      }
+    : undefined;
+const genealogyHref = paths.genealogy(DODEKATHEON.chapterId);
+const tier = episode?.chapter.theme.tier ?? 'olympus';
+const unreviewed = data.review.status !== 'published';
+---
+
+<BaseLayout title={data.title} description={data.tagline ?? data.summary} unreviewed={unreviewed} tier={tier} preloadFont="/assets/fonts/cormorant-garamond-latin-wght-normal.woff2">
+  <article class="tale">
+    <div class="tale__inner">
+      <Breadcrumbs
+        items={[
+          { label: 'La Torre', href: paths.home() },
+          ...(episode === undefined ? [] : [{ label: episode.chapter.chapter.title, href: paths.chapter(episode.chapter.id), lang: episode.chapter.chapter.titleLang }]),
+          { label: data.title },
+        ]}
+      />
+
+      <header class="tale__head">
+        {
+          episode !== undefined && (
+            <p class="eyebrow">
+              {episode.chapter.chapter.number} · Episodio {position + 1} de {episodes.length}
+            </p>
+          )
+        }
+        <h1 class="tale__title">{data.title}</h1>
+        {data.tagline !== undefined && <p class="tale__tagline">{data.tagline}</p>}
+        <p class="tale__teller">
+          <span class="tale__teller-label">Lo cuenta</span> {data.traditionLabel}
+          {variant !== undefined && <> · versión: {variant.option}</>}
+        </p>
+      </header>
+
+      {
+        data.narrativeHook !== undefined && (
+          <p class="tale__hook">
+            <MixedText text={data.narrativeHook} />
+          </p>
+        )
+      }
+
+      <div class="tale__story">
+        {
+          data.storySections.length > 0 ? (
+            data.storySections.map((section, index) => (
+              <section class="tale__part" aria-labelledby={`parte-${index + 1}`}>
+                <p class="tale__part-number" aria-hidden="true">
+                  {['I', 'II', 'III', 'IV', 'V', 'VI'][index] ?? index + 1}
+                </p>
+                <h2 id={`parte-${index + 1}`} class="tale__part-title">
+                  {section.heading}
+                </h2>
+                <div class="tale__prose">
+                  <StoryBody body={section.body} />
+                </div>
+              </section>
+            ))
+          ) : (
+            <div class="tale__prose">
+              <p>
+                <MixedText text={data.summary} />
+              </p>
+            </div>
+          )
+        }
+      </div>
+
+      <SourceHint citations={citations} about={`el relato «${data.title}»`} />
+
+      {
+        variant !== undefined && (
+          <aside class="tale__variant" aria-labelledby="otra-tradicion">
+            <p class="eyebrow">Dos tradiciones contadas por los antiguos bardos</p>
+            <h2 id="otra-tradicion" class="tale__variant-title">
+              {variant.label}
+            </h2>
+            <p>
+              Acabas de leer la versión de <strong>{variant.option}</strong>. Otros poetas lo contaron de otro modo
+              {variant.others.length > 0 && <> ({variant.others.map(([, label]) => label).join(', ')})</>}: las dos versiones convivieron sin que
+              nadie eligiera una sola.
+            </p>
+            <ul class="tale__variant-links" role="list">
+              {variant.siblings.map((sibling) => (
+                <li>
+                  <a href={paths.myth(sibling.id)}>Leer «{sibling.data.title}»</a>
+                </li>
+              ))}
+              {isPublished(genealogyHref) && (
+                <li>
+                  <a href={genealogyHref}>Comparar las dos tradiciones en el Mapa de Linajes Estelares</a>
+                </li>
+              )}
+            </ul>
+          </aside>
+        )
+      }
+
+      <section class="tale__cast" aria-labelledby="protagonistas">
+        <h2 id="protagonistas" class="tale__section-title">Protagonistas</h2>
+        <ul class="tale__cast-list" role="list">
+          {
+            data.participants.map((participant) => {
+              const deity = deities.get(participant.id);
+              const name = deity?.name ?? participant.id;
+              return (
+                <li>
+                  {deity?.profile === 'full' ? (
+                    <a class="tale__person" href={paths.deity(participant.id)}>
+                      <span class="tale__person-name">{name}</span>
+                      {deity.tagline !== undefined && <span class="tale__person-line">{deity.tagline}</span>}
+                    </a>
+                  ) : (
+                    <span class="tale__person tale__person--context">
+                      <span class="tale__person-name">{name}</span>
+                      {deity?.summary !== undefined && (
+                        <span class="tale__person-line">
+                          <MixedText text={deity.summary} />
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </li>
+              );
+            })
+          }
+        </ul>
+      </section>
+
+      {
+        data.didacticNotes.length > 0 && (
+          <section class="tale__notes" aria-labelledby="capsulas">
+            <h2 id="capsulas" class="tale__section-title">
+              Para saber más
+            </h2>
+            <div class="tale__capsules">
+              {data.didacticNotes.map((note) => (
+                <DidacticNote note={note} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <nav class="tale__steps" aria-label="Hilo del destino">
+        {
+          previous !== undefined && (
+            <a class="tale__step" href={paths.myth(previous.mythId)} rel="prev">
+              <span class="tale__step-label">← Episodio anterior</span>
+              <span class="tale__step-name">{titleOf(previous.mythId)}</span>
+            </a>
+          )
+        }
+        {
+          next !== undefined && (
+            <a class="tale__step tale__step--next" href={paths.myth(next.mythId)} rel="next">
+              <span class="tale__step-label">Siguiente episodio →</span>
+              <span class="tale__step-name">{titleOf(next.mythId)}</span>
+            </a>
+          )
+        }
+      </nav>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .tale__inner {
+    display: grid;
+    gap: var(--space-48);
+    inline-size: 100%;
+    max-inline-size: 56rem;
+    margin-inline: auto;
+    padding: var(--space-24) var(--gutter) var(--space-48);
+  }
+
+  .tale__head {
+    display: grid;
+    gap: var(--space-12);
+    padding-block-start: clamp(1rem, 4vw, 3rem);
+  }
+
+  .tale__title {
+    font-size: clamp(2.75rem, 1.8rem + 4.6vw, 6rem);
+    font-weight: 500;
+    line-height: 0.98;
+  }
+
+  .tale__tagline {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+    font-style: italic;
+    line-height: 1.2;
+  }
+
+  .tale__teller {
+    font-size: var(--font-size-small);
+  }
+
+  .tale__teller-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-accent);
+  }
+
+  .tale__hook {
+    padding-inline-start: var(--space-24);
+    border-inline-start: 2px solid var(--color-star-gold);
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 1.2rem + 0.9vw, 1.875rem);
+    line-height: 1.4;
+  }
+
+  .tale__story {
+    display: grid;
+    gap: var(--space-48);
+  }
+
+  .tale__part {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-12);
+  }
+
+  .tale__part-number {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+    color: var(--text-link);
+  }
+
+  .tale__part-number::after {
+    content: '';
+    display: inline-block;
+    inline-size: 3rem;
+    block-size: 1px;
+    margin-inline-start: var(--space-12);
+    vertical-align: middle;
+    background: linear-gradient(to right, var(--color-star-gold), transparent);
+  }
+
+  .tale__part-title {
+    font-size: clamp(1.875rem, 1.5rem + 1.6vw, 2.75rem);
+  }
+
+  .tale__prose {
+    display: grid;
+    gap: var(--space-16);
+    max-inline-size: var(--measure);
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    line-height: 1.75;
+  }
+
+  /* Letra capitular en el primer párrafo de la primera parte. */
+  .tale__part:first-child .tale__prose > :global(p:first-child)::first-letter {
+    float: inline-start;
+    margin-inline-end: 0.08em;
+    font-family: var(--font-display);
+    font-size: 3.6em;
+    font-weight: 600;
+    line-height: 0.82;
+    color: var(--text-link);
+  }
+
+  .tale__variant {
+    display: grid;
+    gap: var(--space-12);
+    padding: var(--space-24);
+    border: 1px solid color-mix(in srgb, var(--color-bronze) 60%, transparent);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(90% 80% at 100% 0%, rgb(217 119 6 / 0.14), transparent 65%),
+      var(--surface-glass);
+  }
+
+  .tale__variant-title {
+    font-size: 1.875rem;
+  }
+
+  .tale__variant-links {
+    display: grid;
+    gap: 0;
+  }
+
+  .tale__variant-links a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+  }
+
+  .tale__cast,
+  .tale__notes {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .tale__section-title {
+    font-size: var(--font-size-h3);
+  }
+
+  .tale__cast-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-12);
+  }
+
+  .tale__person {
+    display: grid;
+    gap: var(--space-4);
+    block-size: 100%;
+    padding: var(--space-16);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    background-color: var(--surface-glass);
+  }
+
+  a.tale__person:hover {
+    border-color: var(--text-link);
+  }
+
+  .tale__person--context {
+    border-style: dashed;
+    background: none;
+  }
+
+  .tale__person-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  a.tale__person .tale__person-name {
+    color: var(--text-link);
+  }
+
+  .tale__person-line {
+    font-size: var(--font-size-small);
+    line-height: 1.45;
+  }
+
+  .tale__capsules {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 48rem) {
+    .tale__capsules {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .tale__steps {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 40rem) {
+    .tale__steps {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .tale__step--next {
+      grid-column: 2;
+      text-align: end;
+    }
+  }
+
+  .tale__step {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-16) var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: border-color var(--duration-hover) ease-out;
+  }
+
+  .tale__step:hover {
+    border-color: var(--text-link);
+  }
+
+  .tale__step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .tale__step-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+</style>

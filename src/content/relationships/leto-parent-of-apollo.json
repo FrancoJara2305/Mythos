@@ -1,0 +1,25 @@
+{
+  "subject": "leto",
+  "object": "apollo",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Hesíodo, Teogonía; Himno homérico a Apolo",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "leto-apollo-artemis",
+      "claim": "Leto da a luz a Apolo y a Ártemis (vv. 918–920).",
+      "role": "supports"
+    },
+    {
+      "source": "hymn-apollo",
+      "passageId": "birth-on-delos",
+      "claim": "Leto, madre de Apolo y de Ártemis (vv. 14–16).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

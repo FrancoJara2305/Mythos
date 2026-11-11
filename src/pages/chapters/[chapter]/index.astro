@@ -1,0 +1,49 @@
+---
+/**
+ * Página de capítulo de la saga (src/config/saga.ts).
+ *
+ * - GR-04, The Dodekatheon (capítulo principal): el Planetario de Constelaciones. El roster sale de
+ *   src/config/chapters.ts y se resuelve sobre el archivo visible: en producción, si falta un perfil
+ *   publicado, `resolveRoster` detiene el build.
+ * - Los demás capítulos: un preludio narrativo con sus personajes y sus historias. Las que ya tienen
+ *   relato en la colección `myths` se pueden leer; las demás se anuncian como «próximamente».
+ */
+import ChapterPrelude from '../../../components/chapter/ChapterPrelude.astro';
+import Planetarium from '../../../components/planetarium/Planetarium.astro';
+import { CHAPTER_SELECTIONS, profileIds } from '../../../config/chapters.ts';
+import { sagaChapters, type ResolvedSagaChapter } from '../../../config/saga.ts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../../lib/content/archive.ts';
+import { resolveRoster } from '../../../lib/content/integrity.ts';
+
+export function getStaticPaths() {
+  return sagaChapters()
+    .filter((chapter) => chapter.chapter.publishable)
+    .map((chapter) => ({ params: { chapter: chapter.id }, props: { chapter } }));
+}
+
+interface Props {
+  chapter: ResolvedSagaChapter;
+}
+
+const { chapter } = Astro.props;
+const selection = CHAPTER_SELECTIONS.find((item) => item.chapterId === chapter.id);
+const { visible } = await loadArchive();
+
+let unreviewed = visible.myths.some((myth) => myth.data.review.status !== 'published');
+if (selection !== undefined) {
+  resolveRoster(visible, selection);
+  const ids = new Set(profileIds(selection));
+  unreviewed = unreviewed || visible.deities.some((entry) => ids.has(entry.id) && entry.data.review.status !== 'published');
+}
+---
+
+<BaseLayout
+  title={selection === undefined ? `${chapter.chapter.number} · ${chapter.chapter.title}` : `${chapter.chapter.title} · Los doce olímpicos`}
+  description={`${chapter.chapter.number}, ${chapter.chapter.title}: ${chapter.hook}`}
+  unreviewed={unreviewed}
+  tier={chapter.theme.tier}
+  preloadFont="/assets/fonts/cormorant-garamond-latin-wght-normal.woff2"
+>
+  {selection === undefined ? <ChapterPrelude chapter={chapter} /> : <Planetarium chapter={chapter.chapter} selection={selection} hook={chapter.hook} />}
+</BaseLayout>

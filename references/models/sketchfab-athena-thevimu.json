@@ -1,0 +1,28 @@
+{
+  "retrievedAt": "2026-11-08",
+  "endpoint": "https://api.sketchfab.com/v3/models/b4a20645ac364c988b6dc4bce3367cd0",
+  "responseSha256": "1997853e37e7a0fcdf860ca49c3997f34aa491a1edbb436ea47492995dbc3224",
+  "uid": "b4a20645ac364c988b6dc4bce3367cd0",
+  "name": "Bust of Athena (c. 100–200 CE)",
+  "viewerUrl": "https://sketchfab.com/3d-models/bust-of-athena-c-100200-ce-b4a20645ac364c988b6dc4bce3367cd0",
+  "publishedAt": "2026-04-26T04:25:24.908056",
+  "user": {
+    "username": "TheViMu",
+    "displayName": "The Virtual Museum",
+    "profileUrl": "https://sketchfab.com/TheViMu"
+  },
+  "isDownloadable": false,
+  "license": null,
+  "faceCount": 31032,
+  "vertexCount": 16102,
+  "tags": [
+    "goddess",
+    "Roman",
+    "Minerva",
+    "athena",
+    "sculpture"
+  ],
+  "descriptionExcerpts": [
+    "Credit: \"Bust of Athena, British Museum\" (https://skfb.ly/Br8x) by Thomas Flynn is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/)."
+  ]
+}

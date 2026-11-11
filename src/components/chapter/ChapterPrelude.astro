@@ -1,0 +1,319 @@
+---
+/**
+ * Preludio de un capítulo de la saga sin roster propio (GR-01, GR-02, GR-03, GR-05, GR-06): quiénes
+ * aparecen y qué historias se cuentan. Cada historia enlaza sus relatos publicados; si aún no hay
+ * ninguno, se anuncia como «próximamente» con su adelanto. Sin JavaScript.
+ */
+import ActionLink from '../ui/ActionLink.astro';
+import Breadcrumbs from '../ui/Breadcrumbs.astro';
+import { sagaChapters, type ResolvedSagaChapter } from '../../config/saga.ts';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { paths } from '../../lib/routes.ts';
+
+interface Props {
+  chapter: ResolvedSagaChapter;
+}
+
+const { chapter } = Astro.props;
+const { visible } = await loadArchive();
+const myths = new Map(visible.myths.map((entry) => [entry.id, entry.data]));
+const profiles = new Set(visible.deities.filter((entry) => entry.data.profile === 'full').map((entry) => entry.id));
+
+const stories = chapter.stories.map((story) => ({
+  ...story,
+  myths: story.mythIds.flatMap((id) => {
+    const myth = myths.get(id);
+    return myth === undefined ? [] : [{ id, title: myth.title, tagline: myth.tagline }];
+  }),
+}));
+const all = sagaChapters();
+const previous = all[chapter.index - 1];
+const next = all[chapter.index + 1];
+---
+
+<article class="prelude">
+  <div class="container prelude__inner">
+    <Breadcrumbs items={[{ label: 'La Torre', href: `${paths.home()}#${chapter.theme.anchor}` }, { label: chapter.chapter.title }]} />
+
+    <header class="prelude__head">
+      <p class="eyebrow">
+        {chapter.theme.number} · {chapter.theme.title}
+      </p>
+      <p class="prelude__number">{chapter.chapter.number}</p>
+      <h1 class="prelude__title">{chapter.chapter.title}</h1>
+      <p class="prelude__hook">{chapter.hook}</p>
+      <p class="prelude__intro">{chapter.intro}</p>
+    </header>
+
+    <section class="prelude__section" aria-labelledby="personajes-titulo">
+      <h2 id="personajes-titulo" class="prelude__heading">Quién aparece</h2>
+      <ul class="cast" role="list">
+        {
+          chapter.characters.map((character) => (
+            <li class="cast__item">
+              <p class="cast__name">
+                {character.deityId !== undefined && profiles.has(character.deityId) ? <a href={paths.deity(character.deityId)}>{character.name}</a> : character.name}
+              </p>
+              <p class="cast__role">{character.role}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="prelude__section" aria-labelledby="historias-titulo">
+      <h2 id="historias-titulo" class="prelude__heading">Las historias de este capítulo</h2>
+      <ol class="stories" role="list">
+        {
+          stories.map((story, index) => (
+            <li class:list={['story', { 'story--ready': story.myths.length > 0 }]}>
+              <p class="story__index" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </p>
+              <div class="story__body">
+                <p class="story__status">
+                  {story.myths.length > 0 ? 'Para leer ahora' : 'Próximamente'}
+                  {story.complementary === true && ' · ciclo complementario'}
+                </p>
+                <h3 class="story__title">{story.title}</h3>
+                <p class="story__teaser">{story.teaser}</p>
+                {story.myths.length > 0 && (
+                  <ul class="story__links" role="list">
+                    {story.myths.map((myth) => (
+                      <li>
+                        <a href={paths.myth(myth.id)}>
+                          Leer «{myth.title}»<span aria-hidden="true">→</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <nav class="prelude__steps" aria-label="Otros capítulos">
+      {
+        previous !== undefined && (
+          <a class="prelude__step" href={paths.chapter(previous.id)} rel="prev">
+            <span class="prelude__step-label">↑ Subir · {previous.chapter.number}</span>
+            <span class="prelude__step-name" lang={previous.chapter.titleLang}>
+              {previous.chapter.title}
+            </span>
+          </a>
+        )
+      }
+      {
+        next !== undefined && (
+          <a class="prelude__step prelude__step--next" href={paths.chapter(next.id)} rel="next">
+            <span class="prelude__step-label">Seguir bajando · {next.chapter.number} ↓</span>
+            <span class="prelude__step-name" lang={next.chapter.titleLang}>
+              {next.chapter.title}
+            </span>
+          </a>
+        )
+      }
+    </nav>
+    <p class="prelude__back">
+      <ActionLink href={`${paths.home()}#${chapter.theme.anchor}`} variant="secondary">
+        Volver a la Torre
+      </ActionLink>
+    </p>
+  </div>
+</article>
+
+<style>
+  .prelude__inner {
+    display: grid;
+    gap: var(--space-64);
+    padding-block: var(--space-24) var(--space-48);
+    max-inline-size: 70rem;
+  }
+
+  .prelude__head {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .prelude__number {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-small);
+    letter-spacing: 0.14em;
+    color: var(--text-accent);
+  }
+
+  .prelude__title {
+    font-size: clamp(3rem, 1.6rem + 6vw, 7rem);
+    font-weight: 500;
+    line-height: 0.95;
+  }
+
+  .prelude__hook {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+    font-style: italic;
+    line-height: 1.2;
+    max-inline-size: 40rem;
+  }
+
+  .prelude__intro {
+    max-inline-size: var(--measure);
+    font-size: 1.125rem;
+  }
+
+  .prelude__section {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  .prelude__heading {
+    font-size: var(--font-size-h2);
+  }
+
+  .cast {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-12);
+  }
+
+  .cast__item {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-16);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+    background-color: var(--surface-glass);
+  }
+
+  .cast__name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .cast__name a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .cast__role {
+    font-size: var(--font-size-small);
+  }
+
+  .stories {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .story {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-16) var(--space-24);
+    padding: var(--space-24);
+    border: 1px dashed var(--rule-soft);
+    border-radius: var(--radius-card);
+  }
+
+  .story--ready {
+    border: 1px solid color-mix(in srgb, var(--color-star-gold) 45%, transparent);
+    background:
+      radial-gradient(90% 80% at 0% 0%, rgb(253 224 71 / 0.08), transparent 60%),
+      var(--surface-glass);
+  }
+
+  .story__index {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--text-link);
+  }
+
+  .story__body {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .story__status {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-accent);
+  }
+
+  .story--ready .story__status {
+    color: var(--text-link);
+  }
+
+  .story__title {
+    font-size: clamp(1.5rem, 1.3rem + 1vw, 2.125rem);
+  }
+
+  .story__teaser {
+    max-inline-size: var(--measure);
+  }
+
+  .story__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-24);
+  }
+
+  .story__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+  }
+
+  .prelude__steps {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 48rem) {
+    .prelude__steps {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .prelude__step--next {
+      grid-column: 2;
+      text-align: end;
+    }
+  }
+
+  .prelude__step {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-16) var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: border-color var(--duration-hover) ease-out;
+  }
+
+  .prelude__step:hover {
+    border-color: var(--text-link);
+  }
+
+  .prelude__step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .prelude__step-name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+  }
+</style>

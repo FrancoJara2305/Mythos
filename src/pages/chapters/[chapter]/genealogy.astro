@@ -1,0 +1,262 @@
+---
+/**
+ * Genealogy Explorer. Jerarquía de consulta:
+ *
+ * 1. Descubrir: cabecera breve y, de inmediato, la isla: selector, diagrama (foco de la pantalla) y
+ *    panel de detalle con versiones y relaciones citadas de la figura elegida.
+ * 2. Investigar: «Cómo leer el diagrama» y «Todas las relaciones del capítulo» (la lista completa,
+ *    equivalente sin JavaScript, con anclas `#familia-{id}`), plegadas en `<details>`. Las anclas
+ *    abren su sección (navegador y src/scripts/site-nav.ts).
+ */
+import GenealogyExplorer from '../../../components/islands/GenealogyExplorer.astro';
+import Breadcrumbs from '../../../components/ui/Breadcrumbs.astro';
+import { CHAPTERS, CHAPTER_SELECTIONS, type ChapterSelection } from '../../../config/chapters.ts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../../lib/content/archive.ts';
+import { resolveRoster } from '../../../lib/content/integrity.ts';
+import { genealogyData } from '../../../lib/genealogy/build-data.ts';
+import { NODE_LIMIT } from '../../../lib/genealogy/neighbourhood.ts';
+import { renderFamily } from '../../../lib/genealogy/render.ts';
+import { paths } from '../../../lib/routes.ts';
+
+export function getStaticPaths() {
+  return CHAPTER_SELECTIONS.filter((selection) =>
+    CHAPTERS.some((chapter) => chapter.id === selection.chapterId && chapter.publishable),
+  ).map((selection) => ({ params: { chapter: selection.chapterId }, props: { selection } }));
+}
+
+interface Props {
+  selection: ChapterSelection;
+}
+
+const { selection } = Astro.props;
+const chapter = CHAPTERS.find((item) => item.id === selection.chapterId);
+if (chapter === undefined) throw new Error(`Capítulo inexistente: ${selection.chapterId}`);
+
+const { visible } = await loadArchive();
+resolveRoster(visible, selection);
+const data = genealogyData(visible, selection);
+const unreviewed = visible.relationships.some((entry) => entry.data.review.status !== 'published');
+---
+
+<BaseLayout
+  title={`Mapa de Linajes Estelares · ${chapter.title}`}
+  description="Mapa de Linajes Estelares: quién es hijo de quién entre los dioses del Olimpo, y qué cuentan las distintas tradiciones de los antiguos bardos."
+  tier="olympus"
+  unreviewed={unreviewed}
+>
+  <div class="container genealogy-page">
+    <Breadcrumbs
+      items={[
+        { label: 'La Torre', href: paths.home() },
+        { label: chapter.title, href: paths.chapter(chapter.id), lang: 'en' },
+        { label: 'Linajes estelares' },
+      ]}
+    />
+
+    <header class="genealogy-page__header">
+      <p class="eyebrow">{chapter.number} · Familias del Olimpo</p>
+      <h1>Mapa de Linajes Estelares</h1>
+      <p class="genealogy-page__lede">
+        Cada dios es una estrella y cada familia, una pequeña constelación. Elige una divinidad para ver de quién nace, con quién se
+        une y quiénes son sus hijos. Y cuando los antiguos bardos cuentan dos historias distintas, podrás elegir cuál escuchar.
+      </p>
+    </header>
+
+    <GenealogyExplorer data={data} />
+
+    <div class="genealogy-page__research">
+      <details class="genealogy-page__method">
+        <summary>Cómo leer el mapa</summary>
+        <div class="prose">
+          <p>
+            Cada parentesco sale de un poema antiguo, y puedes comprobarlo en «¿Cómo sabemos esto?». Cuando las tradiciones no
+            coinciden —el origen de Afrodita, los padres de Hefesto— el mapa muestra una versión cada vez: nunca se dibujan
+            juntas como una sola familia. Cada vista reúne a una figura con sus progenitores, uniones y descendencia, hasta
+            {NODE_LIMIT} figuras; la flecha va del progenitor a su descendencia y no indica quién manda.
+          </p>
+        </div>
+      </details>
+
+      <details id="todas-las-relaciones" class="genealogy-page__all">
+        <summary>
+          <h2 id="todas-titulo">Todas las relaciones del capítulo</h2>
+          <span class="genealogy-page__all-hint">La lista completa, con cada tradición rotulada</span>
+        </summary>
+        <p class="prose">
+          La misma información que el diagrama, para las {data.roster.length} divinidades del capítulo. Las relaciones que
+          dependen de una versión llevan su rótulo.
+        </p>
+        <div class="genealogy-page__families">
+          {data.roster.map((id) => <Fragment set:html={renderFamily(data, id)} />)}
+        </div>
+      </details>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .genealogy-page {
+    display: grid;
+    gap: var(--space-32);
+    padding-block: var(--space-24) var(--space-32);
+  }
+
+  .genealogy-page__header {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .genealogy-page__header h1 {
+    font-size: clamp(3rem, 1.8rem + 4.5vw, 6.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+  }
+
+  .genealogy-page__lede {
+    max-inline-size: 40rem;
+    font-size: 1.125rem;
+  }
+
+  .genealogy-page__research {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .genealogy-page__method,
+  .genealogy-page__all {
+    border-block-start: 1px solid var(--rule-soft);
+  }
+
+  .genealogy-page__method summary,
+  .genealogy-page__all summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-4) var(--space-16);
+    min-block-size: var(--target-min);
+    padding-block: var(--space-12);
+    cursor: pointer;
+  }
+
+  .genealogy-page__method summary {
+    font-weight: 600;
+    color: var(--text-link);
+  }
+
+  .genealogy-page__method .prose {
+    padding-block-end: var(--space-16);
+  }
+
+  .genealogy-page__all summary h2 {
+    display: inline;
+    font-size: var(--font-size-h3);
+  }
+
+  .genealogy-page__all-hint {
+    font-size: var(--font-size-small);
+    color: var(--text-link);
+  }
+
+  .genealogy-page__all[open] {
+    display: grid;
+    gap: var(--space-24);
+    padding-block-end: var(--space-24);
+  }
+
+  .genealogy-page__eyebrow {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .genealogy-page__families {
+    display: grid;
+    gap: var(--space-32);
+  }
+
+  .genealogy-page__families :global(.gv-family) {
+    display: grid;
+    gap: var(--space-12);
+    padding-block-start: var(--space-16);
+    border-block-start: 1px solid var(--decoration-bronze);
+    scroll-margin-block-start: var(--space-16);
+  }
+
+  .genealogy-page__families :global(.gv-family:target) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 4px;
+  }
+
+  .genealogy-page__families :global(.gv-family__title) {
+    font-size: var(--font-size-h3);
+  }
+
+  .genealogy-page__families :global(.gv-family__groups) {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 64rem) {
+    .genealogy-page__families :global(.gv-family__groups) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--space-32);
+      align-items: start;
+    }
+  }
+
+  .genealogy-page__families :global(.gv-group) {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .genealogy-page__families :global(.gv-group__title) {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-meta);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .genealogy-page__families :global(.gv-relations) {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .genealogy-page__families :global(.gv-relation) {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .genealogy-page__families :global(.gv-relation__head) {
+    font-weight: 600;
+  }
+
+  .genealogy-page__families :global(.gv-meta),
+  .genealogy-page__families :global(.gv-note),
+  .genealogy-page__families :global(.gv-cites),
+  .genealogy-page__families :global(.gv-empty),
+  .genealogy-page__families :global(.gv-muted) {
+    font-size: var(--font-size-small);
+    font-weight: 400;
+  }
+
+  .genealogy-page__families :global(.gv-variant-tag) {
+    color: var(--text-link);
+  }
+
+  .genealogy-page__families :global(.gv-cites) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-16);
+  }
+
+  .genealogy-page__families :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+</style>

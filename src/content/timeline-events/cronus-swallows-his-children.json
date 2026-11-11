@@ -1,0 +1,25 @@
+{
+  "kind": "mythic",
+  "title": "Crono devora a sus hijos",
+  "myth": "cronus-swallows-his-children",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "sequenceGroup": "hesiodic-succession",
+  "displayOrder": 1,
+  "after": [],
+  "entities": [
+    "cronus",
+    "rhea",
+    "zeus"
+  ],
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "cronus-swallows-children",
+      "claim": "Crono traga a sus hijos al nacer.",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

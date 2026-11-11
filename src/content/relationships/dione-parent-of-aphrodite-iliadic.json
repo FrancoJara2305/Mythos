@@ -1,0 +1,21 @@
+{
+  "subject": "dione",
+  "object": "aphrodite",
+  "kind": "parent-of",
+  "label": "madre",
+  "traditionLabel": "Homero, Ilíada",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "homer-iliad",
+      "passageId": "dione-comforts-aphrodite",
+      "claim": "Afrodita cae en las rodillas de Dione, «su madre» (5.370–371).",
+      "role": "supports"
+    }
+  ],
+  "variantGroup": "aphrodite-origin",
+  "variantOption": "iliadic",
+  "review": {
+    "status": "draft"
+  }
+}

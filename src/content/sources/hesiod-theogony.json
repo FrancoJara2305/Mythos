@@ -1,0 +1,416 @@
+{
+  "title": "Teogonía",
+  "workUrn": "urn:cts:greekLit:tlg0020.tlg001",
+  "attribution": {
+    "name": "Hesíodo",
+    "status": "traditional",
+    "note": "Atribución tradicional. MYTHOS todavía no resume la discusión sobre su autoría ni la fecha: falta cotejar una referencia académica."
+  },
+  "compositionDate": {
+    "kind": "unknown",
+    "label": "Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que lo date."
+  },
+  "editions": [
+    {
+      "id": "perseus-grc2",
+      "editor": "Hugh G. Evelyn-White",
+      "language": "grc",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "urn": "urn:cts:greekLit:tlg0020.tlg001.perseus-grc2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+        "creditLine": "Θεογονία, ed. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    },
+    {
+      "id": "perseus-eng2",
+      "translator": "Hugh G. Evelyn-White",
+      "language": "en",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-eng2.xml",
+      "urn": "urn:cts:greekLit:tlg0020.tlg001.perseus-eng2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-eng2.xml",
+        "creditLine": "Theogony, trad. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": "castration-of-uranus",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 176,
+        "lineEnd": 187,
+        "display": "Teogonía 176–187",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:176-187/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Urano llega con la noche; Crono, desde su escondite, le cercena los genitales con la hoz y los arroja tras de sí.",
+      "relatedEntities": [
+        "uranus",
+        "cronus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "birth-of-aphrodite",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 188,
+        "lineEnd": 206,
+        "display": "Teogonía 188–206",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:188-206/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Los genitales de Urano caen al mar; de la espuma que los rodea nace una diosa que llega a Citera y a Chipre. Hesíodo explica sus nombres (Afrogenía, Citerea, Ciprogenia, «amante de los genitales») y la porción de honores que le corresponde.",
+      "relatedEntities": [
+        "aphrodite",
+        "uranus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "children-of-rhea-and-cronus",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 453,
+        "lineEnd": 458,
+        "display": "Teogonía 453–458",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:453-458/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Rea, sometida a Crono, da a luz a Hestia, Deméter, Hera «de sandalias de oro», Hades «que habita bajo tierra», el Ennosígeo y Zeus «astuto», padre de dioses y hombres.",
+      "relatedEntities": [
+        "rhea",
+        "cronus",
+        "hestia",
+        "demeter",
+        "hera",
+        "hades",
+        "poseidon",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "cronus-swallows-children",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 459,
+        "lineEnd": 460,
+        "display": "Teogonía 459–460",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:459-460/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Crono traga a cada hijo en cuanto sale del vientre de su madre.",
+      "relatedEntities": [
+        "cronus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "zeus-hidden-in-crete",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 478,
+        "lineEnd": 480,
+        "display": "Teogonía 478–480",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:478-480/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Cuando Rea va a dar a luz a Zeus, el menor de sus hijos, Gea lo recibe para criarlo en Creta.",
+      "relatedEntities": [
+        "zeus",
+        "rhea"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "the-stone",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 485,
+        "lineEnd": 486,
+        "display": "Teogonía 485–486",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:485-486/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "En lugar del niño, Rea entrega a Crono, hijo de Urano y antiguo rey de los dioses, una gran piedra envuelta en pañales.",
+      "relatedEntities": [
+        "cronus",
+        "rhea"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "thunder-and-thunderbolt",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 501,
+        "lineEnd": 506,
+        "display": "Teogonía 501–506",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:501-506/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Zeus libera a los hermanos de su padre; en agradecimiento le dan el trueno, el rayo ardiente y el relámpago, en los que confía para reinar sobre mortales e inmortales.",
+      "relatedEntities": [
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "zeus-becomes-king",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 881,
+        "lineEnd": 885,
+        "display": "Teogonía 881–885",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:881-885/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Concluida la lucha por los honores con los Titanes, los dioses, por consejo de Gea, instan a Zeus a reinar; él les reparte los honores.",
+      "relatedEntities": [
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "metis-and-athena",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 886,
+        "lineEnd": 900,
+        "display": "Teogonía 886–900",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:886-900/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Zeus, rey de los dioses, toma a Metis como primera esposa. Cuando ella va a dar a luz a Atenea, la engaña y la guarda en su vientre por consejo de Gea y Urano.",
+      "relatedEntities": [
+        "zeus",
+        "metis",
+        "athena"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "demeter-and-persephone",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 912,
+        "lineEnd": 914,
+        "display": "Teogonía 912–914",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:912-914/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Zeus se une a Deméter, que da a luz a Perséfone; Aidoneo la arrebata de junto a su madre y Zeus se la concede.",
+      "relatedEntities": [
+        "zeus",
+        "demeter",
+        "persephone",
+        "hades"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "leto-apollo-artemis",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 918,
+        "lineEnd": 920,
+        "display": "Teogonía 918–920",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:918-920/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Leto, unida a Zeus, da a luz a Apolo y a Ártemis flechadora.",
+      "relatedEntities": [
+        "leto",
+        "apollo",
+        "artemis",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hera-hebe-ares-eileithyia",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 921,
+        "lineEnd": 923,
+        "display": "Teogonía 921–923",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:921-923/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Por último, Zeus toma a Hera como esposa; ella da a luz a Hebe, Ares e Ilitía.",
+      "relatedEntities": [
+        "zeus",
+        "hera",
+        "ares"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "athena-from-the-head",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 924,
+        "lineEnd": 926,
+        "display": "Teogonía 924–926",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:924-926/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Zeus engendra él mismo, de su cabeza, a Atenea, a la que agradan los tumultos, las guerras y las batallas.",
+      "relatedEntities": [
+        "zeus",
+        "athena"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-without-union",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 927,
+        "lineEnd": 929,
+        "display": "Teogonía 927–929",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:927-929/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Hera, enfadada y enfrentada con su esposo, engendra sin unión amorosa a Hefesto, que supera en artes a todos los Uránidas. (La edición imprime después una versión alternativa, 929a–929t, que no se usa como texto principal.)",
+      "relatedEntities": [
+        "hera",
+        "hephaestus",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "ares-and-cytherea",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 933,
+        "lineEnd": 937,
+        "display": "Teogonía 933–937",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:933-937/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Citerea da a luz para Ares a Fobos y Deimos, que siembran el pánico en las falanges, y a Harmonía.",
+      "relatedEntities": [
+        "ares",
+        "aphrodite"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "maia-and-hermes",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 938,
+        "lineEnd": 939,
+        "display": "Teogonía 938–939",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:938-939/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Maya, hija de Atlas, da a luz para Zeus a Hermes, heraldo de los inmortales.",
+      "relatedEntities": [
+        "maia",
+        "zeus",
+        "hermes"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "semele-and-dionysus",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 940,
+        "lineEnd": 942,
+        "display": "Teogonía 940–942",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:940-942/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Sémele, hija de Cadmo, unida a Zeus, da a luz a Dioniso: una mortal a un inmortal; ahora ambos son dioses.",
+      "relatedEntities": [
+        "semele",
+        "zeus",
+        "dionysus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "alcmene-and-heracles",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 943,
+        "lineEnd": 944,
+        "display": "Teogonía 943–944",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:943-944/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Alcmena da a luz a Heracles unida a Zeus «que amontona las nubes».",
+      "relatedEntities": [
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "dionysus-and-ariadne",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "lineStart": 947,
+        "lineEnd": 949,
+        "display": "Teogonía 947–949",
+        "scheme": "line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0020.tlg001.perseus-grc2:947-949/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0020/tlg001/tlg0020.tlg001.perseus-grc2.xml",
+      "summary": "Dioniso «de cabellos de oro» toma por esposa a Ariadna, hija de Minos; Zeus la hace inmortal.",
+      "relatedEntities": [
+        "dionysus"
+      ],
+      "verifiedAt": "2026-11-08"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

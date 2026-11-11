@@ -1,0 +1,372 @@
+{
+  "title": "Ilíada",
+  "workUrn": "urn:cts:greekLit:tlg0012.tlg001",
+  "attribution": {
+    "name": "Homero",
+    "status": "traditional",
+    "note": "Atribución tradicional. MYTHOS todavía no resume la discusión sobre su autoría ni la fecha: falta cotejar una referencia académica."
+  },
+  "compositionDate": {
+    "kind": "unknown",
+    "label": "Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que lo date."
+  },
+  "editions": [
+    {
+      "id": "perseus-grc2",
+      "editor": "David B. Monro; Thomas W. Allen",
+      "language": "grc",
+      "title": "Homeri Opera, editio tertia",
+      "publisher": "Clarendon Press (Oxford). Scriptorum Classicorum Bibliotheca Oxoniensis",
+      "year": 1920,
+      "yearLabel": "1908–1920 (según la cabecera TEI)",
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "urn": "urn:cts:greekLit:tlg0012.tlg001.perseus-grc2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+        "creditLine": "Ἰλιάς, ed. D. B. Monro y T. W. Allen (OCT, 3.ª ed.). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    },
+    {
+      "id": "perseus-eng3",
+      "translator": "Augustus Taber Murray",
+      "language": "en",
+      "title": "The Iliad, with an English Translation",
+      "publisher": "William Heinemann Ltd. (Londres); G. P. Putnam's Sons (Nueva York). Loeb Classical Library",
+      "year": 1925,
+      "yearLabel": "1924–1925",
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-eng3.xml",
+      "urn": "urn:cts:greekLit:tlg0012.tlg001.perseus-eng3",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-eng3.xml",
+        "creditLine": "Iliad, trad. A. T. Murray (Loeb, 1924–1925). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": "apollo-silver-bow",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 1,
+        "lineStart": 37,
+        "lineEnd": 37,
+        "display": "Ilíada 1.37",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:1.37/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Crises invoca a Apolo como «el del arco de plata».",
+      "relatedEntities": [
+        "apollo"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "apollo-bow-and-quiver",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 1,
+        "lineStart": 43,
+        "lineEnd": 48,
+        "display": "Ilíada 1.43–48",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:1.43-1.48/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Apolo desciende del Olimpo con el arco y la aljaba al hombro; las flechas resuenan y dispara contra el campamento aqueo.",
+      "relatedEntities": [
+        "apollo"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-speaks-to-hera",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 1,
+        "lineStart": 571,
+        "lineEnd": 579,
+        "display": "Ilíada 1.571–579",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:1.571-1.579/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Hefesto, «ilustre artesano», toma la palabra para complacer a su madre Hera «de blancos brazos» y le aconseja ser grata a su «querido padre Zeus».",
+      "relatedEntities": [
+        "hephaestus",
+        "hera",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-thrown-to-lemnos",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 1,
+        "lineStart": 590,
+        "lineEnd": 594,
+        "display": "Ilíada 1.590–594",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:1.590-1.594/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Hefesto recuerda que, cuando quiso defender a su madre, fue arrojado del umbral divino tomado del pie; cayó todo el día y llegó a Lemnos, donde lo recogieron los sintios.",
+      "relatedEntities": [
+        "hephaestus",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "aphrodite-daughter-of-zeus-3",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 3,
+        "lineStart": 374,
+        "lineEnd": 374,
+        "display": "Ilíada 3.374",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:3.374/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "La fórmula «hija de Zeus, Afrodita» acompaña su intervención en el duelo del canto 3.",
+      "relatedEntities": [
+        "aphrodite",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hera-three-cities",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 4,
+        "lineStart": 51,
+        "lineEnd": 54,
+        "display": "Ilíada 4.51–54",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:4.51-4.54/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Hera responde a Zeus que sus tres ciudades más queridas son Argos, Esparta y Micenas, y le permite destruirlas cuando le resulten odiosas: no saldrá en su defensa.",
+      "relatedEntities": [
+        "hera",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-09"
+    },
+    {
+      "id": "aphrodite-daughter-of-zeus-5",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 312,
+        "lineEnd": 312,
+        "display": "Ilíada 5.312",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:5.312/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "La misma fórmula, «hija de Zeus, Afrodita», reaparece en el combate del canto 5.",
+      "relatedEntities": [
+        "aphrodite",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "dione-comforts-aphrodite",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 370,
+        "lineEnd": 372,
+        "display": "Ilíada 5.370–372",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:5.370-5.372/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Herida, Afrodita cae en las rodillas de Dione, su madre, que abraza a su hija y la consuela.",
+      "relatedEntities": [
+        "aphrodite",
+        "dione"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "zeus-assigns-marriage",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 426,
+        "lineEnd": 430,
+        "display": "Ilíada 5.426–430",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:5.426-5.430/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Zeus, sonriente, le dice a Afrodita, «hija mía», que no le corresponden las obras de la guerra sino las del matrimonio; la guerra quedará a cargo de Ares y de Atenea.",
+      "relatedEntities": [
+        "zeus",
+        "aphrodite",
+        "ares",
+        "athena"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "athena-arms-herself",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 733,
+        "lineEnd": 742,
+        "display": "Ilíada 5.733–742",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:5.733-5.742/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Atenea, hija de Zeus portador de la égida, deja caer el peplo que ella misma tejió, viste las armas para la guerra y se echa la égida a los hombros.",
+      "relatedEntities": [
+        "athena",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "zeus-rebukes-ares",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 5,
+        "lineStart": 888,
+        "lineEnd": 898,
+        "display": "Ilíada 5.888–898",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:5.888-5.898/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Zeus reprocha a Ares que solo ame la discordia, las guerras y las batallas; aun así lo reconoce como hijo suyo y de Hera.",
+      "relatedEntities": [
+        "zeus",
+        "ares",
+        "hera"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "lycurgus-and-dionysus",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 6,
+        "lineStart": 130,
+        "lineEnd": 137,
+        "display": "Ilíada 6.130–137",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:6.130-6.137/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Licurgo persigue por el monte Niseo a las nodrizas de Dioniso «el delirante»; Dioniso, aterrado, se sumerge en el mar y Tetis lo recibe en su seno.",
+      "relatedEntities": [
+        "dionysus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "the-three-lots",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 15,
+        "lineStart": 187,
+        "lineEnd": 193,
+        "display": "Ilíada 15.187–193",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:15.187-15.193/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Poseidón recuerda que son tres hermanos, hijos de Crono y de Rea: Zeus, él y Hades. Por sorteo le tocó el mar; a Hades, la oscuridad brumosa; a Zeus, el ancho cielo. La tierra y el Olimpo son comunes.",
+      "relatedEntities": [
+        "poseidon",
+        "zeus",
+        "hades",
+        "cronus",
+        "rhea"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-bronze-house",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 18,
+        "lineStart": 369,
+        "lineEnd": 371,
+        "display": "Ilíada 18.369–371",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:18.369-18.371/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Tetis llega a la casa imperecedera y de bronce que se construyó el propio Hefesto, «el de pie torcido».",
+      "relatedEntities": [
+        "hephaestus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-and-his-mother",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 18,
+        "lineStart": 395,
+        "lineEnd": 397,
+        "display": "Ilíada 18.395–397",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:18.395-18.397/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Hefesto recuerda que Tetis lo salvó cuando cayó lejos por voluntad de su madre, que quiso ocultarlo por ser cojo.",
+      "relatedEntities": [
+        "hephaestus",
+        "hera"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "hephaestus-at-the-forge",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "book": 18,
+        "lineStart": 468,
+        "lineEnd": 477,
+        "display": "Ilíada 18.468–477",
+        "scheme": "book.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0012.tlg001.perseus-grc2:18.468-18.477/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0012/tlg001/tlg0012.tlg001.perseus-grc2.xml",
+      "summary": "Hefesto pone a trabajar sus veinte fuelles, echa al fuego bronce, estaño, oro y plata, coloca un gran yunque sobre su soporte y toma en una mano un martillo robusto y en la otra las tenazas.",
+      "relatedEntities": [
+        "hephaestus"
+      ],
+      "verifiedAt": "2026-11-09"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

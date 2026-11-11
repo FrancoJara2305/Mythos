@@ -1,0 +1,466 @@
+---
+/**
+ * Ficha de objeto. Museografía: la pieza en una vitrina (escenario oscuro con luz cenital y plinto de
+ * bronce) con su cartela; al lado, la ficha de catálogo. Después, identificaciones con su certeza,
+ * notas y derechos de la imagen, separados de la narración mítica. El visor 3D aparece solo en objetos
+ * con un modelo real registrado, dentro de la misma vitrina.
+ */
+import { Picture } from 'astro:assets';
+import ArtifactFigure from '../../components/archive/ArtifactFigure.astro';
+import ArtifactInspector from '../../components/three/ArtifactInspector.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import MixedText from '../../components/ui/MixedText.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { PassageIndex } from '../../lib/content/citations.ts';
+import { artifactModels } from '../../lib/content/models.ts';
+import { imageAt } from '../../lib/media.ts';
+import { CERTAINTY_LABELS, RIGHTS_LABELS } from '../../lib/content/labels.ts';
+import { paths } from '../../lib/routes.ts';
+import { sentence } from '../../lib/text/format.ts';
+
+export async function getStaticPaths() {
+  const { visible } = await loadArchive();
+  return visible.artifacts.map((entry) => ({ params: { artifact: entry.id } }));
+}
+
+const { artifact } = Astro.params;
+const { visible } = await loadArchive();
+const entry = visible.artifacts.find((item) => item.id === artifact);
+if (entry === undefined) throw new Error(`Objeto no visible: ${artifact}`);
+const { data } = entry;
+const images = data.media.flatMap((media) => (media.type === 'image' ? [media] : []));
+// Visor 3D solo con un modelo real registrado (archivo, hash y derechos); hoy ningún objeto lo tiene.
+const models = artifactModels(data, new PassageIndex(visible));
+const deities = new Map(visible.deities.map((deity) => [deity.id, deity.data]));
+const contextual = data.identifications
+  .map((identification) => identification.entity.id)
+  .filter((id, index, all) => all.indexOf(id) === index && deities.get(id)?.profile === 'context');
+const unreviewed = data.review.status !== 'published';
+// Un relieve o friso apaisado ocupa toda la vitrina; la ficha pasa debajo, en columnas.
+const lead = images[0];
+const wide = lead !== undefined && lead.width / lead.height > 1.6;
+---
+
+<BaseLayout
+  title={data.title}
+  description={`${data.title} (${data.institution}, ${data.accessionNumber}): ficha del objeto en MYTHOS, con datación, procedencia, identificaciones y derechos de imagen.`}
+  unreviewed={unreviewed}
+>
+  <article class="container artifact" aria-labelledby="artifact-title">
+    <Breadcrumbs
+      items={[
+        { label: 'La Torre', href: paths.home() },
+        // Los objetos son testigos documentales: cuelgan del Códice, junto a las obras.
+        { label: 'El Códice de las Fuentes', href: `${paths.sources()}#objetos` },
+        { label: data.title, lang: 'en' },
+      ]}
+    />
+
+    <header class="artifact__header">
+      <p class="artifact__eyebrow">Objeto · {data.institution}</p>
+      <h1 id="artifact-title" class="artifact__title" lang="en">{data.title}</h1>
+      <p class="artifact__lede">
+        {sentence(data.date.label)} {sentence(data.material)}
+      </p>
+    </header>
+
+    <div class:list={['artifact__body', wide && 'artifact__body--wide']}>
+      <div class="artifact__media">
+        {
+          images.length === 0 ? (
+            <p class="artifact__no-image">
+              Sin fotografía adquirida. Consulta la <a href={data.catalogueUrl} rel="external">ficha del museo</a>.
+            </p>
+          ) : (
+            images.map((image, index) => (
+              <ArtifactFigure
+                artifactId={entry.id}
+                artifact={data}
+                media={image}
+                sizes={wide ? '(min-width: 64rem) 64rem, calc(100vw - 3rem)' : '(min-width: 64rem) 40rem, calc(100vw - 3rem)'}
+                eager={index === 0}
+                linkToRecord={false}
+                mat={entry.id === 'walters-23-40'}
+              />
+            ))
+          )
+        }
+      </div>
+
+      <section class="artifact__record" aria-labelledby="ficha-titulo">
+        <h2 id="ficha-titulo">Ficha</h2>
+        <dl class="record">
+          <div><dt>Institución</dt><dd>{data.institution}</dd></div>
+          <div><dt>Inventario</dt><dd>{data.accessionNumber}</dd></div>
+          <div>
+            <dt>Fecha</dt>
+            <dd>
+              {data.date.label}
+              {data.date.kind === 'range' && <p class="record__note">{data.date.basis}</p>}
+            </dd>
+          </div>
+          <div><dt>Material</dt><dd>{data.material}</dd></div>
+          {data.culture !== undefined && <div><dt>Cultura</dt><dd>{data.culture}</dd></div>}
+          {data.findspot !== undefined && <div><dt>Lugar de hallazgo</dt><dd>{data.findspot}</dd></div>}
+          <div>
+            <dt>Procedencia</dt>
+            <dd>
+              {data.provenance.summary}
+              <p class="record__note">Certeza: {CERTAINTY_LABELS[data.provenance.certainty]}.</p>
+            </dd>
+          </div>
+          <div><dt>Línea de crédito</dt><dd>{data.creditLine}</dd></div>
+          <div>
+            <dt>Catálogo</dt>
+            <dd><a href={data.catalogueUrl} rel="external">Ficha del museo</a></dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
+    {
+      models.map((model, index) => (
+        <section class="artifact__section" aria-labelledby={`modelo-${index}-titulo`}>
+          <h2 id={`modelo-${index}-titulo`}>Modelo 3D</h2>
+          <ArtifactInspector
+            id={`modelo-${index}`}
+            title={data.title}
+            config={model.config}
+            triangles={model.media.triangles}
+            hotspots={model.hotspots}
+          >
+            <Picture
+              slot="poster"
+              src={imageAt(model.poster.localPath)}
+              formats={['avif', 'webp']}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 64rem) 56rem, calc(100vw - 3rem)"
+              alt={model.poster.alt}
+              loading="lazy"
+            />
+          </ArtifactInspector>
+          <dl class="record">
+            <div><dt>Derechos del modelo</dt><dd>{RIGHTS_LABELS[model.media.rights.status]}</dd></div>
+            <div>
+              <dt>Licencia</dt>
+              <dd>
+                {model.media.rights.licenseUrl !== undefined ? (
+                  <a href={model.media.rights.licenseUrl} rel="external license">{model.media.rights.licenseName}</a>
+                ) : (
+                  model.media.rights.licenseName
+                )}
+              </dd>
+            </div>
+            <div><dt>Autoría del modelo</dt><dd>{model.media.rights.creator}</dd></div>
+            <div>
+              <dt>Original</dt>
+              <dd><a href={model.media.rights.sourceUrl} rel="external">Archivo publicado</a> ({model.media.sourceFormat})</dd>
+            </div>
+            <div>
+              <dt>Cambios</dt>
+              <dd>{model.media.rights.modifications.length === 0 ? 'Ninguno: archivo original.' : model.media.rights.modifications.join(' ')}</dd>
+            </div>
+            <div><dt>Texturas</dt><dd>{model.media.textureSummary}</dd></div>
+          </dl>
+        </section>
+      ))
+    }
+
+    <section class="artifact__section" aria-labelledby="identificaciones-titulo">
+      <h2 id="identificaciones-titulo">Identificaciones</h2>
+      {
+        data.identifications.length === 0 ? (
+          <p class="prose">
+            MYTHOS no registra ninguna identificación de figuras para este objeto: la ficha consultada no la ofrece o aún
+            no se ha cotejado su descripción. No se infiere a partir de la apariencia.
+          </p>
+        ) : (
+          <ul role="list" class="identifications">
+            {data.identifications.map((identification) => {
+              const deity = deities.get(identification.entity.id);
+              const href =
+                deity?.profile === 'full' ? paths.deity(identification.entity.id) : `#contexto-${identification.entity.id}`;
+              return (
+                <li class="identification">
+                  <p>
+                    <a href={href}>{deity?.name ?? identification.entity.id}</a> · certeza{' '}
+                    {CERTAINTY_LABELS[identification.certainty]}
+                  </p>
+                  <p>
+                    Rótulo de la institución: «<span lang="en">{identification.attributionLabel}</span>»
+                  </p>
+                  <p class="record__note">{identification.note}</p>
+                </li>
+              );
+            })}
+          </ul>
+        )
+      }
+    </section>
+
+    {
+      data.catalogueNotes.length > 0 && (
+        <section class="artifact__section" aria-labelledby="notas-titulo">
+          <h2 id="notas-titulo">Notas de catálogo</h2>
+          <ul class="notes">
+            {data.catalogueNotes.map((note) => (
+              <li>
+                <MixedText text={note} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      images.length > 0 && (
+        <section class="artifact__section" aria-labelledby="derechos-titulo">
+          <h2 id="derechos-titulo">Derechos de la imagen</h2>
+          {images.map((image) => (
+            <dl class="record">
+              <div><dt>Estado</dt><dd>{RIGHTS_LABELS[image.rights.status]}</dd></div>
+              <div>
+                <dt>Licencia</dt>
+                <dd>
+                  {image.rights.licenseUrl !== undefined ? (
+                    <a href={image.rights.licenseUrl} rel="external license">{image.rights.licenseName}</a>
+                  ) : (
+                    image.rights.licenseName
+                  )}
+                </dd>
+              </div>
+              <div><dt>Autoría</dt><dd>{image.rights.creator}</dd></div>
+              <div>
+                <dt>Original</dt>
+                <dd><a href={image.rights.sourceUrl} rel="external">Archivo de la institución</a></dd>
+              </div>
+              <div>
+                <dt>Cambios</dt>
+                <dd>{image.rights.modifications.length === 0 ? 'Ninguno: archivo original.' : image.rights.modifications.join(' ')}</dd>
+              </div>
+            </dl>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      contextual.length > 0 && (
+        <section class="artifact__section" aria-labelledby="contexto-titulo">
+          <h2 id="contexto-titulo">Figuras sin ficha propia</h2>
+          {contextual.map((id) => (
+            <div class="context" id={`contexto-${id}`}>
+              <h3>
+                {deities.get(id)?.name} <span lang="grc">{deities.get(id)?.greekName}</span>
+              </h3>
+              {deities.get(id)?.summary !== undefined && (
+                <p class="prose">
+                  <MixedText text={deities.get(id)?.summary ?? ''} />
+                </p>
+              )}
+            </div>
+          ))}
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .artifact {
+    display: grid;
+    gap: var(--space-32);
+    padding-block: var(--space-24) var(--space-32);
+  }
+
+  .artifact__header {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .artifact__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .artifact__title {
+    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 5rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .artifact__body {
+    display: grid;
+    gap: var(--space-32);
+  }
+
+  @media (min-width: 64rem) {
+    .artifact__body {
+      grid-template-columns: minmax(0, 1.6fr) minmax(17rem, 1fr);
+      align-items: start;
+      column-gap: var(--space-48);
+    }
+  }
+
+  /* Vitrina: luz cenital sobre la pieza, sombra al pie y plinto de bronce; la cartela, aparte. */
+  .artifact__media {
+    display: grid;
+    gap: var(--space-24);
+    padding: clamp(1.25rem, 3vw, 3rem);
+    background:
+      radial-gradient(ellipse 60% 55% at 50% 36%, rgb(233 226 213 / 0.13), transparent 70%),
+      linear-gradient(to bottom, #171a1f, #0c0e11);
+    border-block-end: 3px solid var(--decoration-bronze);
+  }
+
+  .artifact__media :global(.artifact-figure) {
+    justify-items: center;
+    gap: var(--space-16);
+  }
+
+  .artifact__media :global(.artifact-figure__frame) {
+    max-inline-size: 100%;
+    background: none;
+    box-shadow: 0 32px 40px -26px rgb(0 0 0 / 0.85);
+  }
+
+  .artifact__media :global(.artifact-figure__frame--mat) {
+    background-color: var(--color-marble);
+  }
+
+  .artifact__media :global(.artifact-figure__frame img) {
+    inline-size: auto;
+    max-inline-size: 100%;
+    max-block-size: 66svh;
+    margin-inline: auto;
+  }
+
+  .artifact__media :global(.artifact-figure__caption) {
+    justify-self: stretch;
+    max-inline-size: 38rem;
+    padding: var(--space-12) var(--space-16);
+    border-inline-start: 2px solid var(--decoration-bronze);
+    background-color: rgb(11 13 16 / 0.6);
+  }
+
+  @media (min-width: 64rem) {
+    .artifact__record {
+      position: sticky;
+      inset-block-start: var(--space-24);
+    }
+  }
+
+  .artifact__record,
+  .artifact__section {
+    display: grid;
+    gap: var(--space-16);
+    align-content: start;
+  }
+
+  .record {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .record > div {
+    display: grid;
+    gap: var(--space-4);
+    padding-block-start: var(--space-8);
+    border-block-start: 1px solid var(--surface-raised);
+  }
+
+  @media (min-width: 40rem) {
+    .record > div {
+      grid-template-columns: 11rem 1fr;
+      column-gap: var(--space-24);
+    }
+  }
+
+  /* Junto a la vitrina, la ficha es una columna estrecha: rótulo encima del dato. */
+  @media (min-width: 64rem) {
+    .artifact__record .record > div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .artifact__record dd {
+      font-size: 1rem;
+    }
+
+    .artifact__body--wide {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .artifact__body--wide .artifact__record {
+      position: static;
+    }
+
+    .artifact__body--wide .record {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--space-32);
+    }
+  }
+
+  .record dt {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .record__note {
+    margin-block-start: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+
+  .record a,
+  .identification a,
+  .artifact__no-image a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  /* Identificaciones: una cartela por figura, en friso. */
+  .identifications {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-12);
+  }
+
+  .identification {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding: var(--space-12) var(--space-16) var(--space-16);
+    border-block-start: 2px solid var(--decoration-bronze);
+    background-color: var(--surface-stone);
+    font-size: var(--font-size-small);
+    scroll-margin-block-start: var(--space-16);
+  }
+
+  .identification a {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+  }
+
+  .notes {
+    display: grid;
+    gap: var(--space-8);
+    max-inline-size: var(--measure);
+    padding-inline-start: var(--space-24);
+  }
+
+  .context {
+    display: grid;
+    gap: var(--space-8);
+    padding: var(--space-16);
+    border-inline-start: 3px solid var(--decoration-laurel);
+    background-color: var(--surface-raised);
+    scroll-margin-block-start: var(--space-16);
+  }
+</style>

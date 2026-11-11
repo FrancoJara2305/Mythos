@@ -1,0 +1,29 @@
+/*
+ * Hoja global de MYTHOS. El orden de capas fija la precedencia; los estilos scoped de los componentes
+ * `.astro` no tienen capa y por tanto prevalecen sobre todas estas reglas.
+ */
+@layer reset, tokens, base, layout, utilities;
+
+@import './fonts.css';
+@import './reset.css';
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './accessibility.css';
+
+/*
+ * View Transitions entre documentos (mejora opcional, docs/design_guidelines.md «Movimiento»): solo con
+ * preferencia de movimiento; sin JavaScript ni ClientRouter. Los navegadores sin soporte navegan igual.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--duration-page);
+  animation-timing-function: var(--ease-entrance);
+}

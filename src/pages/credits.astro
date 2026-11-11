@@ -1,0 +1,197 @@
+---
+/**
+ * Créditos y licencias: imágenes de objetos, ediciones digitales y recursos originales, con
+ * el estado de sus derechos tal como consta en el archivo. Fuente: los registros de contenido y
+ * docs/asset_manifest.md.
+ */
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import MixedText from '../components/ui/MixedText.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadArchive } from '../lib/content/archive.ts';
+import { RIGHTS_LABELS } from '../lib/content/labels.ts';
+import { paths } from '../lib/routes.ts';
+
+const { visible } = await loadArchive();
+const images = visible.artifacts.flatMap((artifact) =>
+  artifact.data.media.flatMap((media) => (media.type === 'image' ? [{ artifact, media }] : [])),
+);
+const editions = visible.sources.flatMap((source) => source.data.editions.map((edition) => ({ source, edition })));
+---
+
+<BaseLayout
+  title="Créditos"
+  description="Créditos y licencias de MYTHOS: fotografías de objetos, ediciones digitales de los textos y recursos originales."
+>
+  <div class="container credits">
+    <Breadcrumbs items={[{ label: 'La Torre', href: paths.home() }, { label: 'Créditos' }]} />
+    <header class="credits__header">
+      <h1>Créditos y licencias</h1>
+      <p class="prose">
+        La licencia de un objeto antiguo, la de su fotografía y la de su modelo digital son distintas: aquí se indica la
+        del archivo concreto que usa MYTHOS. Un estado «sin verificar» significa que la licencia está documentada pero
+        falta una comprobación humana; esos recursos no se publican en producción hasta completarla.
+      </p>
+    </header>
+
+    <section class="credits__section" aria-labelledby="imagenes-titulo">
+      <h2 id="imagenes-titulo">Fotografías de objetos</h2>
+      <ul role="list" class="credits__list">
+        {
+          images.map(({ artifact, media }) => (
+            <li class="credit">
+              <p class="credit__title">
+                <a href={paths.artifact(artifact.id)} lang="en">
+                  {artifact.data.title}
+                </a>
+              </p>
+              <p>
+                {media.rights.creditLine}. Autoría: {media.rights.creator}.
+              </p>
+              <p>
+                {media.rights.licenseUrl !== undefined ? (
+                  <a href={media.rights.licenseUrl} rel="external license">
+                    {media.rights.licenseName}
+                  </a>
+                ) : (
+                  media.rights.licenseName
+                )}{' '}
+                · {RIGHTS_LABELS[media.rights.status]}
+                {media.rights.checkedAt !== undefined && <> · consultado el {media.rights.checkedAt}</>}
+              </p>
+              <p>{media.rights.modifications.length === 0 ? 'Archivo original sin cambios.' : media.rights.modifications.join(' ')}</p>
+              <p>
+                <a href={media.rights.sourceUrl} rel="external">
+                  Archivo de origen
+                </a>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="credits__section" aria-labelledby="ediciones-titulo">
+      <h2 id="ediciones-titulo">Ediciones digitales de los textos</h2>
+      <p class="prose">
+        MYTHOS no reproduce los textos: cita localizadores y enlaza a las ediciones del Perseus Digital Library
+        (repositorio <span lang="en">canonical-greekLit</span>, fijado a un commit). Los resúmenes de pasajes son de
+        MYTHOS.
+      </p>
+      <ul role="list" class="credits__list">
+        {
+          editions.map(({ source, edition }) => (
+            <li class="credit">
+              <p class="credit__title">
+                <a href={paths.source(source.id)}>{source.data.title}</a>: {edition.title}
+              </p>
+              <p>
+                {edition.editor ?? edition.translator}, {edition.publisher}, {edition.yearLabel ?? edition.year}.
+              </p>
+              <p>
+                <MixedText text={edition.rights.creditLine} />{' '}
+                {edition.rights.licenseUrl !== undefined ? (
+                  <a href={edition.rights.licenseUrl} rel="external license">
+                    {edition.rights.licenseName}
+                  </a>
+                ) : (
+                  edition.rights.licenseName
+                )}{' '}
+                · {RIGHTS_LABELS[edition.rights.status]}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="credits__section" aria-labelledby="originales-titulo">
+      <h2 id="originales-titulo">Recursos originales de MYTHOS</h2>
+      <ul role="list" class="credits__list">
+        <li class="credit">
+          <p class="credit__title">La Torre del Conocimiento y el cielo estrellado</p>
+          <p>
+            Arte vectorial original generado en el build: portal de geometría sagrada, torre, nubes, paisaje y la trama
+            de estrellas del fondo de todas las páginas. Interpretación artística; no reconstruye ningún edificio ni
+            ningún mapa celeste antiguo.
+          </p>
+        </li>
+        <li class="credit">
+          <p class="credit__title">Escenas de las fichas</p>
+          <p>
+            Trece ilustraciones vectoriales originales, una por divinidad, cuyo objeto central dibuja un atributo
+            documentado en la ficha (símbolo editorial). No reproducen objetos antiguos ni fotografías de museo.
+          </p>
+        </li>
+        <li class="credit">
+          <p class="credit__title">Constelaciones de la bóveda</p>
+          <p>
+            Figuras editoriales dibujadas a partir del símbolo de cada divinidad. No son constelaciones astronómicas ni
+            figuras celestes de la Antigüedad.
+          </p>
+        </li>
+        <li class="credit">
+          <p class="credit__title">Autoría y licencia de los recursos originales</p>
+          <p>MYTHOS (2026). Licencia de reutilización: pendiente de decisión del responsable del proyecto.</p>
+        </li>
+        <li class="credit">
+          <p class="credit__title">Tipografía</p>
+          <p>
+            Cormorant Garamond (Cormorant Project Authors), Noto Sans (Noto Project Authors) e IBM Plex Mono (IBM),
+            bajo la SIL Open Font License 1.1. Se sirven desde el propio sitio, recortadas a los caracteres y pesos en
+            uso; cada licencia acompaña a sus archivos:
+            <a href="/assets/fonts/OFL-cormorant-garamond.txt" rel="license">Cormorant Garamond</a>,
+            <a href="/assets/fonts/OFL-noto-sans.txt" rel="license">Noto Sans</a> e
+            <a href="/assets/fonts/OFL-ibm-plex-mono.txt" rel="license">IBM Plex Mono</a>.
+          </p>
+        </li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .credits {
+    display: grid;
+    gap: var(--space-48);
+    padding-block: var(--space-24) var(--space-32);
+  }
+
+  .credits__header,
+  .credits__section {
+    display: grid;
+    gap: var(--space-16);
+    align-content: start;
+  }
+
+  .credits__list {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 48rem) {
+    .credits__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-24) var(--space-32);
+    }
+  }
+
+  .credit {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding: var(--space-16) var(--space-24);
+    background-color: var(--surface-raised);
+    font-size: var(--font-size-small);
+  }
+
+  .credit__title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+  }
+
+  .credits a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+</style>

@@ -1,0 +1,138 @@
+---
+/**
+ * Pie persistente. Aquí vive, con discreción, la puerta a la capa documental: «El Códice de las
+ * Fuentes» (obras, pasajes y objetos) y los créditos. Fuera de producción indica el ambiente para que
+ * nadie confunda una Preview o un build local con el sitio público.
+ *
+ * `unreviewed`: la página muestra registros sin revisión curatorial humana. El aviso ya no ocupa la
+ * interfaz pública: solo se pinta, pequeño, en modo depuración (servidor de desarrollo). En producción
+ * esos registros no existen (src/lib/content/integrity.ts, `visibleArchive`).
+ */
+import { availableItems, footerNavigation } from '../../config/navigation.ts';
+import { getPublicEnv, type AppEnv } from '../../lib/env.ts';
+import { ariaCurrent } from '../../lib/routes.ts';
+
+interface Props {
+  unreviewed?: boolean;
+}
+
+const { unreviewed = false } = Astro.props;
+const env = getPublicEnv();
+const items = availableItems(footerNavigation);
+const siblingHrefs = items.map((item) => item.href);
+const pathname = Astro.url.pathname;
+const debug = import.meta.env.DEV;
+
+const ENV_LABELS: Record<AppEnv, string> = {
+  development: 'desarrollo',
+  staging: 'staging',
+  production: 'producción',
+};
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p class="site-footer__name">
+      <span class="site-footer__brand">MYTHOS</span>
+      <span>Narratorio de mitología</span>
+    </p>
+    {
+      items.length > 0 && (
+        <nav class="site-footer__nav" aria-label="Fuentes y créditos">
+          <p class="site-footer__ask">¿De dónde sale cada historia?</p>
+          <ul role="list" class="site-footer__links">
+            {items.map((item) => (
+              <li>
+                <a href={item.href} aria-current={ariaCurrent(pathname, item.href, siblingHrefs)}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+    {
+      !env.indexable && (
+        <p class="site-footer__env">
+          Entorno: {ENV_LABELS[env.appEnv]}. Esta versión no se indexa en buscadores.
+        </p>
+      )
+    }
+    {
+      debug && unreviewed && (
+        <p class="site-footer__debug" data-debug="unreviewed">
+          <span aria-hidden="true">●</span> depuración: contenido en borrador curatorial
+        </p>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    margin-block-start: var(--space-64);
+    border-block-start: 1px solid var(--rule-soft);
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--surface-stone) 80%, transparent));
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-12) var(--space-32);
+    padding-block: var(--space-24) var(--space-32);
+    font-size: var(--font-size-small);
+  }
+
+  .site-footer__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-16);
+  }
+
+  .site-footer__brand {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    letter-spacing: 0.2em;
+  }
+
+  .site-footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-16);
+  }
+
+  .site-footer__ask {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.0625rem;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-24);
+  }
+
+  .site-footer__links a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .site-footer__env,
+  .site-footer__debug {
+    flex-basis: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .site-footer__debug {
+    color: var(--text-accent);
+  }
+</style>

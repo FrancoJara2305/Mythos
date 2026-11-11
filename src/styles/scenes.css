@@ -1,0 +1,500 @@
+/*
+ * Escenas de las fichas (src/lib/scenes/, src/components/deity/DeityHero.astro).
+ *
+ * Encuadre: la escena (1600 × 1000) cubre su contenedor como `object-fit: cover`, con un punto de
+ * interés horizontal propio de cada deidad en escritorio (`--focus-x`) y en móvil (`--focus-x-mobile`).
+ * Todas las capas comparten el mismo escenario, así que base y efectos nunca se desalinean.
+ *
+ * Movimiento: cada capa tiene un estilo base que ES su versión estática (sin JavaScript, fuera de
+ * pantalla, con la pestaña oculta o con movimiento reducido). Las animaciones solo existen mientras
+ * src/scripts/site-nav.ts marca la escena con data-ambient-state="running"; animan únicamente
+ * transform y opacity. En móvil solo se anima la primera capa de efecto.
+ */
+
+.scene {
+  container-type: size;
+}
+
+.scene__stage {
+  position: absolute;
+  inline-size: max(100cqw, 160cqh);
+  block-size: max(100cqh, 62.5cqw);
+  inset-inline-start: calc((100cqw - max(100cqw, 160cqh)) * var(--focus-x, 0.5));
+  inset-block-start: calc((100cqh - max(100cqh, 62.5cqw)) * 0.5);
+}
+
+@media (max-width: 47.99rem) {
+  .scene__stage {
+    inset-inline-start: calc((100cqw - max(100cqw, 160cqh)) * var(--focus-x-mobile, 0.5));
+  }
+}
+
+.scene__base,
+.scene__fx,
+.scene__fx > svg {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.scene__base {
+  object-fit: fill;
+}
+
+.scene__fx {
+  pointer-events: none;
+}
+
+.scene[data-ambient-state='running'] .scene__fx {
+  will-change: transform, opacity;
+}
+
+/* ——— Poseidón: cáusticas lentas, refracción y ondulación ——— */
+.scene__fx--caustics-a {
+  mix-blend-mode: screen;
+  transform: scale(1.05);
+}
+
+.scene__fx--caustics-b {
+  mix-blend-mode: screen;
+  transform: scale(1.05) translate3d(1%, 0.5%, 0);
+}
+
+.scene__fx--shafts {
+  transform-origin: 70% 0;
+  opacity: 0.85;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--caustics-a {
+  animation: mythos-caustic-a 38s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--caustics-b {
+  animation: mythos-caustic-b 27s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--shafts {
+  animation: mythos-sway 17s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-caustic-a {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(2%, 1.5%, 0) scale(1.08);
+  }
+}
+
+@keyframes mythos-caustic-b {
+  from {
+    transform: translate3d(2%, -1%, 0) scale(1.07);
+  }
+  to {
+    transform: translate3d(-2%, 1.2%, 0) scale(1.04);
+  }
+}
+
+@keyframes mythos-sway {
+  from {
+    transform: skewX(-3deg);
+    opacity: 0.65;
+  }
+  to {
+    transform: skewX(3deg);
+    opacity: 1;
+  }
+}
+
+/* ——— Zeus: claridad tras la tormenta y nubes que derivan (sin destellos) ——— */
+.scene__fx--storm-light {
+  opacity: 0.75;
+}
+
+.scene__fx--clouds {
+  transform: scale(1.08);
+}
+
+.scene[data-ambient-state='running'] .scene__fx--storm-light {
+  animation: mythos-breathe 11s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--clouds {
+  animation: mythos-drift 70s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-breathe {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mythos-drift {
+  from {
+    transform: translate3d(-3%, 0, 0) scale(1.08);
+  }
+  to {
+    transform: translate3d(3%, 0, 0) scale(1.08);
+  }
+}
+
+/* ——— Hera: barrido de luz rasante sobre el friso ——— */
+.scene__fx--relief-sweep {
+  mix-blend-mode: screen;
+  transform: translate3d(10%, 0, 0);
+  opacity: 0.7;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--relief-sweep {
+  animation: mythos-sweep 16s linear infinite;
+}
+
+@keyframes mythos-sweep {
+  0% {
+    transform: translate3d(-40%, 0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  65%,
+  100% {
+    transform: translate3d(70%, 0, 0);
+    opacity: 0;
+  }
+}
+
+/* ——— Deméter: espigas que oscilan y sombras que se desplazan ——— */
+.scene__fx--wheat {
+  transform-origin: 50% 100%;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--wheat {
+  animation: mythos-wheat 7s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--shadows {
+  animation: mythos-shadows 9s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-wheat {
+  from {
+    transform: skewX(-1.4deg);
+  }
+  to {
+    transform: skewX(1.8deg);
+  }
+}
+
+@keyframes mythos-shadows {
+  from {
+    transform: translate3d(-1.5%, 0, 0);
+  }
+  to {
+    transform: translate3d(1.5%, 0, 0);
+  }
+}
+
+/* ——— Atenea: el haz se abre una vez y después solo respira ——— */
+.scene__fx--beam {
+  transform-origin: 50% 20%;
+  mix-blend-mode: screen;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--beam {
+  animation:
+    mythos-beam-open 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+    mythos-beam-breathe 12s 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-beam-open {
+  from {
+    transform: scaleX(0.04);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes mythos-beam-breathe {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.7;
+  }
+}
+
+/* ——— Apolo: bandas de luz que se desplazan sobre las cuerdas ——— */
+.scene__fx--light-bands {
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--light-bands {
+  animation: mythos-bands 14s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-bands {
+  from {
+    transform: translate3d(0, -2.5%, 0);
+    opacity: 0.6;
+  }
+  to {
+    transform: translate3d(0, 3%, 0);
+    opacity: 1;
+  }
+}
+
+/* ——— Ártemis: luz entre el follaje ——— */
+.scene__fx--dapple {
+  mix-blend-mode: screen;
+}
+
+.scene__fx--canopy {
+  transform-origin: 50% 0;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--dapple {
+  animation: mythos-dapple 13s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--canopy {
+  animation: mythos-canopy 9s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-dapple {
+  from {
+    transform: translate3d(-1.5%, 0.6%, 0);
+    opacity: 0.7;
+  }
+  to {
+    transform: translate3d(1.5%, -0.6%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes mythos-canopy {
+  from {
+    transform: rotate(-0.6deg) translate3d(-0.5%, 0, 0);
+  }
+  to {
+    transform: rotate(0.6deg) translate3d(0.5%, 0, 0);
+  }
+}
+
+/* ——— Ares: destellos breves y espaciados; revelación firme al cargar ——— */
+.scene__fx--glint-a,
+.scene__fx--glint-b {
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--glint-a {
+  animation: mythos-glint 9s ease-out infinite;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--glint-b {
+  animation: mythos-glint 9s 4.5s ease-out infinite;
+}
+
+@keyframes mythos-glint {
+  0%,
+  84% {
+    opacity: 0;
+  }
+  88% {
+    opacity: 1;
+  }
+  95%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero--ares .scene__stage {
+    animation: mythos-reveal 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@keyframes mythos-reveal {
+  from {
+    transform: translate3d(0, 12px, 0) scale(1.02);
+    opacity: 0.4;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* ——— Afrodita: reflejos de agua y brillo de nácar ——— */
+.scene__fx--sheen {
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+.scene__fx--ripples {
+  transform-origin: 50% 88%;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--sheen {
+  animation: mythos-sheen 12s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--ripples {
+  animation: mythos-ripples 6s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-sheen {
+  from {
+    transform: translate3d(-2%, 0, 0);
+    opacity: 0.4;
+  }
+  to {
+    transform: translate3d(2%, 0, 0);
+    opacity: 0.95;
+  }
+}
+
+@keyframes mythos-ripples {
+  from {
+    transform: scaleX(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scaleX(1.04) translate3d(-1%, 0, 0);
+  }
+}
+
+/* ——— Hefesto: resplandor de fragua irregular y contenido ——— */
+.scene__fx--forge-a {
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.scene__fx--forge-b {
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--forge-a {
+  animation: mythos-forge-a 3.7s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--forge-b {
+  animation: mythos-forge-b 5.3s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-forge-a {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mythos-forge-b {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+/* ——— Hermes: trazos de aire en diagonal ——— */
+.scene__fx--wind-a {
+  opacity: 0.8;
+}
+
+.scene__fx--wind-b {
+  opacity: 0;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--wind-a {
+  animation: mythos-wind 6s linear infinite;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--wind-b {
+  animation: mythos-wind 6s 3s linear infinite;
+}
+
+@keyframes mythos-wind {
+  0% {
+    transform: translate3d(-8%, 5%, 0);
+    opacity: 0;
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(8%, -5%, 0);
+    opacity: 0;
+  }
+}
+
+/* ——— Dioniso: sombras de hiedra y luz lenta ——— */
+.scene__fx--slow-light {
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.scene__fx--leaf-shadow {
+  transform-origin: 30% 0;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--slow-light {
+  animation: mythos-slow-light 22s ease-in-out infinite alternate;
+}
+
+.scene[data-ambient-state='running'] .scene__fx--leaf-shadow {
+  animation: mythos-leaf 11s ease-in-out infinite alternate;
+}
+
+@keyframes mythos-slow-light {
+  from {
+    transform: translate3d(-3%, 1%, 0);
+    opacity: 0.7;
+  }
+  to {
+    transform: translate3d(3%, -1%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes mythos-leaf {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.4deg);
+  }
+}
+
+/* Móvil: solo la primera capa de efecto se mueve. */
+@media (max-width: 47.99rem) {
+  .scene[data-ambient-state='running'] .scene__fx + .scene__fx {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/* Movimiento reducido: ninguna capa se anima, aunque el script la marcara. */
+@media (prefers-reduced-motion: reduce) {
+  .scene .scene__fx,
+  .scene .scene__stage {
+    animation: none !important;
+  }
+}

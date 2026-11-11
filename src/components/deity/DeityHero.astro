@@ -1,0 +1,480 @@
+---
+/**
+ * Primera vista de una ficha («Descubrir»): la escena original de la deidad ocupa casi toda la
+ * pantalla; encima, solo el nombre, el nombre griego, el dominio principal, una síntesis de una o dos
+ * frases y una acción. La bibliografía no aparece aquí: cada afirmación de la ficha lleva su fuente
+ * en su sección.
+ *
+ * La escena es decorativa (`alt=""`); su pie dice qué muestra y que es una interpretación artística.
+ * Las capas de efecto solo se animan con CSS mientras la escena es visible (src/scripts/site-nav.ts,
+ * src/styles/scenes.css); sin JavaScript o con movimiento reducido quedan quietas.
+ */
+import type { DeityTheme } from '../../config/deity-themes.ts';
+import { themeStyle } from '../../config/deity-themes.ts';
+import type { ArtifactLink } from '../../lib/content/deity-archive.ts';
+import { CERTAINTY_LABELS } from '../../lib/content/labels.ts';
+import { sceneFor } from '../../lib/scenes/scenes.ts';
+import ArtifactFigure from '../archive/ArtifactFigure.astro';
+import MixedText from '../ui/MixedText.astro';
+import '../../styles/scenes.css';
+
+interface Props {
+  id: string;
+  name: string;
+  greekName: string | undefined;
+  transliteration: string | undefined;
+  /** Frase evocadora de la deidad. */
+  tagline: string | undefined;
+  /** Dominios en pocas palabras, como etiquetas. */
+  domains: readonly string[];
+  /** Rótulo sobre el nombre: posición en la bóveda y, si procede, su tradición. */
+  eyebrow: string;
+  theme: DeityTheme;
+  emblemDepicts: string;
+  position: number;
+  total: number;
+  /** Objeto fotografiado que representa a la deidad con identificación explícita o probable. */
+  representation: ArtifactLink | undefined;
+  action: { label: string; href: string };
+}
+
+const { id, name, greekName, transliteration, tagline, domains, eyebrow, theme, emblemDepicts, position, total, representation, action } = Astro.props;
+const scene = sceneFor(id);
+const image = representation?.entry.data.media.find((media) => media.type === 'image');
+---
+
+<section
+  id="vision"
+  class:list={['hero', `hero--${theme.family}`, `hero--${theme.surface}`, `hero--${id}`, { 'hero--with-piece': representation !== undefined }]}
+  style={themeStyle(theme)}
+  aria-labelledby="deity-title"
+>
+  <div class="hero__scene scene" data-ambient data-ambient-state="paused" data-effect={theme.effect.kind} style={`view-transition-name: scene-${id}`}>
+    <div class="scene__stage">
+      <img class="scene__base" src={`/scenes/${id}.svg`} alt="" width="1600" height="1000" fetchpriority="high" decoding="async" />
+      {scene.fx.map((layer) => <div class={`scene__fx scene__fx--${layer.name}`} set:html={layer.svg} />)}
+    </div>
+  </div>
+
+  <div class="hero__text">
+    <p class="hero__eyebrow">
+      <span>{eyebrow}</span>
+      <span class="hero__position" aria-label={`Constelación ${position} de ${total}`}>{String(position).padStart(2, '0')} / {total}</span>
+    </p>
+    <h1 id="deity-title" class="hero__name">{name}</h1>
+    {
+      greekName !== undefined && (
+        <p class="hero__greek deity__greek">
+          <span lang="grc">{greekName}</span>
+          {transliteration !== undefined && <span class="hero__translit">{transliteration}</span>}
+        </p>
+      )
+    }
+    {tagline !== undefined && <p class="hero__tagline">{tagline}</p>}
+    {
+      domains.length > 0 && (
+        <ul class="hero__domains" role="list" aria-label="Dominios">
+          {domains.map((domain) => (
+            <li>
+              <MixedText text={domain} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <p class="hero__actions">
+      <a class="hero__action" href={action.href}>{action.label}</a>
+    </p>
+  </div>
+
+  {
+    representation !== undefined && image !== undefined && image.type === 'image' && (
+      <div class="hero__piece deity__media">
+        <ArtifactFigure
+          artifactId={representation.entry.id}
+          artifact={representation.entry.data}
+          media={image}
+          sizes="(min-width: 64rem) 18rem, calc(100vw - 2rem)"
+          eager
+          note={`Identificación ${CERTAINTY_LABELS[representation.identification.certainty]}: «${representation.identification.attributionLabel}».`}
+        />
+      </div>
+    )
+  }
+
+  <p class="hero__caption">
+    <span class="hero__caption-title">Ilustración original de MYTHOS</span>: {theme.caption}. Interpreta su símbolo ({emblemDepicts}); no
+    reproduce ningún objeto antiguo.
+  </p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    background-color: var(--theme-deep);
+    color: var(--text-primary);
+  }
+
+  .hero__scene {
+    position: relative;
+    block-size: clamp(18rem, 56svh, 36rem);
+    overflow: hidden;
+  }
+
+  .hero__text {
+    position: relative;
+    display: grid;
+    gap: var(--space-12);
+    align-content: start;
+    padding: var(--space-24) var(--gutter) var(--space-16);
+  }
+
+  .hero__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8) var(--space-16);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hero__position {
+    color: var(--text-link);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero__name {
+    font-size: clamp(3.5rem, 2rem + 7vw, 8.5rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__greek {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-8) var(--space-16);
+    font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+  }
+
+  .hero__translit {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.8em;
+  }
+
+  .hero__tagline {
+    max-inline-size: 34rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+    font-style: italic;
+    line-height: 1.2;
+  }
+
+  .hero__domains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  .hero__domains li {
+    padding: 0.125rem var(--space-12);
+    border: 1px solid color-mix(in srgb, var(--theme-accent) 80%, transparent);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-small);
+    background-color: color-mix(in srgb, var(--theme-deep) 70%, transparent);
+  }
+
+  .hero__actions {
+    padding-block-start: var(--space-8);
+  }
+
+  .hero__action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-24);
+    border-radius: var(--radius-pill);
+    background-color: var(--action-primary-bg);
+    color: var(--action-primary-text);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--duration-hover) ease-out;
+  }
+
+  .hero__action::after {
+    content: '↓';
+    font-weight: 400;
+  }
+
+  .hero__action:hover {
+    background-color: var(--color-star-gold);
+  }
+
+  .hero__piece {
+    padding: 0 var(--gutter) var(--space-16);
+  }
+
+  .hero__piece :global(.artifact-figure) {
+    max-inline-size: 18rem;
+  }
+
+  .hero__caption {
+    padding: var(--space-8) var(--gutter) var(--space-16);
+    font-size: var(--font-size-meta);
+    line-height: 1.45;
+  }
+
+  .hero__caption-title {
+    font-weight: 600;
+  }
+
+  /* ——— Superficie clara (Afrodita): texto y foco oscuros, contraste comprobado ——— */
+  .hero--light {
+    --text-primary: #1d1414;
+    --text-link: #6b3626;
+    --focus-ring: #3a1f16;
+    --action-primary-bg: #3a1f16;
+    --action-primary-text: #fbf6f2;
+    background-color: #efe5df;
+  }
+
+  .hero--light .hero__action:hover {
+    background-color: #6b3626;
+  }
+
+  /*
+   * ——— Superposición: solo cuando el propio héroe es ancho (consulta de contenedor sobre la ficha,
+   * no sobre la ventana). Por debajo, en móvil, tableta vertical o escritorio estrecho con la barra
+   * lateral, la escena va encima y el texto debajo, sin pisar nunca el objeto. ———
+   */
+  @container deity (min-width: 60rem) {
+    .hero {
+      min-block-size: clamp(36rem, calc(100svh - 2.5rem), 60rem);
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: 1fr auto;
+      grid-template-areas:
+        'text piece'
+        'caption caption';
+      overflow: hidden;
+    }
+
+    /* Escena (-2) < velo de contraste (::before, -1) < texto. */
+    .hero__scene {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      block-size: auto;
+    }
+
+    /* Velo local bajo el texto: el contraste no depende del detalle de la ilustración. */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: linear-gradient(
+        to top right,
+        color-mix(in srgb, var(--theme-deep) 92%, transparent) 0%,
+        color-mix(in srgb, var(--theme-deep) 55%, transparent) 34%,
+        transparent 62%
+      );
+    }
+
+    .hero__text {
+      grid-area: text;
+      align-self: end;
+      max-inline-size: 40rem;
+      padding: var(--space-64) var(--gutter) var(--space-24);
+    }
+
+    .hero__piece {
+      grid-area: piece;
+      align-self: end;
+      padding: 0 var(--gutter) var(--space-24) 0;
+    }
+
+    /* Cartela sobre un paño propio: legible sea cual sea el detalle de la escena debajo. */
+    .hero__caption {
+      grid-area: caption;
+      justify-self: end;
+      max-inline-size: 44rem;
+      margin: 0 calc(var(--gutter) - var(--space-8)) var(--space-12);
+      padding: var(--space-4) var(--space-8);
+      background-color: color-mix(in srgb, var(--theme-deep) 80%, transparent);
+      text-align: end;
+    }
+
+    .hero--light .hero__caption {
+      background-color: rgb(251 246 242 / 0.86);
+    }
+
+    /* La cartela de la pieza representativa, también sobre paño: puede caer sobre la escena. */
+    .hero__piece :global(.artifact-figure__caption) {
+      padding: var(--space-8) var(--space-12);
+      background-color: color-mix(in srgb, var(--theme-deep) 86%, transparent);
+    }
+
+    .hero--light .hero__piece :global(.artifact-figure__caption) {
+      background-color: rgb(251 246 242 / 0.9);
+    }
+
+    /*
+     * Arquitectura: simetría axial. La escena reserva el eje central para el objeto bajo el haz y
+     * las gradas para el texto, que se reparte a ambos lados del eje: identidad a la izquierda
+     * (alineada al eje), síntesis y acción a la derecha.
+     */
+    .hero--arquitectura {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'text'
+        'caption';
+    }
+
+    .hero--arquitectura .hero__text {
+      max-inline-size: none;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: clamp(2.5rem, 1rem + 4vw, 5rem);
+      align-items: end;
+      padding-block-end: var(--space-32);
+    }
+
+    .hero--arquitectura .hero__text > :not(.hero__tagline, .hero__domains, .hero__actions) {
+      grid-column: 1;
+      justify-self: end;
+      text-align: end;
+    }
+
+    .hero--arquitectura .hero__greek,
+    .hero--arquitectura .hero__eyebrow {
+      justify-content: end;
+    }
+
+    /* El rótulo queda junto al eje, donde baja el haz: va sobre un paño, como la cartela. */
+    .hero--arquitectura .hero__eyebrow {
+      padding: var(--space-4) var(--space-8);
+      background-color: color-mix(in srgb, var(--theme-deep) 80%, transparent);
+    }
+
+    .hero--arquitectura .hero__tagline {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: end;
+      max-inline-size: 28rem;
+    }
+
+    .hero--arquitectura .hero__domains {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    .hero--arquitectura .hero__actions {
+      grid-column: 2;
+      grid-row: 4;
+    }
+
+    /* Eje: el haz continúa como un filete entre las dos columnas de texto. */
+    .hero--arquitectura .hero__text::before {
+      content: '';
+      position: absolute;
+      inset-block: var(--space-64) var(--space-32);
+      inset-inline-start: 50%;
+      inline-size: 1px;
+      background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--theme-light) 55%, transparent) 30%);
+    }
+
+    .hero--arquitectura::before {
+      background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--theme-deep) 92%, transparent) 0%,
+        color-mix(in srgb, var(--theme-deep) 55%, transparent) 30%,
+        transparent 46%
+      );
+    }
+
+    .hero--arquitectura .hero__caption {
+      justify-self: center;
+      text-align: center;
+    }
+
+    /* Monolito: el objeto ocupa el tercio derecho de la escena; el texto, una columna a la izquierda con filete. */
+    .hero--monolito .hero__text {
+      align-self: center;
+      max-inline-size: 33rem;
+      padding-block: var(--space-64);
+      border-inline-start: 2px solid var(--theme-accent);
+      margin-inline-start: var(--gutter);
+      padding-inline-start: clamp(1.25rem, 0.5rem + 2vw, 2.5rem);
+    }
+
+    .hero--monolito::before {
+      background:
+        linear-gradient(to right, color-mix(in srgb, var(--theme-deep) 94%, transparent) 0%, color-mix(in srgb, var(--theme-deep) 70%, transparent) 34%, transparent 58%),
+        linear-gradient(to top, color-mix(in srgb, var(--theme-deep) 70%, transparent), transparent 30%);
+    }
+
+    /* Orgánica: columna de texto sobre un paño propio a toda altura; la escena respira a la derecha. */
+    .hero--organica .hero__text {
+      align-self: stretch;
+      align-content: end;
+      max-inline-size: 30rem;
+      padding-inline-end: var(--space-48);
+    }
+
+    .hero--organica::before {
+      background: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--theme-deep) 94%, transparent) 0,
+        color-mix(in srgb, var(--theme-deep) 94%, transparent) calc(var(--gutter) + 22rem),
+        transparent calc(var(--gutter) + 34rem)
+      );
+    }
+
+    .hero--organica.hero--light::before {
+      background: linear-gradient(
+        to right,
+        rgb(251 246 242 / 0.95) 0,
+        rgb(251 246 242 / 0.95) calc(var(--gutter) + 22rem),
+        rgb(251 246 242 / 0) calc(var(--gutter) + 34rem)
+      );
+    }
+
+    /* Cinética: el texto acompaña la diagonal, arriba a la izquierda. */
+    .hero--cinetica .hero__text {
+      align-self: start;
+      padding-block-start: var(--space-96);
+    }
+
+    .hero--cinetica::before {
+      background:
+        linear-gradient(
+          to right,
+          color-mix(in srgb, var(--theme-deep) 82%, transparent) 0,
+          color-mix(in srgb, var(--theme-deep) 62%, transparent) calc(var(--gutter) + 30rem),
+          transparent calc(var(--gutter) + 44rem)
+        ),
+        linear-gradient(
+          to bottom right,
+          color-mix(in srgb, var(--theme-deep) 90%, transparent) 0%,
+          color-mix(in srgb, var(--theme-deep) 50%, transparent) 36%,
+          transparent 60%
+        );
+    }
+
+    .hero--cinetica .hero__caption {
+      align-self: end;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero__name {
+      font-size: clamp(4.5rem, 1rem + 6.5vw, 9rem);
+    }
+  }
+</style>

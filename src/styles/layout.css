@@ -1,0 +1,13 @@
+/* Primitivas de composición compartidas. */
+@layer layout {
+  .container {
+    inline-size: 100%;
+    max-inline-size: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .prose {
+    max-inline-size: var(--measure);
+  }
+}

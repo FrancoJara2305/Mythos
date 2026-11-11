@@ -1,0 +1,28 @@
+{
+  "subject": "zeus",
+  "object": "hephaestus",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Homero, Ilíada y Odisea",
+  "certainty": "probable",
+  "evidence": [
+    {
+      "source": "homer-iliad",
+      "passageId": "hephaestus-speaks-to-hera",
+      "claim": "πατρὶ φίλῳ… Διί (1.578).",
+      "role": "supports"
+    },
+    {
+      "source": "homer-odyssey",
+      "passageId": "hephaestus-blames-his-parents",
+      "claim": "Culpa a sus «dos progenitores» (τοκῆε δύω, 8.312) tras invocar a «padre Zeus».",
+      "role": "supports"
+    }
+  ],
+  "variantGroup": "hephaestus-parentage",
+  "variantOption": "homeric",
+  "note": "«Padre» también es el título habitual de Zeus como padre de dioses y hombres; la mención de dos progenitores en Odisea 8.312 refuerza la lectura filial, de ahí la certeza «probable».",
+  "review": {
+    "status": "draft"
+  }
+}

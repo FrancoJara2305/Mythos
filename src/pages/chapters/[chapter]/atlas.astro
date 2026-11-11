@@ -1,0 +1,867 @@
+---
+/**
+ * Hilo del Destino (antes «Temporal Atlas»): la cronología mítica como una saga que se recorre de
+ * episodio en episodio, siguiendo los capítulos de src/config/saga.ts. Cada episodio con relato abre
+ * su página; los que aún no lo tienen se anuncian. Los «después» justificados por una fuente quedan en
+ * el cajón «¿Cómo sabemos esto?». La segunda vista, «Los testigos del tiempo», conserva la historia de
+ * los testimonios (cuándo se compusieron los poemas y se hicieron los objetos).
+ *
+ * Dos temporalidades rotuladas y separadas: el orden de los relatos (sin años) y la
+ * historia de los testimonios (composición de obras y fabricación de objetos, con intervalos
+ * inciertos). Sin JS se ven ambas completas; la isla alterna la vista y filtra por divinidad sin
+ * fusionar escalas.
+ *
+ * Jerarquía: la visualización es el protagonista (escenario oscuro a todo el ancho); cada marca enlaza
+ * a su tarjeta (detalle al seleccionar, resaltado con `:target`); la metodología y las fuentes de cada
+ * tarjeta quedan plegadas en `<details>`.
+ */
+import HistoricalBands from '../../../components/atlas/HistoricalBands.astro';
+import SourceHint from '../../../components/narrative/SourceHint.astro';
+import type { ResolvedCitation } from '../../../lib/content/citations.ts';
+import Breadcrumbs from '../../../components/ui/Breadcrumbs.astro';
+import { CHAPTERS, CHAPTER_SELECTIONS, profileIds, type ChapterSelection } from '../../../config/chapters.ts';
+import { sagaChapters } from '../../../config/saga.ts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../../lib/content/archive.ts';
+import { formatHistoricalYear } from '../../../lib/content/dates.ts';
+import { resolveRoster } from '../../../lib/content/integrity.ts';
+import { paths } from '../../../lib/routes.ts';
+import { sentence } from '../../../lib/text/format.ts';
+import { historicalEntries, narrativeSequences } from '../../../lib/timeline/entries.ts';
+
+export function getStaticPaths() {
+  return CHAPTER_SELECTIONS.filter((selection) =>
+    CHAPTERS.some((chapter) => chapter.id === selection.chapterId && chapter.publishable),
+  ).map((selection) => ({ params: { chapter: selection.chapterId }, props: { selection } }));
+}
+
+interface Props {
+  selection: ChapterSelection;
+}
+
+const { selection } = Astro.props;
+const chapter = CHAPTERS.find((item) => item.id === selection.chapterId);
+if (chapter === undefined) throw new Error(`Capítulo inexistente: ${selection.chapterId}`);
+
+const { visible } = await loadArchive();
+const roster = resolveRoster(visible, selection);
+const sequences = narrativeSequences(visible, roster.map((entry) => entry.id));
+const historical = historicalEntries(visible);
+
+// El hilo: los capítulos de la saga, sus historias y, donde existen, sus relatos y eventos registrados.
+const eventByMyth = new Map(
+  visible['timeline-events'].flatMap((entry) => (entry.data.kind === 'mythic' ? [[entry.data.myth.id, entry.id] as const] : [])),
+);
+const narrativeEvents = new Map(sequences.flatMap((sequence) => sequence.events.map((event) => [event.id, event] as const)));
+const mythById = new Map(visible.myths.map((entry) => [entry.id, entry.data]));
+const filterable = profileIds(selection).flatMap((id) => {
+  const deity = visible.deities.find((entry) => entry.id === id);
+  return deity === undefined ? [] : [{ id, name: deity.data.name }];
+});
+type Episode =
+  | { kind: 'upcoming'; title: string; teaser: string; complementary: boolean }
+  | {
+      kind: 'ready';
+      number: number;
+      anchor: string;
+      mythId: string;
+      myth: NonNullable<ReturnType<typeof mythById.get>>;
+      after: { eventId: string; title: string; citations: ResolvedCitation[] }[];
+      citations: ResolvedCitation[];
+    };
+let episodeNumber = 0;
+const acts = sagaChapters().map((chapter) => ({
+  chapter,
+  episodes: chapter.stories.flatMap((story): Episode[] => {
+    const myths = story.mythIds.flatMap((id) => {
+      const myth = mythById.get(id);
+      return myth === undefined ? [] : [{ id, myth }];
+    });
+    if (myths.length === 0) return [{ kind: 'upcoming', title: story.title, teaser: story.teaser, complementary: story.complementary === true }];
+    return myths.map(({ id, myth }): Episode => {
+      const eventId = eventByMyth.get(id);
+      const event = eventId === undefined ? undefined : narrativeEvents.get(eventId);
+      episodeNumber += 1;
+      return {
+        kind: 'ready',
+        number: episodeNumber,
+        anchor: eventId === undefined ? `episodio-${id}` : `evento-${eventId}`,
+        mythId: id,
+        myth,
+        after: event?.after ?? [],
+        citations: event?.citations ?? [],
+      };
+    });
+  }),
+}));
+const compositions = historical.filter((entry) => entry.facet === 'composition');
+const productions = historical.filter((entry) => entry.facet === 'object-production');
+const unreviewed = visible['timeline-events'].some((entry) => entry.data.review.status !== 'published');
+const PRECISION = { year: 'año', decade: 'década', century: 'siglo', approximate: 'aproximada' } as const;
+---
+
+<BaseLayout
+  title={`Hilo del Destino · ${chapter.title}`}
+  description="Hilo del Destino: la cronología mítica de MYTHOS como una gran saga, episodio a episodio, del cosmos primordial a los dioses del Olimpo."
+  tier="olympus"
+  unreviewed={unreviewed}
+>
+  <mythos-atlas class="container atlas">
+    <Breadcrumbs
+      items={[
+        { label: 'La Torre', href: paths.home() },
+        { label: chapter.title, href: paths.chapter(chapter.id), lang: 'en' },
+        { label: 'Hilo del destino' },
+      ]}
+    />
+
+    <header class="atlas__header">
+      <p class="eyebrow">{chapter.number} · Cronología mítica</p>
+      <h1>Hilo del Destino</h1>
+      <p class="atlas__lede">
+        Los griegos imaginaban el destino como un hilo. Síguelo de arriba abajo: cada nudo es un episodio de la gran saga, desde
+        la caída del Cielo hasta las historias de los olímpicos.
+      </p>
+      <details class="atlas__method">
+        <summary>¿Esto pasó en algún año?</summary>
+        <div class="atlas__explain">
+          <div class="atlas__explain-item">
+            <p class="atlas__explain-title">El hilo de los relatos</p>
+            <p>
+              Los mitos no tienen fecha. El orden del hilo es el orden en que MYTHOS cuenta la saga; la distancia entre dos
+              episodios no mide tiempo, y solo decimos «después» cuando un poema antiguo lo justifica.
+            </p>
+          </div>
+          <div class="atlas__explain-item">
+            <p class="atlas__explain-title">Los testigos del tiempo</p>
+            <p>
+              Lo que sí tiene fecha —a menudo aproximada— son los poemas que cuentan estas historias y los objetos que las
+              representan. Las dos escalas nunca se mezclan: fechar un vaso no fecha un mito.
+            </p>
+          </div>
+        </div>
+      </details>
+
+      <div class="atlas__controls" data-controls hidden>
+        <div class="atlas__modes" role="group" aria-label="El hilo de los relatos / Los testigos del tiempo">
+          <button type="button" data-mode-button="relatos" aria-pressed="true">El hilo de los relatos</button>
+          <button type="button" data-mode-button="testimonios" aria-pressed="false">Los testigos del tiempo</button>
+        </div>
+        <div class="atlas__filter">
+          <label for="atlas-deidad">Seguir a</label>
+          <select id="atlas-deidad" data-deity-filter>
+            <option value="">Todos los dioses</option>
+            {filterable.map((entry) => <option value={entry.id}>{entry.name}</option>)}
+          </select>
+        </div>
+      </div>
+      <p class="visually-hidden" role="status" data-status></p>
+    </header>
+
+    <section id="relatos" class="atlas__view thread" data-mode="relatos" aria-labelledby="relatos-titulo">
+      <div class="atlas__view-head">
+        <h2 id="relatos-titulo">El hilo de los relatos</h2>
+        <p class="atlas__view-lede">{episodeNumber} episodios para leer, en el orden de la saga. Sin años: los mitos no tienen fecha.</p>
+      </div>
+      {
+        acts.map(({ chapter: act, episodes }) => (
+          <div class:list={['act', `act--${act.theme.tier}`]}>
+            <header class="act__head">
+              <p class="act__number">{act.chapter.number}</p>
+              <h3 class="act__title">
+                <a href={paths.chapter(act.id)} lang={act.chapter.titleLang}>
+                  {act.chapter.title}
+                </a>
+              </h3>
+              <p class="act__hook">{act.hook}</p>
+            </header>
+            <div>
+              <ol class="knots" role="list" data-filterable>
+                {episodes.map((episode) =>
+                  episode.kind === 'ready' ? (
+                    <li id={episode.anchor} class="knot knot--ready" data-entities={episode.myth.participants.map((participant) => participant.id).join(' ')}>
+                      <p class="knot__kicker">Episodio {episode.number}</p>
+                      <h4 class="knot__title">
+                        <a href={paths.myth(episode.mythId)}>{episode.myth.title}</a>
+                      </h4>
+                      {episode.myth.tagline !== undefined && <p class="knot__tagline">{episode.myth.tagline}</p>}
+                      <p class="knot__meta">Lo cuenta {episode.myth.traditionLabel}</p>
+                      {episode.after.map((after) => (
+                        <p class="knot__after">
+                          Los poetas lo sitúan después de <a href={`#evento-${after.eventId}`}>{after.title}</a>
+                        </p>
+                      ))}
+                      <SourceHint citations={[...episode.after.flatMap((after) => after.citations), ...episode.citations]} about={`el episodio «${episode.myth.title}»`} />
+                    </li>
+                  ) : (
+                    <li class="knot knot--upcoming" data-entities="">
+                      <p class="knot__kicker">
+                        Próximamente{episode.complementary && ' · ciclo complementario'}
+                      </p>
+                      <h4 class="knot__title">{episode.title}</h4>
+                      <p class="knot__teaser">{episode.teaser}</p>
+                    </li>
+                  ),
+                )}
+              </ol>
+              <p class="atlas__empty" data-empty hidden>
+                En este capítulo todavía no hay episodios de la divinidad elegida.
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section id="testimonios" class="atlas__view" data-mode="testimonios" aria-labelledby="testimonios-titulo">
+      <div class="atlas__view-head">
+        <h2 id="testimonios-titulo">Los testigos del tiempo</h2>
+        <p class="atlas__view-lede">
+          Escala de siglos, del {productions.length > 0 ? 'más antiguo al más reciente' : 'pasado al presente'}; entre 1 a. C.
+          y 1 d. C. no hay año 0. Un extremo difuminado indica un límite aproximado.
+        </p>
+      </div>
+      <div class="atlas__scroll" role="region" tabindex="0" aria-label="Diagrama de intervalos históricos; las listas siguientes contienen la misma información">
+        <HistoricalBands entries={historical} />
+      </div>
+
+      <div class="atlas__lists">
+        <div>
+          <h3>Composición de los textos</h3>
+          <ul class="atlas__cards" role="list" data-filterable>
+            {
+              compositions.map((entry) => (
+                <li id={`evento-${entry.id}`} class="atlas-card" data-entities={entry.entities.join(' ')}>
+                  <h4 class="atlas-card__title">{entry.title}</h4>
+                  {entry.date.kind === 'range' ? (
+                    <>
+                      <p class="atlas-card__interval">
+                        {sentence(entry.date.label)} En la escala: {formatHistoricalYear(entry.date.start)} –{' '}
+                        {formatHistoricalYear(entry.date.end)}.
+                      </p>
+                      <details class="atlas-card__sources">
+                        <summary>Base de la datación</summary>
+                        <p class="atlas-card__meta">
+                          Significado del intervalo: época en que la obra se compuso según la referencia citada; no fecha los
+                          hechos que narra. Base: {entry.date.basis}
+                        </p>
+                      </details>
+                    </>
+                  ) : (
+                    <p class="atlas-card__interval">{entry.date.label}</p>
+                  )}
+                  <p>
+                    <a href={entry.subject.href}>{entry.subject.title}: ediciones y pasajes</a>
+                  </p>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="atlas__empty" data-empty hidden>Ninguna obra registrada menciona a la divinidad elegida.</p>
+        </div>
+        <div>
+          <h3>Fabricación de los objetos</h3>
+          <ul class="atlas__cards" role="list" data-filterable>
+            {
+              productions.map((entry) => (
+                <li id={`evento-${entry.id}`} class="atlas-card" data-entities={entry.entities.join(' ')}>
+                  <h4 class="atlas-card__title">{entry.title}</h4>
+                  {entry.date.kind === 'range' ? (
+                    <>
+                      <p class="atlas-card__interval">
+                        {sentence(entry.date.label)} En la escala: {formatHistoricalYear(entry.date.start)}
+                        {entry.date.end !== entry.date.start && <> – {formatHistoricalYear(entry.date.end)}</>} (precisión:{' '}
+                        {PRECISION[entry.date.precision]}).
+                      </p>
+                      <details class="atlas-card__sources">
+                        <summary>Base de la datación</summary>
+                        <p class="atlas-card__meta">
+                          Significado del intervalo: periodo en que {entry.institution} sitúa la fabricación del objeto.
+                          Base: {entry.date.basis}
+                        </p>
+                      </details>
+                    </>
+                  ) : (
+                    <p class="atlas-card__interval">{entry.date.label}</p>
+                  )}
+                  <p class="atlas-card__links">
+                    <a href={entry.subject.href}>
+                      <span>
+                        Ficha del objeto: <span lang={entry.subject.titleLang}>{entry.subject.title}</span>
+                      </span>
+                    </a>
+                    {entry.catalogueUrl !== undefined && (
+                      <a href={entry.catalogueUrl} rel="external">
+                        Ficha del museo
+                      </a>
+                    )}
+                  </p>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="atlas__empty" data-empty hidden>Ningún objeto registrado está identificado con la divinidad elegida.</p>
+        </div>
+      </div>
+    </section>
+  </mythos-atlas>
+</BaseLayout>
+
+<script>
+  import '../../../components/islands/atlas.ts';
+</script>
+
+<style>
+  /* ——— El hilo: una línea de luz con un nudo por episodio ——— */
+  .thread {
+    --thread-x: 0.75rem;
+  }
+
+  .act {
+    position: relative;
+    display: grid;
+    gap: var(--space-24);
+    padding-inline-start: calc(var(--thread-x) + var(--space-32));
+    padding-block-end: var(--space-48);
+  }
+
+  .act::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--thread-x);
+    inline-size: 2px;
+    background: linear-gradient(to bottom, var(--color-ether-cyan), var(--color-star-gold));
+    box-shadow: 0 0 1rem rgb(253 224 71 / 0.4);
+  }
+
+  .act--olympus::before {
+    background: linear-gradient(to bottom, var(--color-star-gold), var(--color-bronze));
+  }
+
+  .act__head {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .act__head::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-start: calc(var(--space-32) * -1 - 0.6875rem + 1px);
+    inline-size: 1.375rem;
+    aspect-ratio: 1;
+    rotate: 45deg;
+    border: 2px solid var(--color-star-gold);
+    background-color: var(--surface-canvas);
+    box-shadow: 0 0 1rem rgb(253 224 71 / 0.5);
+  }
+
+  .act__number {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.14em;
+    color: var(--text-accent);
+  }
+
+  .act__title {
+    font-size: clamp(1.875rem, 1.5rem + 1.8vw, 3rem);
+    font-weight: 500;
+  }
+
+  .act__title a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .act__title a:hover {
+    color: var(--text-link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+
+  .act__hook {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-style: italic;
+  }
+
+  .knots {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .knot {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 44rem;
+    padding: var(--space-16) var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    background-color: var(--surface-glass);
+    scroll-margin-block-start: var(--anchor-offset);
+    transition: border-color var(--duration-hover) ease-out;
+  }
+
+  .knot[hidden] {
+    display: none;
+  }
+
+  /* Nudo sobre el hilo y su lazo hasta la tarjeta. */
+  .knot::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 1.5rem;
+    inset-inline-start: calc(var(--space-32) * -1 - 0.375rem + 1px);
+    inline-size: 0.75rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: var(--color-star-gold);
+    box-shadow: 0 0 0.75rem 0.125rem rgb(253 224 71 / 0.7);
+  }
+
+  .knot::after {
+    content: '';
+    position: absolute;
+    inset-block-start: calc(1.5rem + 0.375rem - 0.5px);
+    inset-inline-start: calc(var(--space-32) * -1 + 0.375rem);
+    inline-size: calc(var(--space-32) - 0.375rem);
+    block-size: 1px;
+    background-color: var(--rule-soft);
+  }
+
+  .knot--ready:hover,
+  .knot--ready:focus-within,
+  .knot:target {
+    border-color: var(--color-star-gold);
+  }
+
+  .knot--upcoming {
+    border-style: dashed;
+    background: none;
+  }
+
+  .knot--upcoming::before {
+    background-color: var(--surface-canvas);
+    border: 1px solid var(--text-link);
+    box-shadow: none;
+  }
+
+  .knot__kicker {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .knot--upcoming .knot__kicker {
+    color: var(--text-accent);
+  }
+
+  .knot__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .knot__title a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .knot__tagline {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-style: italic;
+    line-height: 1.25;
+  }
+
+  .knot__meta,
+  .knot__after,
+  .knot__teaser {
+    font-size: var(--font-size-small);
+  }
+
+  .knot__after a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  @media (min-width: 64rem) {
+    .thread {
+      --thread-x: 2rem;
+    }
+  }
+
+  .atlas {
+    display: grid;
+    gap: var(--space-48);
+    padding-block: var(--space-24) var(--space-32);
+  }
+
+  .atlas__header {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .atlas__header h1 {
+    font-size: clamp(3rem, 1.8rem + 4.5vw, 6.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+  }
+
+  .atlas__lede {
+    max-inline-size: 40rem;
+    font-size: 1.125rem;
+  }
+
+  .atlas__method {
+    border-block: 1px solid var(--rule-soft);
+  }
+
+  .atlas__method summary {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+    color: var(--text-link);
+    cursor: pointer;
+  }
+
+  .atlas__method[open] {
+    padding-block-end: var(--space-16);
+  }
+
+  .atlas__view-head {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .atlas__view-head h2 {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 500;
+  }
+
+  .atlas__view-lede {
+    font-size: var(--font-size-small);
+    color: var(--text-link);
+  }
+
+  .atlas__eyebrow,
+  .atlas-card__kicker {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .atlas__explain {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 48rem) {
+    .atlas__explain {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-32);
+    }
+  }
+
+  .atlas__explain-item {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+    padding: var(--space-16) var(--space-24);
+    border-inline-start: 3px solid var(--decoration-bronze);
+    background-color: var(--surface-raised);
+  }
+
+  .atlas__explain-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h3);
+  }
+
+  .atlas__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-16) var(--space-32);
+  }
+
+  .atlas__controls[hidden] {
+    display: none;
+  }
+
+  /* Conmutador de escala: dos pestañas grandes; la activa, subrayada en oro. */
+  .atlas__modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-4);
+    border-block-end: 1px solid var(--rule-soft);
+  }
+
+  .atlas__modes button {
+    min-block-size: var(--target-min);
+    padding: var(--space-8) var(--space-16);
+    margin-block-end: -1px;
+    border: 0;
+    border-block-end: 2px solid transparent;
+    background: none;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    cursor: pointer;
+    transition: border-color var(--duration-hover) ease-out;
+  }
+
+  .atlas__modes button:hover {
+    border-block-end-color: var(--decoration-bronze);
+  }
+
+  .atlas__modes button[aria-pressed='true'] {
+    border-block-end-color: var(--text-link);
+    color: var(--text-link);
+    font-weight: 600;
+  }
+
+  .atlas__filter {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .atlas__filter select {
+    min-block-size: var(--target-min);
+    min-inline-size: 12rem;
+    padding-inline: var(--space-12);
+    border: 1px solid var(--decoration-bronze);
+    background-color: var(--surface-raised);
+    color: var(--text-primary);
+    font: inherit;
+  }
+
+  .atlas__view {
+    display: grid;
+    gap: var(--space-24);
+    scroll-margin-block-start: var(--space-16);
+  }
+
+  .atlas__view[hidden] {
+    display: none;
+  }
+
+  .atlas__sequence {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .atlas__note,
+  .atlas-card__meta,
+  .atlas__empty {
+    font-size: var(--font-size-small);
+  }
+
+  /* Escenario de la visualización: un trozo de cielo nocturno donde los testigos dejan su estela. */
+  .atlas__scroll {
+    overflow-x: auto;
+    padding: clamp(1rem, 3vw, 2.5rem) clamp(0.5rem, 2vw, 2rem);
+    background:
+      radial-gradient(ellipse 60% 70% at 50% 30%, rgb(253 224 71 / 0.08), transparent 72%),
+      url('/sky.svg') center / 40rem,
+      linear-gradient(to bottom, #070b1c, #111a3a);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+  }
+
+  .atlas__scroll :global(.atlas-svg) {
+    margin-inline: auto;
+  }
+
+  .atlas__lists {
+    display: grid;
+    gap: var(--space-32);
+  }
+
+  @media (min-width: 64rem) {
+    .atlas__lists {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  .atlas__lists > div {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .atlas__cards {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  ol.atlas__cards {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .atlas-card {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+    padding: var(--space-16) var(--space-24);
+    background-color: var(--surface-raised);
+    scroll-margin-block-start: var(--space-16);
+  }
+
+  .atlas-card[hidden] {
+    display: none;
+  }
+
+  /* Detalle al seleccionar: la marca del diagrama enlaza a su tarjeta, que se resalta. */
+  .atlas-card:target {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    background-color: rgb(253 224 71 / 0.08);
+  }
+
+  .atlas-card__after {
+    font-weight: 600;
+  }
+
+  .atlas-card__sources summary {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-size: var(--font-size-small);
+    text-decoration: underline dotted;
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+  }
+
+  .atlas-card__sources[open] {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .atlas-card__title {
+    font-size: 1.25rem;
+  }
+
+  .atlas-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-24);
+  }
+
+  .atlas-card a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  /* Diagramas (SVG generado en el build). */
+  .atlas :global(.atlas-svg) {
+    display: block;
+    inline-size: 100%;
+    min-inline-size: calc(var(--natural-width) * 0.8px);
+    max-inline-size: calc(var(--natural-width) * 1.15px);
+    block-size: auto;
+  }
+
+  .atlas :global(.ta-mark) {
+    transition: opacity var(--duration-filter) ease;
+  }
+
+  .atlas :global(.ta-mark.is-muted) {
+    opacity: 0.22;
+  }
+
+  .atlas :global(.ta-tick line) {
+    stroke: rgb(56 189 248 / 0.18);
+    stroke-width: 1;
+  }
+
+  .atlas :global(.ta-tick text),
+  .atlas :global(.ta-order),
+  .atlas :global(.ta-after text) {
+    fill: var(--text-primary);
+    font-family: var(--font-text);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+
+  .atlas :global(.ta-tick text),
+  .atlas :global(.ta-after text) {
+    text-anchor: middle;
+  }
+
+  .atlas :global(.ta-band__bg) {
+    fill: rgb(30 27 75 / 0.35);
+  }
+
+  .atlas :global(.ta-band__title) {
+    fill: var(--color-star-gold);
+    font-family: var(--font-text);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .atlas :global(.ta-band__empty) {
+    fill: var(--text-primary);
+    font-size: 15px;
+    font-style: italic;
+  }
+
+  .atlas :global(.ta-mark__label) {
+    fill: var(--text-primary);
+    font-size: 15px;
+  }
+
+  .atlas :global(.ta-mark__bar) {
+    fill: var(--text-link);
+  }
+
+  .atlas :global(.ta-mark__bar--fuzzy) {
+    fill: url(#ta-fuzzy);
+  }
+
+  .atlas :global(.ta-stop) {
+    stop-color: var(--text-link);
+  }
+
+  .atlas :global(.ta-event) {
+    fill: rgb(13 19 46 / 0.9);
+    stroke: var(--decoration-bronze);
+    stroke-width: 1.5;
+  }
+
+  .atlas :global(.ta-event__title) {
+    fill: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 19px;
+    text-anchor: middle;
+  }
+
+  .atlas :global(.ta-after path) {
+    fill: none;
+    stroke: var(--text-link);
+    stroke-width: 2;
+  }
+
+  .atlas :global(.ta-arrowhead) {
+    fill: var(--text-link);
+  }
+
+  .atlas :global(.ta-mark:hover .ta-event),
+  .atlas :global(.ta-mark:hover .ta-mark__bar) {
+    stroke: var(--text-primary);
+  }
+</style>

@@ -1,0 +1,12 @@
+---
+/** Texto en español con fragmentos griegos: cada racha griega se marca con `lang="grc"`. */
+import { splitGreek } from '../../lib/text/greek.ts';
+
+interface Props {
+  text: string;
+}
+
+const segments = splitGreek(Astro.props.text);
+---
+
+{segments.map((segment) => (segment.greek ? <span lang="grc">{segment.text}</span> : segment.text))}

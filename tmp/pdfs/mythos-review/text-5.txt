@@ -1,0 +1,95 @@
+9/11/26, 5:51 The Dodekatheon · Hall of the Twelve · MYTHOS
+M Y T H O S
+Colección Atlas Fuentes
+Borrador curatorial. Este contenido aún no ha superado la revisión humana; por eso no se publica
+en producción.
+CHAPTER I · HALL OF THE TWELVE
+The Dodekatheon
+Doce divinidades del panteón griego, cada una con su ficha, sus relatos y sus
+fuentes. El orden de la sala es editorial: no expresa jerarquía ni cronología.
+Una selección editorial de los doce: las listas antiguas no siempre coinciden.
+Símbolo editorial: rayo Símbolo editorial: cetro
+Zeus Hera
+Ζεύς Ἥρα
+Realeza entre los dioses Argos, Esparta y Micenas
+localhost:4322/chapters/dodekatheon/ 1/6
+
+9/11/26, 5:51 The Dodekatheon · Hall of the Twelve · MYTHOS
+Símbolo editorial: tridente Símbolo editorial: gavilla de trigo y cetro
+Poseidón Deméter
+Ποσειδῶν Δημήτηρ
+El mar Grano y cosecha
+Símbolo editorial: lechuza Símbolo editorial: cítara
+localhost:4322/chapters/dodekatheon/ 2/6
+
+9/11/26, 5:51 The Dodekatheon · Hall of the Twelve · MYTHOS
+Atenea Apolo
+Ἀθηνᾶ Ἀπόλλων
+Guerra Profecía
+Símbolo editorial: arco y aljaba Símbolo editorial: casco y lanza
+Ártemis Ares
+Ἄρτεμις Ἄρης
+Caza en los montes Guerra y discordia
+localhost:4322/chapters/dodekatheon/ 3/6
+
+9/11/26, 5:51 The Dodekatheon · Hall of the Twelve · MYTHOS
+Símbolo editorial: velo Símbolo editorial: yunque, martillo y
+tenazas
+Afrodita
+Hefesto
+Ἀφροδίτη
+Ἥφαιστος
+Deseo
+Artesanía
+Símbolo editorial: gorro y bastón Símbolo editorial: racimo de uvas y hoja de
+hiedra
+Hermes
+Dioniso
+Ἑρμῆς
+Διόνυσος
+Mensajero y heraldo de los dioses
+Vino
+localhost:4322/chapters/dodekatheon/ 4/6
+
+9/11/26, 5:51 The Dodekatheon · Hall of the Twelve · MYTHOS
+Cada emblema es un dibujo original de MYTHOS que representa un atributo
+documentado en la ficha de la divinidad; no reproduce ningún objeto antiguo. Las
+fotografías de piezas de museo están en las fichas, con su identificación y su grado
+de certeza.
+Genealogía: parentescos con su fuente, versión por versión.
+Atlas temporal: el orden de los relatos y la historia de los testimonios.
+Otra selección de los doce
+El relieve 23.40 del Walters Art Museum muestra doce divinidades con Hestia y sin
+Dioniso. Respalda esa selección concreta; no prueba una sustitución universal ni un
+relato antiguo de cesión del trono.
+Procession of Twelve Gods and Goddesses
+Siglo I a. C. – siglo I d. C. (helenístico). Mármol pentélico (ficha: «Pentelic marble»). Tarento (Taranto),
+Italia («Place of Discovery» en la ficha).
+The Walters Art Museum, 23.40. Imagen: CC0 1.0 Universal (dedicación al dominio público).
+Ficha del objeto · Ficha del museo
+DE IZQUIERDA A DERECHA, SEGÚN LA FICHA DEL MUSEO
+1. Hestia: «Hestia (goddess of the hearth), with scepter»
+localhost:4322/chapters/dodekatheon/ 5/6
+
+9/11/26, 5:51 The Dodekatheon · Hall of the Twelve · MYTHOS
+2. Hermes: «Hermes (messenger of the gods), with cap and staff»
+3. Afrodita: «Aphrodite (goddess of love and beauty), with veil»
+4. Ares: «Ares (god of war), with helmet and spear»
+5. Deméter: «Demeter (goddess of agriculture), with scepter and wheat sheaf»
+6. Hefesto: «Hephaestus (god of fire and metal-working), with staff»
+7. Hera: «Hera (queen of the gods), with scepter»
+8. Poseidón: «Poseidon (god of the sea), with trident»
+9. Atenea: «Athena (goddess of wisdom and the arts), with owl and helmet»
+10. Zeus: «Zeus (king of the gods), with thunderbolt and staff»
+11. Ártemis: «Artemis (goddess of the hunt and moon), with bow and quiver»
+12. Apolo: «Apollo (god of the sun), with "kithara."»
+Hestia
+Ἑστία
+Nota contextual: sin ficha propia en este capítulo.
+Primogénita de Crono y Rea. El Himno a Afrodita la cuenta entre las diosas
+que Afrodita no somete; el Himno 29 le atribuye una sede perpetua y la
+primera y última libación en las casas de dioses y hombres. Figura en el relieve
+Walters 23.40.
+MYTHOS An Interactive Archive of Mythology Créditos
+Entorno: desarrollo. Esta versión no se indexa en buscadores.
+localhost:4322/chapters/dodekatheon/ 6/6

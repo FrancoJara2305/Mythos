@@ -1,0 +1,164 @@
+---
+/**
+ * Lista de evidencias de una afirmación: cada pasaje enlaza a su ancla en la página de la obra (donde
+ * está el acceso a la edición); cada observación de objeto, a la ficha del objeto y a la del museo.
+ *
+ * `compact` (fichas de deidad): los localizadores enlazados quedan siempre visibles junto a la
+ * afirmación; lo que respalda cada pasaje se pliega en un `<details>` («Qué respalda»). Nada se
+ * elimina: la evidencia sigue al lado de lo que justifica y su detalle está a un clic.
+ */
+import type { ArtifactCitation, ResolvedCitation, VisualCitation } from '../../lib/content/citations.ts';
+import MixedText from '../ui/MixedText.astro';
+
+interface Props {
+  citations: readonly (ResolvedCitation | VisualCitation)[];
+  /** Encabezado visible corto, p. ej. «Fuentes». */
+  label?: string;
+  compact?: boolean;
+}
+
+const { citations, label = 'Fuentes', compact = false } = Astro.props;
+const isArtifact = (citation: ResolvedCitation | VisualCitation): citation is ArtifactCitation => 'kind' in citation && citation.kind === 'artifact';
+---
+
+{
+  citations.length > 0 &&
+    (compact ? (
+      <div class="citations citations--compact">
+        <p class="citations__label">{label}</p>
+        <ul role="list" class="citations__links">
+          {citations.map((citation) =>
+            isArtifact(citation) ? (
+              <li>
+                {citation.href !== undefined ? (
+                  <a href={citation.href} lang="en">
+                    {citation.title}
+                  </a>
+                ) : (
+                  <span>{citation.artifactId}</span>
+                )}
+              </li>
+            ) : (
+              <li>
+                <a href={citation.href}>{citation.passage.locator.display}</a>
+                {citation.role === 'contrasts' && <span class="citations__role"> (contrasta)</span>}
+              </li>
+            ),
+          )}
+        </ul>
+        <details class="citations__claims">
+          <summary>
+            Qué respalda<span class="visually-hidden"> cada fuente</span>
+          </summary>
+          <ul role="list">
+            {citations.map((citation) =>
+              isArtifact(citation) ? (
+                <li>
+                  <span class="citations__locator" lang="en">
+                    {citation.title ?? citation.artifactId}
+                  </span>{' '}
+                  (<a href={citation.catalogueUrl} rel="external">ficha del museo</a>): <MixedText text={citation.claim} />
+                </li>
+              ) : (
+                <li>
+                  <span class="citations__locator">{citation.passage.locator.display}</span>: <MixedText text={citation.claim} />
+                </li>
+              ),
+            )}
+          </ul>
+        </details>
+      </div>
+    ) : (
+      <div class="citations">
+        <p class="citations__label">{label}</p>
+        <ul role="list">
+          {citations.map((citation) =>
+            isArtifact(citation) ? (
+              <li>
+                {citation.href !== undefined ? (
+                  <a href={citation.href} lang="en">
+                    {citation.title}
+                  </a>
+                ) : (
+                  <span>{citation.artifactId}</span>
+                )}{' '}
+                (<a href={citation.catalogueUrl} rel="external">ficha del museo</a>): <MixedText text={citation.claim} />
+              </li>
+            ) : (
+              <li>
+                <a href={citation.href}>{citation.passage.locator.display}</a>
+                {citation.role === 'contrasts' && <span class="citations__role"> (contrasta)</span>}: <MixedText text={citation.claim} />
+              </li>
+            ),
+          )}
+        </ul>
+      </div>
+    ))
+}
+
+<style>
+  .citations {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+
+  .citations__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .citations ul {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .citations a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  /* Compacta: localizadores en línea, detalle plegado */
+  .citations--compact {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--space-12);
+  }
+
+  .citations--compact .citations__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-16);
+  }
+
+  .citations__claims {
+    grid-column: 1 / -1;
+  }
+
+  .citations__claims summary {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    color: var(--text-primary);
+    cursor: pointer;
+    text-decoration: underline dotted;
+    text-underline-offset: 0.25em;
+  }
+
+  .citations__claims[open] summary {
+    text-decoration-style: solid;
+  }
+
+  .citations__claims ul {
+    padding: var(--space-8) var(--space-12);
+    border-inline-start: 1px solid var(--rule-soft);
+  }
+
+  .citations__locator {
+    font-weight: 600;
+  }
+</style>

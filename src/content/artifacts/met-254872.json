@@ -1,0 +1,74 @@
+{
+  "title": "Terracotta amphora (jar)",
+  "institution": "The Metropolitan Museum of Art",
+  "externalId": "254872",
+  "accessionNumber": "56.171.14",
+  "catalogueUrl": "https://www.metmuseum.org/art/collection/search/254872",
+  "date": {
+    "kind": "range",
+    "start": -530,
+    "end": -530,
+    "label": "ca. 530 a. C.",
+    "precision": "approximate",
+    "basis": "Año aproximado de la datación textual («ca. 530 BCE»); la API publica -530/-530.",
+    "evidence": [
+      {
+        "kind": "catalogue",
+        "url": "https://www.metmuseum.org/art/collection/search/254872",
+        "title": "Terracotta amphora (jar)",
+        "authorOrInstitution": "The Metropolitan Museum of Art",
+        "locator": "Collection API, objects/254872 (campos objectDate, objectBeginDate, objectEndDate)",
+        "checkedAt": "2026-11-08"
+      }
+    ]
+  },
+  "material": "Terracota (ficha: «Terracotta»)",
+  "culture": "Griega, ática, período arcaico (ficha: «Greek, Attic», «Archaic»)",
+  "findspot": "No consta en los datos de la API consultada.",
+  "provenance": {
+    "summary": "La API pública no expone el historial de propiedad y la ficha web respondió HTTP 429 el 2026-11-08: procedencia pendiente de cotejo. La línea de crédito registra solo la forma de adquisición.",
+    "catalogueUrl": "https://www.metmuseum.org/art/collection/search/254872",
+    "certainty": "unknown"
+  },
+  "creditLine": "Fletcher Fund, 1956",
+  "identifications": [
+    {
+      "entity": "dionysus",
+      "certainty": "probable",
+      "attributionLabel": "Etiquetas de la ficha: «Dionysus», «Satyrs»",
+      "basisUrl": "https://www.metmuseum.org/art/collection/search/254872",
+      "note": "La imagen principal de la API (DP102378) muestra un combate de hoplitas; la vista adicional DP102377, la adquirida, muestra una figura barbada con manto y cuerno para beber entre dos sátiros. Qué cara es el anverso no se ha comprobado en la descripción del museo."
+    }
+  ],
+  "catalogueNotes": [
+    "Atribución: «Attributed to the manner of the Lysippides Painter» (artistPrefix + artistDisplayName de la API). objectName: «Amphora, Type B».",
+    "La API marca el objeto con isPublicDomain: true; según la política Open Access del Met, sus imágenes abiertas son CC0. Imagen adquirida el 2026-11-09 (references/artifacts/images.md); derechos pendientes de confirmar en la ficha web."
+  ],
+  "review": {
+    "status": "draft"
+  },
+  "media": [
+    {
+      "type": "image",
+      "assetId": "met-254872-dp102377",
+      "localPath": "src/assets/images/artifacts/met-254872-dp102377.jpg",
+      "width": 1280,
+      "height": 1600,
+      "alt": "Ánfora de figuras negras; en el panel, una figura barbada con manto y un cuerno para beber entre dos sátiros que danzan. Probablemente Dioniso, según las etiquetas del museo.",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC0 1.0 (Open Access de The Met), pendiente de confirmar en la ficha",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "creator": "The Metropolitan Museum of Art",
+        "institution": "The Metropolitan Museum of Art",
+        "sourceUrl": "https://images.metmuseum.org/CRDImages/gr/original/DP102377.jpg",
+        "creditLine": "The Metropolitan Museum of Art, Fletcher Fund, 1956, 56.171.14 (Open Access)",
+        "modifications": [
+          "Reescalado a 1600 px de lado largo y recompresión JPEG (mozjpeg, calidad 85); sin recorte ni retoque."
+        ],
+        "checkedAt": "2026-11-09",
+        "evidencePath": "references/artifacts/images.md"
+      }
+    }
+  ]
+}

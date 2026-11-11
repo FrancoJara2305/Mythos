@@ -1,0 +1,936 @@
+---
+/**
+ * Ficha de deidad (Narratorio). Una página por divinidad con ficha: las doce del roster y la de la
+ * otra tradición (Hestia). Se lee como un relato, de arriba abajo:
+ *
+ * 1. Primera vista (DeityHero): escena, nombre, frase y dominios.
+ * 2. Su historia: entrada y bloques narrativos (origen, carácter, hazañas, simbolismo).
+ * 3. ¿Sabías que…?: cápsulas didácticas.
+ * 4. Nombres secretos: cada epíteto con su cápsula amena.
+ * 5. Poderes y símbolos · Grandes relatos · Su linaje · Huellas en el mundo antiguo.
+ *
+ * Las referencias filológicas no se ven por defecto: cada dato documentado lleva su cajón
+ * «¿Cómo sabemos esto? (Ver fuente antigua)» y el repertorio completo vive en el Códice de las Fuentes.
+ */
+import ArtifactFigure from '../../components/archive/ArtifactFigure.astro';
+import DidacticNote from '../../components/narrative/DidacticNote.astro';
+import SourceHint from '../../components/narrative/SourceHint.astro';
+import StoryBody from '../../components/narrative/StoryBody.astro';
+import MixedText from '../../components/ui/MixedText.astro';
+import { DODEKATHEON, emblemOf, profileIds } from '../../config/chapters.ts';
+import { isPublished, type DeityNavigation, type PageSection } from '../../config/navigation.ts';
+import DeityLayout from '../../layouts/DeityLayout.astro';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { PassageIndex } from '../../lib/content/citations.ts';
+import { contextAnchor, getDeityArchive, type ArtifactLink } from '../../lib/content/deity-archive.ts';
+import { CERTAINTY_LABELS } from '../../lib/content/labels.ts';
+import { joinNames, variantOptions, type RelatedEntity } from '../../lib/content/queries.ts';
+import { constellationSvg, planetariumData, seatOf, traditionOf } from '../../lib/planetarium/model.ts';
+import { paths } from '../../lib/routes.ts';
+
+export async function getStaticPaths() {
+  const { visible } = await loadArchive();
+  const visibleIds = new Set(visible.deities.map((entry) => entry.id));
+  return profileIds(DODEKATHEON)
+    .filter((id) => visibleIds.has(id))
+    .map((id) => ({ params: { deity: id } }));
+}
+
+const { deity } = Astro.params as { deity: string };
+const { visible } = await loadArchive();
+const archive = getDeityArchive(visible, deity, DODEKATHEON);
+const citations = new PassageIndex(visible);
+const { data } = archive;
+const emblem = emblemOf(DODEKATHEON, deity);
+if (emblem === undefined) throw new Error(`Sin emblema: ${deity}`);
+
+const sky = planetariumData(visible, DODEKATHEON);
+const constellation = sky.deities[deity];
+const tradition = traditionOf(sky, deity);
+const eyebrow = tradition !== undefined && sky.traditions !== undefined ? `Los Doce · ${sky.traditions[tradition]}` : 'Los Doce';
+
+// Representación del encabezado: un objeto fotografiado cuya ficha identifica solo a esta deidad, con
+// certeza explícita o probable. Si no lo hay, solo la escena original (nunca una pieza mal atribuida).
+const representation: ArtifactLink | undefined = archive.artifacts.find(
+  ({ entry, identification }) =>
+    (identification.certainty === 'explicit' || identification.certainty === 'probable') &&
+    entry.data.identifications.length === 1 &&
+    entry.data.media.some((media) => media.type === 'image'),
+);
+
+const entityHref = (entity: Pick<RelatedEntity, 'id' | 'hasProfile'>) => (entity.hasProfile ? paths.deity(entity.id) : `#${contextAnchor(entity.id)}`);
+const nameOf = (id: string) => visible.deities.find((entry) => entry.id === id)?.data.name ?? id;
+
+const noteByTerm = new Map(data.didacticNotes.filter((note) => note.kind === 'name' && note.term !== undefined).map((note) => [note.term as string, note]));
+const capsules = data.didacticNotes.filter((note) => note.kind !== 'name');
+// Descendencia de todas las tradiciones, una entrada por figura: sin rótulo si todas las versiones la
+// cuentan (o si no hay versiones); «solo según…» si únicamente la cuenta un bardo. Nada se mezcla ni se pierde.
+const edgesByChild = new Map<string, (typeof archive.children)[number][]>();
+for (const child of archive.children) edgesByChild.set(child.id, [...(edgesByChild.get(child.id) ?? []), child]);
+const offspring = [...edgesByChild.values()]
+  .flatMap((edges) => {
+    const first = edges[0];
+    if (first === undefined) return [];
+    const group = edges.find((edge) => edge.relationship.variantGroup !== undefined)?.relationship.variantGroup;
+    const everyVersion =
+      edges.some((edge) => edge.relationship.variantGroup === undefined) ||
+      (group !== undefined && variantOptions(visible, group).every((option) => edges.some((edge) => edge.relationship.variantOption === option)));
+    const tellers = everyVersion ? [] : edges.flatMap((edge) => (edge.variantLabel === undefined ? [] : [edge.variantLabel]));
+    return [{ id: first.id, name: first.name, hasProfile: first.hasProfile, tellers, evidence: edges.flatMap((edge) => edge.relationship.evidence) }];
+  })
+  .sort((a, b) => Number(a.tellers.length > 0) - Number(b.tellers.length > 0));
+const genealogyHref = paths.genealogy(DODEKATHEON.chapterId);
+// Solo las figuras del mapa de linajes (el roster) tienen sección en él.
+const genealogyPublished = isPublished(genealogyHref) && DODEKATHEON.roster.some((item) => item.id === deity);
+const STORY_LABELS = { origin: 'El origen', character: 'Su carácter', deeds: 'Sus hazañas', symbolism: 'Sus símbolos' } as const;
+
+const sections: PageSection[] = [
+  { id: 'vision', label: data.name },
+  { id: 'relato', label: 'Su historia' },
+  ...(capsules.length > 0 ? [{ id: 'sabias', label: '¿Sabías que…?' }] : []),
+  { id: 'nombres', label: 'Nombres secretos' },
+  { id: 'poderes', label: 'Poderes y símbolos' },
+  { id: 'relatos', label: 'Grandes relatos' },
+  { id: 'linaje', label: 'Su linaje' },
+  ...(archive.artifacts.length > 0 ? [{ id: 'huellas', label: 'Huellas en el mundo antiguo' }] : []),
+  ...(archive.contextEntities.length > 0 ? [{ id: 'contexto', label: 'Quién es quién' }] : []),
+];
+
+// Selector de constelaciones: los doce asientos en la tradición de esta deidad, anterior/siguiente (circular).
+const visibleIds = new Set(visible.deities.map((entry) => entry.id));
+const roster = profileIds(DODEKATHEON)
+  .filter((id) => visibleIds.has(id))
+  .map((id) => ({ id, name: nameOf(id), href: paths.deity(id) }));
+const index = roster.findIndex((item) => item.id === deity);
+const previous = roster[(index - 1 + roster.length) % roster.length];
+const next = roster[(index + 1) % roster.length];
+if (previous === undefined || next === undefined) throw new Error(`Roster incompleto para ${deity}`);
+const navigation: DeityNavigation = {
+  current: { id: deity, name: data.name, position: seatOf(sky, deity) + 1, total: sky.seats.length },
+  previous: { name: previous.name, href: previous.href },
+  next: { name: next.name, href: next.href },
+  roster,
+};
+
+const unreviewed =
+  data.review.status !== 'published' ||
+  archive.myths.some((myth) => myth.data.review.status !== 'published') ||
+  archive.sources.some((group) => group.source.data.review.status !== 'published');
+---
+
+<DeityLayout
+  archive={archive}
+  emblemDepicts={emblem.depicts}
+  representation={representation}
+  sections={sections}
+  navigation={navigation}
+  unreviewed={unreviewed}
+  eyebrow={eyebrow}
+>
+  <section id="relato" class="chapter story" aria-labelledby="relato-titulo">
+    <header class="chapter__head">
+      <p class="eyebrow">Su historia</p>
+      <h2 id="relato-titulo" class="chapter__title">Érase una vez… {data.name}</h2>
+    </header>
+    {
+      data.narrativeHook !== undefined && (
+        <p class="story__hook">
+          <MixedText text={data.narrativeHook} />
+        </p>
+      )
+    }
+    <div class="story__parts">
+      {
+        data.storySections.map((section) => (
+          <section class="story__part">
+            {section.kind !== undefined && <p class="story__kind">{STORY_LABELS[section.kind]}</p>}
+            <h3 class="story__heading">
+              <MixedText text={section.heading} />
+            </h3>
+            <div class="story__prose">
+              <StoryBody body={section.body} />
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    capsules.length > 0 && (
+      <section id="sabias" class="chapter" aria-labelledby="sabias-titulo">
+        <header class="chapter__head">
+          <p class="eyebrow">Cápsulas</p>
+          <h2 id="sabias-titulo" class="chapter__title">
+            ¿Sabías que…?
+          </h2>
+        </header>
+        <div class="capsules">
+          {capsules.map((note) => (
+            <DidacticNote note={note} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section id="nombres" class="chapter" aria-labelledby="nombres-titulo">
+    <header class="chapter__head">
+      <p class="eyebrow">Nombres secretos</p>
+      <h2 id="nombres-titulo" class="chapter__title">Cómo lo llamaban los poetas</h2>
+      <p class="chapter__lede">
+        En griego se escribe <span lang="grc" class="chapter__greek">{data.greekName}</span>
+        {data.transliteration !== undefined && <>{' '}(<i class="translit">{data.transliteration}</i>)</>}. Pero los poetas rara vez decían solo el
+        nombre: le añadían apodos, los epítetos, que cuentan algo de cada dios en una sola palabra.
+      </p>
+    </header>
+    <ul class="capsules" role="list">
+      {
+        data.epithets.map((epithet) => {
+          const note = noteByTerm.get(epithet.term);
+          return (
+            <li>
+              {note !== undefined ? (
+                <DidacticNote note={note}>
+                  <SourceHint citations={citations.citeAll(epithet.evidence)} about={`el epíteto ${epithet.term}`} />
+                </DidacticNote>
+              ) : (
+                <DidacticNote note={{ kind: 'name', term: epithet.term, title: epithet.explanation.replace(/[.;].*$/, ''), body: epithet.explanation }}>
+                  <SourceHint citations={citations.citeAll(epithet.evidence)} about={`el epíteto ${epithet.term}`} />
+                </DidacticNote>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+
+  <section id="poderes" class="chapter" aria-labelledby="poderes-titulo">
+    <header class="chapter__head">
+      <p class="eyebrow">Poderes y símbolos</p>
+      <h2 id="poderes-titulo" class="chapter__title">De qué se ocupa y cómo reconocerlo</h2>
+    </header>
+    <div class="powers">
+      {
+        constellation !== undefined && (
+          <figure class="powers__sky">
+            <div class="powers__figure" set:html={constellationSvg(constellation)} />
+            <figcaption>
+              <span class="powers__shape">{constellation.shape}</span>
+              <span>Su constelación en la bóveda de MYTHOS</span>
+              <a href={`${paths.chapter(DODEKATHEON.chapterId)}#constelacion-${deity}`}>Verla en el cielo</a>
+            </figcaption>
+          </figure>
+        )
+      }
+      <dl class="powers__list">
+        {
+          [...data.domains.map((item) => ({ item, kind: 'Dominio' })), ...data.symbols.map((item) => ({ item, kind: 'Símbolo' }))].map(({ item, kind }) => (
+            <div class="power">
+              <dt class="power__term">
+                <span class="power__kind">{kind}</span>
+                <MixedText text={item.label} />
+              </dt>
+              <dd class="power__body">
+                <p>
+                  <MixedText text={item.context} />
+                </p>
+                <SourceHint citations={citations.citeVisual(item.evidence)} about={item.label} />
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section id="relatos" class="chapter" aria-labelledby="relatos-titulo">
+    <header class="chapter__head">
+      <p class="eyebrow">Grandes relatos</p>
+      <h2 id="relatos-titulo" class="chapter__title">Historias en las que aparece</h2>
+    </header>
+    {
+      archive.myths.length === 0 ? (
+        <p class="prose">Todavía no hay relatos de {data.name} en este capítulo.</p>
+      ) : (
+        <ul class="tales" role="list">
+          {archive.myths.map((myth) => (
+            <li id={`relato-${myth.id}`} class="tale-card">
+              <h3 class="tale-card__title">
+                <a href={paths.myth(myth.id)}>{myth.data.title}</a>
+              </h3>
+              {myth.data.tagline !== undefined && <p class="tale-card__tagline">{myth.data.tagline}</p>}
+              <p class="tale-card__hook">
+                <MixedText text={myth.data.narrativeHook ?? myth.data.summary} />
+              </p>
+              <p class="tale-card__cast">
+                Con {joinNames(myth.data.participants.filter((participant) => participant.id !== deity).map((participant) => nameOf(participant.id))) || 'nadie más'}
+              </p>
+              <p class="tale-card__more" aria-hidden="true">
+                Leer el relato →
+              </p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+
+  <section id="linaje" class="chapter" aria-labelledby="linaje-titulo">
+    <header class="chapter__head">
+      <p class="eyebrow">Su linaje</p>
+      <h2 id="linaje-titulo" class="chapter__title">La familia de {data.name}</h2>
+    </header>
+
+    {
+      archive.variants.map((group) => (
+        <div class="bards">
+          <p class="bards__eyebrow">Dos tradiciones contadas por los antiguos bardos</p>
+          <h3 class="bards__title">{group.label}</h3>
+          <ul class="bards__options" role="list">
+            {group.options.map((option) => (
+              <li class="bards__option">
+                <p class="bards__teller">
+                  Según {option.label}
+                  {option.isDefault && <span class="bards__default"> · la que muestra el mapa al abrirlo</span>}
+                </p>
+                <ul role="list" class="kin">
+                  {option.parents.map((parent) => (
+                    <li class="kin__item">
+                      <p class="kin__who">
+                        <a href={entityHref(parent)}>{parent.name}</a>
+                        <span class="kin__role">{parent.relationship.label}</span>
+                      </p>
+                      {parent.relationship.note !== undefined && <p class="kin__note">{parent.relationship.note}</p>}
+                      <SourceHint citations={citations.citeAll(parent.relationship.evidence)} about={`${parent.name}, ${parent.relationship.label}`} />
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+
+    <div class="family">
+      {
+        archive.variants.length === 0 && (
+          <div class="family__group">
+            <h3 class="family__label">Nace de</h3>
+            {archive.parents.length === 0 ? (
+              <p>Las fuentes de este capítulo no nombran a sus progenitores.</p>
+            ) : (
+              <ul role="list" class="kin">
+                {archive.parents.map((parent) => (
+                  <li class="kin__item">
+                    <p class="kin__who">
+                      <a href={entityHref(parent)}>{parent.name}</a>
+                      <span class="kin__role">
+                        {parent.relationship.label}
+                        {parent.relationship.certainty !== 'explicit' && <> (certeza {CERTAINTY_LABELS[parent.relationship.certainty]})</>}
+                      </span>
+                    </p>
+                    {parent.relationship.note !== undefined && <p class="kin__note">{parent.relationship.note}</p>}
+                    <SourceHint citations={citations.citeAll(parent.relationship.evidence)} about={`${parent.name}, ${parent.relationship.label}`} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )
+      }
+
+      {
+        archive.consorts.length > 0 && (
+          <div class="family__group">
+            <h3 class="family__label">Se une a</h3>
+            <ul role="list" class="kin">
+              {archive.consorts.map((consort) => (
+                <li class="kin__item">
+                  <p class="kin__who">
+                    <a href={entityHref(consort)}>{consort.name}</a>
+                    <span class="kin__role">
+                      <MixedText text={consort.relationship.label} />
+                    </span>
+                  </p>
+                  {consort.relationship.note !== undefined && <p class="kin__note">{consort.relationship.note}</p>}
+                  <SourceHint citations={citations.citeAll(consort.relationship.evidence)} about={`la unión con ${consort.name}`} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      {
+        offspring.length > 0 && (
+          <div class="family__group family__group--wide">
+            <h3 class="family__label">Sus hijos e hijas</h3>
+            <ul role="list" class="kin kin--row">
+              {offspring.map((child) => (
+                <li class="kin__item" data-child={child.id}>
+                  <p class="kin__who">
+                    <a href={entityHref(child)}>{child.name}</a>
+                    {child.tellers.length > 0 && <span class="kin__role">solo según {joinNames(child.tellers)}</span>}
+                  </p>
+                  <SourceHint citations={citations.citeAll(child.evidence)} about={`${child.name}, descendencia de ${data.name}`} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+
+    {
+      genealogyPublished && (
+        <p class="chapter__link">
+          <a href={`${genealogyHref}#familia-${deity}`}>
+            Ver su familia en el Mapa de Linajes Estelares<span aria-hidden="true">→</span>
+          </a>
+        </p>
+      )
+    }
+  </section>
+
+  {
+    archive.artifacts.length > 0 && (
+      <section id="huellas" class="chapter" aria-labelledby="huellas-titulo">
+        <header class="chapter__head">
+          <p class="eyebrow">Huellas en el mundo antiguo</p>
+          <h2 id="huellas-titulo" class="chapter__title">
+            Así lo imaginaron los artistas
+          </h2>
+          <p class="chapter__lede">
+            Objetos reales, guardados hoy en museos, donde los especialistas reconocen a {data.name}. A veces con seguridad; a veces con
+            un «quizá», que aquí se conserva.
+          </p>
+        </header>
+        <ul role="list" class="objects">
+          {archive.artifacts.map(({ entry, identification }) => {
+            const image = entry.data.media.find((media) => media.type === 'image');
+            const note = `Identificación ${CERTAINTY_LABELS[identification.certainty]}: «${identification.attributionLabel}».`;
+            return (
+              <li class="object">
+                {image !== undefined && image.type === 'image' ? (
+                  <ArtifactFigure
+                    artifactId={entry.id}
+                    artifact={entry.data}
+                    media={image}
+                    sizes="(min-width: 64rem) 26rem, (min-width: 40rem) 45vw, calc(100vw - 3rem)"
+                    note={note}
+                    mat={entry.id === 'walters-23-40'}
+                  />
+                ) : (
+                  <p>
+                    <a href={paths.artifact(entry.id)} lang="en">
+                      {entry.data.title}
+                    </a>
+                    . {note}
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    archive.contextEntities.length > 0 && (
+      <section id="contexto" class="chapter" aria-labelledby="contexto-titulo">
+        <header class="chapter__head">
+          <p class="eyebrow">Quién es quién</p>
+          <h2 id="contexto-titulo" class="chapter__title">
+            Otros nombres de esta historia
+          </h2>
+        </header>
+        <dl class="glossary">
+          {archive.contextEntities.map((entity) => (
+            <div class="glossary__entry" id={contextAnchor(entity.id)}>
+              <dt class="glossary__term">
+                {entity.data.name} {entity.data.greekName !== undefined && <span lang="grc">{entity.data.greekName}</span>}
+              </dt>
+              <dd class="glossary__body">
+                {entity.data.summary !== undefined ? (
+                  <p>
+                    <MixedText text={entity.data.summary} />
+                  </p>
+                ) : (
+                  <p>Aparece en los relatos de este capítulo.</p>
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )
+  }
+
+  <p class="codex-link">
+    ¿Quieres ver todos los textos antiguos que hablan de {data.name}?{' '}
+    <a href={`${paths.sources()}#figura-${deity}`}>Están en el Códice de las Fuentes</a>.
+  </p>
+</DeityLayout>
+
+<style>
+  /* ——— Capítulos de la ficha ——— */
+  .chapter {
+    display: grid;
+    gap: var(--space-32);
+    align-content: start;
+  }
+
+  .chapter__head {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .chapter__head :global(.eyebrow) {
+    color: var(--theme-accent);
+  }
+
+  .chapter__title {
+    font-size: clamp(2.25rem, 1.6rem + 2.6vw, 4rem);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .chapter__lede {
+    max-inline-size: 44rem;
+  }
+
+  .chapter__greek {
+    font-size: 1.2em;
+  }
+
+  /* Transliteración: cursiva real de la familia de títulos (no cursiva sintética). */
+  .translit {
+    font-family: var(--font-display);
+    font-size: 1.15em;
+  }
+
+  .chapter__link a,
+  .codex-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+  }
+
+  /* ——— Su historia ——— */
+  .story__hook {
+    max-inline-size: 48rem;
+    padding-inline-start: var(--space-24);
+    border-inline-start: 2px solid var(--theme-accent);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.25rem + 1.1vw, 2.125rem);
+    line-height: 1.35;
+  }
+
+  .story__parts {
+    display: grid;
+    gap: var(--space-48);
+  }
+
+  .story__part {
+    display: grid;
+    gap: var(--space-12);
+    align-content: start;
+  }
+
+  .story__kind {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .story__heading {
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  }
+
+  .story__prose {
+    display: grid;
+    gap: var(--space-16);
+    max-inline-size: var(--measure);
+    font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+    line-height: 1.75;
+  }
+
+  .story__part:first-child .story__prose > :global(p:first-child)::first-letter {
+    float: inline-start;
+    margin-inline-end: 0.08em;
+    font-family: var(--font-display);
+    font-size: 3.6em;
+    font-weight: 600;
+    line-height: 0.82;
+    color: var(--theme-accent);
+  }
+
+  @media (min-width: 64rem) {
+    .story__parts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-64);
+    }
+  }
+
+  /* ——— Cápsulas ——— */
+  .capsules {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-16);
+  }
+
+  .capsules > li {
+    display: grid;
+  }
+
+  /* ——— Poderes y símbolos ——— */
+  .powers {
+    display: grid;
+    gap: var(--space-32);
+  }
+
+  .powers__sky {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-8);
+    padding: var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(closest-side, color-mix(in srgb, var(--theme-accent) 18%, transparent), transparent),
+      #070b1c;
+    text-align: center;
+  }
+
+  .powers__figure {
+    inline-size: min(100%, 16rem);
+    aspect-ratio: 1;
+  }
+
+  .powers__figure :global(svg) {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .powers__sky figcaption {
+    display: grid;
+    justify-items: center;
+    font-size: var(--font-size-small);
+  }
+
+  .powers__shape {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+
+  .powers__sky a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .powers__list {
+    display: grid;
+    gap: var(--space-16);
+    align-content: start;
+  }
+
+  .power {
+    display: grid;
+    gap: var(--space-8);
+    padding: var(--space-16) var(--space-24);
+    border-inline-start: 2px solid var(--theme-accent);
+    border-radius: 0 0.875rem 0.875rem 0;
+    background-color: var(--surface-glass);
+  }
+
+  .power__term {
+    display: grid;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .power__kind {
+    font-family: var(--font-text);
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .power__body {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: var(--measure);
+  }
+
+  @media (min-width: 64rem) {
+    .powers {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .powers__sky {
+      position: sticky;
+      inset-block-start: calc(var(--topbar-block-size) + var(--space-16));
+    }
+  }
+
+  /* ——— Grandes relatos ——— */
+  .tales {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-16);
+  }
+
+  .tale-card {
+    position: relative;
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+    padding: var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--theme-mid) 50%, transparent), transparent 60%),
+      var(--surface-glass);
+    transition: border-color var(--duration-hover) ease-out;
+  }
+
+  .tale-card:hover,
+  .tale-card:focus-within {
+    border-color: var(--theme-accent);
+  }
+
+  .tale-card__title {
+    font-size: clamp(1.625rem, 1.4rem + 0.8vw, 2.125rem);
+  }
+
+  .tale-card__title a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .tale-card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+
+  .tale-card__tagline {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-style: italic;
+    line-height: 1.25;
+  }
+
+  .tale-card__hook {
+    font-size: var(--font-size-small);
+    line-height: 1.6;
+  }
+
+  .tale-card__cast {
+    font-size: var(--font-size-meta);
+  }
+
+  .tale-card__more {
+    font-weight: 600;
+    color: var(--text-link);
+  }
+
+  /* ——— Linaje ——— */
+  .bards {
+    display: grid;
+    gap: var(--space-12);
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+    border: 1px solid color-mix(in srgb, var(--color-bronze) 60%, transparent);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(90% 70% at 50% 0%, rgb(217 119 6 / 0.14), transparent 70%),
+      var(--surface-glass);
+  }
+
+  .bards__eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .bards__title {
+    font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.375rem);
+  }
+
+  .bards__options {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 56rem) {
+    .bards__options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .bards__option {
+    display: grid;
+    gap: var(--space-12);
+    align-content: start;
+    padding: var(--space-16);
+    border: 1px dashed var(--rule-soft);
+    border-radius: 0.875rem;
+  }
+
+  .bards__teller {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  .bards__default {
+    font-family: var(--font-text);
+    font-size: var(--font-size-meta);
+    font-weight: 400;
+  }
+
+  .family {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 56rem) {
+    .family {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .family__group--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .family__group {
+    display: grid;
+    gap: var(--space-12);
+    align-content: start;
+    padding: var(--space-24);
+    border-radius: var(--radius-card);
+    background-color: var(--surface-glass);
+    border: 1px solid var(--rule-soft);
+  }
+
+  .family__label {
+    font-family: var(--font-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .kin {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .kin--row {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    column-gap: var(--space-24);
+  }
+
+  .kin__item {
+    display: grid;
+    gap: 0;
+    align-content: start;
+  }
+
+  .kin__who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-12);
+  }
+
+  .kin__who a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    font-weight: 600;
+  }
+
+  .kin__role,
+  .kin__note {
+    font-size: var(--font-size-small);
+  }
+
+  /* ——— Huellas ——— */
+  .objects {
+    display: grid;
+    gap: var(--space-32);
+  }
+
+  @media (min-width: 40rem) {
+    .objects {
+      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    }
+  }
+
+  .object {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+  }
+
+  /* ——— Quién es quién ——— */
+  .glossary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-16);
+  }
+
+  .glossary__entry {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding: var(--space-16) var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+  }
+
+  .glossary__entry:target {
+    border-color: var(--text-link);
+  }
+
+  .glossary__term {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .glossary__body {
+    font-size: var(--font-size-small);
+  }
+
+  .codex-link {
+    padding-block-start: var(--space-24);
+    border-block-start: 1px solid var(--rule-soft);
+    font-size: var(--font-size-small);
+  }
+</style>

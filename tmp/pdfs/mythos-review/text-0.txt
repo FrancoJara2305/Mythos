@@ -1,0 +1,61 @@
+9/11/26, 5:51 Atlas temporal · The Dodekatheon · MYTHOS
+M Y T H O S
+Colección Atlas Fuentes
+Borrador curatorial. Este contenido aún no ha superado la revisión humana; por eso no se publica
+en producción.
+Inicio / The Dodekatheon / Atlas temporal
+CHAPTER I · TEMPORAL ATLAS
+Atlas temporal
+Orden de los relatos
+Episodios de una misma tradición en el orden en que los expone MYTHOS. No
+tienen años: la distancia entre ellos no mide tiempo, y la palabra «después»
+solo aparece cuando una fuente lo justifica.
+Historia de los testimonios
+Cuándo se compusieron las obras y se fabricaron los objetos que conservan
+esos relatos, con intervalos y límites inciertos. Las dos escalas nunca se
+mezclan: fechar un vaso no fecha un mito.
+Orden de los relatos Historia de los testimonios
+Divinidad
+Todas
+Orden de los relatos
+Hesíodo, Teogonía
+Orden editorial de exposición. 2 de 2 pasos tienen un «después» justificado por la fuente.
+localhost:4322/chapters/dodekatheon/atlas/ 1/3
+
+9/11/26, 5:51 Atlas temporal · The Dodekatheon · MYTHOS
+1 2 3
+Crono devora a sus después Zeus, rey de los después
+Nacimiento de Atenea
+hijos dioses
+EPISODIO 1 EN ESTA EXPOSICIÓN EPISODIO 2 EN ESTA EXPOSICIÓN
+Crono devora a sus hijos Zeus, rey de los dioses
+Hesíodo, Teogonía Hesíodo, Teogonía
+FUENTES Después de
+Teogonía 459–460: Crono traga a sus hijos Crono devora a sus hijos, según:
+al nacer. BASE DEL ORDEN
+Relato: Crono devora a sus hijos Teogonía 478–480: Zeus nace después de
+que Crono tragara a sus hermanos y es
+ocultado en Creta.
+FUENTES
+Teogonía 881–885: Los dioses instan a
+Zeus a reinar.
+Relato: Zeus, rey de los dioses
+EPISODIO 3 EN ESTA EXPOSICIÓN
+Nacimiento de Atenea
+Hesíodo, Teogonía
+Después de Zeus, rey de los dioses
+, según:
+BASE DEL ORDEN
+Teogonía 886–900: Zeus figura ya como
+«rey de los dioses» cuando toma a Metis
+(v. 886).
+FUENTES
+Teogonía 924–926: Atenea nace de la
+cabeza de Zeus.
+localhost:4322/chapters/dodekatheon/atlas/ 2/3
+
+9/11/26, 5:51 Atlas temporal · The Dodekatheon · MYTHOS
+Relato: Nacimiento de Atenea
+MYTHOS An Interactive Archive of Mythology Créditos
+Entorno: desarrollo. Esta versión no se indexa en buscadores.
+localhost:4322/chapters/dodekatheon/atlas/ 3/3

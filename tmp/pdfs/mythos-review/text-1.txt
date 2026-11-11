@@ -1,0 +1,361 @@
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+M Y T H O S
+Colección Atlas Fuentes
+Borrador curatorial. Este contenido aún no ha superado la revisión humana; por eso no se publica
+en producción.
+Inicio / The Dodekatheon / Genealogía
+CHAPTER I · GENEALOGY EXPLORER
+Genealogía
+Parentescos registrados en las fuentes del capítulo, cada uno con su cita. Cuando
+las tradiciones no coinciden —el origen de Afrodita, la filiación de Hefesto— se
+muestra una versión cada vez y la otra se rotula aparte: nunca se dibujan juntas
+como una sola familia. El diagrama reúne a una figura con sus progenitores,
+uniones y descendencia, hasta 24 figuras.
+Todas las relaciones del capítulo, en lista y con sus fuentes.
+ELIGE UNA DIVINIDAD
+Zeus Hera Poseidón Deméter Atenea Apolo Ártemis
+Ares Afrodita Hefesto Hermes Dioniso
+Familia de Zeus
+Zeus: 2 progenitores, 2 uniones y 7 descendientes en las versiones elegidas.
+Las versiones son incompatibles: el diagrama muestra solo la elegida.
+Origen de Afrodita
+Teogonía de Hesíodo (por defecto)
+Urano → Afrodita: origen (sin madre)
+Teogonía 188–206
+localhost:4322/chapters/dodekatheon/genealogy/ 1/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Ilíada
+Dione → Afrodita: madre
+Ilíada 5.370–372
+Zeus → Afrodita: padre
+Ilíada 3.374 Ilíada 5.312 Ilíada 5.426–430 Odisea 8.306–312
+Filiación de Hefesto
+Teogonía de Hesíodo (por defecto)
+Hera → Hefesto: madre (sin unión)
+Teogonía 927–929
+Ilíada y Odisea
+Hera → Hefesto: madre
+Ilíada 1.571–579 Ilíada 18.395–397
+Zeus → Hefesto: padre
+Ilíada 1.571–579 Odisea 8.306–312
+Crono Rea
+padre madre
+Sémele Leto Metis Zeus H
+descendencia común descendencia común unión figura elegida
+Dioniso Apolo Ártemis Atenea A
+descendencia descendencia descendencia descendencia desc
+Filiación: la flecha va del progenitor a su descendencia; no indica jerarquía.
+Unión registrada en las fuentes. Relación que solo existe en la versión elegida.
+localhost:4322/chapters/dodekatheon/genealogy/ 2/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Filiación
+Crono (sin ficha propia) — padre
+Hesíodo, Teogonía; concordante con la épica y los himnos citados · certeza explícita
+Teogonía 453–458 Ilíada 15.187–193
+Ver su familia
+Rea (sin ficha propia) — madre
+Hesíodo, Teogonía; concordante con la Ilíada · certeza explícita
+Teogonía 453–458 Ilíada 15.187–193
+Ver su familia
+Uniones
+Hera — esposa (ἄκοιτις)
+Hesíodo, Teogonía · certeza explícita
+Teogonía 921–923
+Ver su familia
+Metis (sin ficha propia) — primera esposa (ἄλοχος)
+Hesíodo, Teogonía · certeza explícita
+Teogonía 886–900
+Ver su familia
+Descendencia
+Apolo — con Leto
+Hesíodo, Teogonía · certeza explícita
+Teogonía 918–920
+Ver su familia
+localhost:4322/chapters/dodekatheon/genealogy/ 3/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Ares — con Hera
+Hesíodo, Teogonía; Homero, Ilíada · certeza explícita
+Teogonía 921–923 Ilíada 5.888–898
+Ver su familia
+Ártemis — con Leto
+Hesíodo, Teogonía · certeza explícita
+Teogonía 918–920
+Ver su familia
+Atenea — con Metis
+Hesíodo, Teogonía; la Ilíada la llama hija de Zeus · certeza explícita
+En la Teogonía, Zeus la engendra de su cabeza tras guardar a Metis en su vientre.
+Teogonía 924–926 Ilíada 5.733–742
+Ver su familia
+Dioniso — con Sémele
+Hesíodo, Teogonía; Himno homérico 7 · certeza explícita
+Teogonía 940–942 Himno a Dioniso 55–57
+Ver su familia
+Hermes — con Maya
+Hesíodo, Teogonía; Himno homérico a Hermes · certeza explícita
+Teogonía 938–939 Himno a Hermes 1–7
+Ver su familia
+Perséfone (sin ficha propia) — con Deméter
+Hesíodo, Teogonía; Himno homérico a Deméter · certeza explícita
+localhost:4322/chapters/dodekatheon/genealogy/ 4/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Teogonía 912–914 Himno a Deméter 1–21
+Otros progenitores de su descendencia
+Ver su familia
+Deméter — madre de Perséfone
+Ver su familia
+Leto (sin ficha propia) — madre de Apolo y Ártemis
+Ver su familia
+Maya (sin ficha propia) — madre de Hermes
+Ver su familia
+Sémele (sin ficha propia) — madre de Dioniso
+Ver su familia
+Todas las relaciones del capítulo
+La misma información que el diagrama, para las 12 divinidades del capítulo. Las
+relaciones que dependen de una versión llevan su rótulo.
+Zeus
+FILIACIÓN
+Crono (sin ficha propia) — padre
+Hesíodo, Teogonía; concordante con la épica y los himnos citados · certeza explícita
+Teogonía 453–458 Ilíada 15.187–193
+Rea (sin ficha propia) — madre
+Hesíodo, Teogonía; concordante con la Ilíada · certeza explícita
+Teogonía 453–458 Ilíada 15.187–193
+localhost:4322/chapters/dodekatheon/genealogy/ 5/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+UNIONES
+Hera — esposa (ἄκοιτις)
+Hesíodo, Teogonía · certeza explícita
+Teogonía 921–923
+Metis (sin ficha propia) — primera esposa (ἄλοχος)
+Hesíodo, Teogonía · certeza explícita
+Teogonía 886–900
+DESCENDENCIA
+Afrodita
+Homero, Ilíada (también Odisea 8.308) · certeza explícita · solo en la versión: Ilíada
+Ilíada 3.374 Ilíada 5.312 Ilíada 5.426–430 Odisea 8.306–312
+Apolo
+Hesíodo, Teogonía · certeza explícita
+Teogonía 918–920
+Ares
+Hesíodo, Teogonía; Homero, Ilíada · certeza explícita
+Teogonía 921–923 Ilíada 5.888–898
+Ártemis
+Hesíodo, Teogonía · certeza explícita
+Teogonía 918–920
+Atenea
+Hesíodo, Teogonía; la Ilíada la llama hija de Zeus · certeza explícita
+En la Teogonía, Zeus la engendra de su cabeza tras guardar a Metis en su vientre.
+Teogonía 924–926 Ilíada 5.733–742
+Dioniso
+localhost:4322/chapters/dodekatheon/genealogy/ 6/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Hesíodo, Teogonía; Himno homérico 7 · certeza explícita
+Teogonía 940–942 Himno a Dioniso 55–57
+Hefesto
+Homero, Ilíada y Odisea · certeza probable · solo en la versión: Ilíada y Odisea
+«Padre» también es el título habitual de Zeus como padre de dioses y hombres; la mención de dos
+progenitores en Odisea 8.312 refuerza la lectura filial, de ahí la certeza «probable».
+Ilíada 1.571–579 Odisea 8.306–312
+Hermes
+Hesíodo, Teogonía; Himno homérico a Hermes · certeza explícita
+Teogonía 938–939 Himno a Hermes 1–7
+Perséfone (sin ficha propia)
+Hesíodo, Teogonía; Himno homérico a Deméter · certeza explícita
+Teogonía 912–914 Himno a Deméter 1–21
+Hera
+FILIACIÓN
+Crono (sin ficha propia) — padre
+Hesíodo, Teogonía; concordante con la épica y los himnos citados · certeza explícita
+Teogonía 453–458
+Rea (sin ficha propia) — madre
+Hesíodo, Teogonía; concordante con la Ilíada · certeza explícita
+Teogonía 453–458
+UNIONES
+Zeus — esposa (ἄκοιτις)
+Hesíodo, Teogonía · certeza explícita
+Teogonía 921–923
+DESCENDENCIA
+localhost:4322/chapters/dodekatheon/genealogy/ 7/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Ares
+Hesíodo, Teogonía; Homero, Ilíada · certeza explícita
+Teogonía 921–923 Ilíada 5.888–898
+Hefesto
+Hesíodo, Teogonía · certeza explícita · solo en la versión: Teogonía de Hesíodo
+Hesíodo afirma que Hera lo engendra sin unión amorosa: la ausencia de padre es parte del relato, no
+un dato faltante.
+Teogonía 927–929
+Hefesto
+Homero, Ilíada · certeza explícita · solo en la versión: Ilíada y Odisea
+Ilíada 1.571–579 Ilíada 18.395–397
+Poseidón
+FILIACIÓN
+Crono (sin ficha propia) — padre
+Hesíodo, Teogonía; concordante con la épica y los himnos citados · certeza explícita
+Teogonía 453–458 Ilíada 15.187–193
+Rea (sin ficha propia) — madre
+Hesíodo, Teogonía; concordante con la Ilíada · certeza explícita
+Teogonía 453–458 Ilíada 15.187–193
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Sin descendencia registrada.
+Deméter
+FILIACIÓN
+localhost:4322/chapters/dodekatheon/genealogy/ 8/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Crono (sin ficha propia) — padre
+Hesíodo, Teogonía; concordante con la épica y los himnos citados · certeza explícita
+Teogonía 453–458
+Rea (sin ficha propia) — madre
+Hesíodo, Teogonía; concordante con la Ilíada · certeza explícita
+Teogonía 453–458
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Perséfone (sin ficha propia)
+Hesíodo, Teogonía; Himno homérico a Deméter · certeza explícita
+Teogonía 912–914 Himno a Deméter 1–21
+Atenea
+FILIACIÓN
+Metis (sin ficha propia) — madre
+Hesíodo, Teogonía · certeza explícita
+Teogonía 886–900
+Zeus — padre
+Hesíodo, Teogonía; la Ilíada la llama hija de Zeus · certeza explícita
+En la Teogonía, Zeus la engendra de su cabeza tras guardar a Metis en su vientre.
+Teogonía 924–926 Ilíada 5.733–742
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Sin descendencia registrada.
+localhost:4322/chapters/dodekatheon/genealogy/ 9/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Apolo
+FILIACIÓN
+Leto (sin ficha propia) — madre
+Hesíodo, Teogonía; Himno homérico a Apolo · certeza explícita
+Teogonía 918–920 Himno a Apolo 14–18
+Zeus — padre
+Hesíodo, Teogonía · certeza explícita
+Teogonía 918–920
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Sin descendencia registrada.
+Ártemis
+FILIACIÓN
+Leto (sin ficha propia) — madre
+Hesíodo, Teogonía; Himno homérico a Apolo · certeza explícita
+Teogonía 918–920 Himno a Apolo 14–18
+Zeus — padre
+Hesíodo, Teogonía · certeza explícita
+Teogonía 918–920
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Sin descendencia registrada.
+Ares
+localhost:4322/chapters/dodekatheon/genealogy/ 10/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+FILIACIÓN
+Hera — madre
+Hesíodo, Teogonía; Homero, Ilíada · certeza explícita
+Teogonía 921–923 Ilíada 5.888–898
+Zeus — padre
+Hesíodo, Teogonía; Homero, Ilíada · certeza explícita
+Teogonía 921–923 Ilíada 5.888–898
+UNIONES
+Afrodita — unión de la que nacen Fobos, Deimos y Harmonía
+Hesíodo, Teogonía; Homero, Odisea · certeza explícita
+Ninguno de los pasajes la presenta como matrimonio; la Odisea la narra como adulterio en la casa
+de Hefesto.
+Teogonía 933–937 Odisea 8.266–270
+DESCENDENCIA
+Sin descendencia registrada.
+Afrodita
+FILIACIÓN
+Dione (sin ficha propia) — madre
+Homero, Ilíada · certeza explícita · solo en la versión: Ilíada
+Ilíada 5.370–372
+Urano (sin ficha propia) — origen (sin madre)
+Hesíodo, Teogonía · certeza explícita · solo en la versión: Teogonía de Hesíodo
+Hesíodo no menciona madre: Afrodita nace de la espuma en torno a los genitales de Urano. No es un
+dato faltante.
+Teogonía 188–206
+Zeus — padre
+Homero, Ilíada (también Odisea 8.308) · certeza explícita · solo en la versión: Ilíada
+localhost:4322/chapters/dodekatheon/genealogy/ 11/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Ilíada 3.374 Ilíada 5.312 Ilíada 5.426–430 Odisea 8.306–312
+UNIONES
+Ares — unión de la que nacen Fobos, Deimos y Harmonía
+Hesíodo, Teogonía; Homero, Odisea · certeza explícita
+Ninguno de los pasajes la presenta como matrimonio; la Odisea la narra como adulterio en la casa
+de Hefesto.
+Teogonía 933–937 Odisea 8.266–270
+DESCENDENCIA
+Sin descendencia registrada.
+Hefesto
+FILIACIÓN
+Hera — madre (sin unión)
+Hesíodo, Teogonía · certeza explícita · solo en la versión: Teogonía de Hesíodo
+Hesíodo afirma que Hera lo engendra sin unión amorosa: la ausencia de padre es parte del relato, no
+un dato faltante.
+Teogonía 927–929
+Hera — madre
+Homero, Ilíada · certeza explícita · solo en la versión: Ilíada y Odisea
+Ilíada 1.571–579 Ilíada 18.395–397
+Zeus — padre
+Homero, Ilíada y Odisea · certeza probable · solo en la versión: Ilíada y Odisea
+«Padre» también es el título habitual de Zeus como padre de dioses y hombres; la mención de dos
+progenitores en Odisea 8.312 refuerza la lectura filial, de ahí la certeza «probable».
+Ilíada 1.571–579 Odisea 8.306–312
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+localhost:4322/chapters/dodekatheon/genealogy/ 12/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+Sin descendencia registrada.
+Hermes
+FILIACIÓN
+Maya (sin ficha propia) — madre
+Hesíodo, Teogonía; Himno homérico a Hermes · certeza explícita
+Teogonía 938–939 Himno a Hermes 1–7
+Zeus — padre
+Hesíodo, Teogonía; Himno homérico a Hermes · certeza explícita
+Teogonía 938–939 Himno a Hermes 1–7
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Sin descendencia registrada.
+Dioniso
+FILIACIÓN
+Sémele (sin ficha propia) — madre
+Hesíodo, Teogonía; Himno homérico 7 · certeza explícita
+Teogonía 940–942 Himno a Dioniso 1–8
+Zeus — padre
+Hesíodo, Teogonía; Himno homérico 7 · certeza explícita
+Teogonía 940–942 Himno a Dioniso 55–57
+UNIONES
+Sin uniones registradas.
+DESCENDENCIA
+Sin descendencia registrada.
+localhost:4322/chapters/dodekatheon/genealogy/ 13/14
+
+9/11/26, 5:51 Genealogía · The Dodekatheon · MYTHOS
+MYTHOS An Interactive Archive of Mythology Créditos
+Entorno: desarrollo. Esta versión no se indexa en buscadores.
+localhost:4322/chapters/dodekatheon/genealogy/ 14/14

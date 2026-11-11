@@ -1,0 +1,35 @@
+{
+  "kind": "mythic",
+  "title": "Zeus, rey de los dioses",
+  "myth": "zeus-becomes-king",
+  "traditionLabel": "Hesíodo, Teogonía",
+  "sequenceGroup": "hesiodic-succession",
+  "displayOrder": 2,
+  "after": [
+    {
+      "eventId": "cronus-swallows-his-children",
+      "evidence": [
+        {
+          "source": "hesiod-theogony",
+          "passageId": "zeus-hidden-in-crete",
+          "claim": "Zeus nace después de que Crono tragara a sus hermanos y es ocultado en Creta.",
+          "role": "supports"
+        }
+      ]
+    }
+  ],
+  "entities": [
+    "zeus"
+  ],
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "zeus-becomes-king",
+      "claim": "Los dioses instan a Zeus a reinar.",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

@@ -1,0 +1,1423 @@
+---
+/**
+ * Planetario de Constelaciones (GR-04, The Dodekatheon): la bóveda celeste donde cada deidad es una
+ * constelación que dibuja su símbolo, en lugar de una grilla de tarjetas.
+ *
+ * Mejora progresiva estricta. El HTML del build contiene todo: cada constelación con su figura (SVG
+ * estático) y sus cuatro facetas —quién es y su origen, sus grandes relatos, dominios y símbolos,
+ * secretos de su nombre—, y la explicación de las dos tradiciones (Hestia / Dioniso) con el relieve
+ * Walters 23.40. Con JavaScript y WebGL, `<mythos-planetarium>` (planetarium.ts) convierte esa lista
+ * en el panel narrativo de una escena 3D navegable; los datos mínimos de la escena viajan en JSON.
+ */
+import { Picture } from 'astro:assets';
+import StoryBody from '../narrative/StoryBody.astro';
+import MixedText from '../ui/MixedText.astro';
+import { profileIds, type Chapter, type ChapterSelection } from '../../config/chapters.ts';
+import { isPublished } from '../../config/navigation.ts';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { serializeForScript } from '../../lib/genealogy/build-data.ts';
+import { imageAt } from '../../lib/media.ts';
+import {
+  CONSTELLATION_ANCHOR_PREFIX,
+  constellationSvg,
+  FACET_LABELS,
+  planetariumData,
+  seatOf,
+  STAR_FACETS,
+  traditionOf,
+} from '../../lib/planetarium/model.ts';
+import { paths } from '../../lib/routes.ts';
+
+interface Props {
+  chapter: Chapter;
+  selection: ChapterSelection;
+  hook: string;
+}
+
+const { chapter, selection, hook } = Astro.props;
+const { visible } = await loadArchive();
+const data = planetariumData(visible, selection);
+const deities = new Map(visible.deities.map((entry) => [entry.id, entry.data]));
+
+const cards = profileIds(selection).flatMap((id) => {
+  const deity = deities.get(id);
+  const sky = data.deities[id];
+  if (deity === undefined || sky === undefined) return [];
+  const sections = (kinds: readonly string[]) => deity.storySections.filter((section) => section.kind !== undefined && kinds.includes(section.kind));
+  return [
+    {
+      id,
+      deity,
+      sky,
+      seat: seatOf(data, id) + 1,
+      tradition: traditionOf(data, id),
+      figure: constellationSvg(sky),
+      origin: sections(['origin', 'character']),
+      deeds: sections(['deeds']),
+      symbolism: sections(['symbolism']),
+      names: deity.didacticNotes.filter((note) => note.kind === 'name' || note.kind === 'concept'),
+      myths: visible.myths.filter((myth) => myth.data.chapterIds.includes(selection.chapterId) && myth.data.participants.some((participant) => participant.id === id)),
+    },
+  ];
+});
+
+// Las dos tradiciones: solo si la otra divinidad y el objeto que la respalda son visibles.
+const alternative = selection.alternatives[0];
+const evidence = visible.artifacts.find((artifact) => artifact.id === alternative?.evidenceArtifactId);
+const evidenceImage = evidence?.data.media.find((media) => media.type === 'image');
+const mainDeity = alternative === undefined ? undefined : deities.get(alternative.without);
+const altDeity = alternative === undefined ? undefined : deities.get(alternative.with);
+const hasTraditions = data.traditions !== undefined && alternative !== undefined && mainDeity !== undefined && altDeity !== undefined;
+const procession = (evidence?.data.identifications ?? []).map((identification) => ({
+  id: identification.entity.id,
+  name: deities.get(identification.entity.id)?.name ?? identification.entity.id,
+  href: deities.get(identification.entity.id)?.profile === 'full' ? paths.deity(identification.entity.id) : undefined,
+}));
+const rooms = [
+  { href: paths.genealogy(selection.chapterId), label: 'Mapa de Linajes Estelares', text: 'quién es hijo de quién, y qué cuentan las distintas tradiciones' },
+  { href: paths.atlas(selection.chapterId), label: 'Hilo del Destino', text: 'la saga completa, episodio a episodio' },
+].filter((room) => isPublished(room.href));
+---
+
+<mythos-planetarium class="planetarium" data-state="static" data-tradition="main">
+  <div class="planetarium__sky" aria-hidden="true">
+    <canvas class="planetarium__canvas" data-canvas></canvas>
+    <div class="planetarium__layer" data-labels></div>
+    <div class="planetarium__layer" data-nodes></div>
+  </div>
+
+  <header class="planetarium__head">
+    <p class="eyebrow">{chapter.number} · Bóveda olímpica</p>
+    <h1 class="planetarium__title" lang={chapter.titleLang}>{chapter.title}</h1>
+    <p class="planetarium__subtitle">Los doce olímpicos</p>
+    <p class="planetarium__hook">{hook}</p>
+    <p class="planetarium__help" data-help>
+      Cada dios es una constelación que dibuja su símbolo. Elige una para viajar hasta ella; sus estrellas más brillantes guardan su
+      historia.
+      <span class="planetarium__drag">Arrastra el cielo para girar la bóveda y descubrir las demás.</span>
+    </p>
+  </header>
+
+  <div class="planetarium__controls" data-controls hidden>
+    {
+      hasTraditions && data.traditions !== undefined && (
+        <div class="tradition">
+          <div class="tradition__switch" role="group" aria-label="Tradición de los doce">
+            <button type="button" class="tradition__option" data-tradition="alt" aria-pressed="false">
+              {data.traditions.alt}
+            </button>
+            <span class="tradition__arrow" aria-hidden="true">↔</span>
+            <button type="button" class="tradition__option" data-tradition="main" aria-pressed="true">
+              {data.traditions.main}
+            </button>
+          </div>
+          <p class="tradition__note" data-tradition-note="main">
+            En esta tradición, el duodécimo asiento es de {mainDeity?.name}.{' '}
+            <button type="button" class="tradition__why" data-why-open>
+              ¿Por qué cambia la lista?
+            </button>
+          </p>
+          <p class="tradition__note" data-tradition-note="alt" hidden>
+            En esta tradición, el duodécimo asiento es de {altDeity?.name}.{' '}
+            <button type="button" class="tradition__why" data-why-open>
+              ¿Por qué cambia la lista?
+            </button>
+          </p>
+        </div>
+      )
+    }
+
+    <div class="travel">
+      <button type="button" class="travel__step" data-prev>
+        <span aria-hidden="true">←</span>
+        <span class="travel__text">Constelación anterior</span>
+      </button>
+      <p class="travel__current">
+        <span class="visually-hidden">Ahora: </span>
+        <span data-current>Vista general</span>
+      </p>
+      <button type="button" class="travel__step travel__step--next" data-next>
+        <span class="travel__text">Siguiente constelación</span>
+        <span aria-hidden="true">→</span>
+      </button>
+      <button type="button" class="travel__overview" data-overview disabled>Ver toda la bóveda</button>
+    </div>
+
+    <nav class="orbit" aria-label="Selector orbital de constelaciones">
+      <ol class="orbit__list" role="list">
+        {
+          cards.map((card) => (
+            <li>
+              <button
+                type="button"
+                class="orbit__star"
+                data-seat-button={card.id}
+                aria-pressed="false"
+                hidden={card.tradition === 'alt'}
+                style={`--star: ${card.sky.color}`}
+              >
+                <span class="orbit__dot" aria-hidden="true" />
+                <span class="orbit__name">{card.deity.name}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+    <p class="visually-hidden" role="status" data-status></p>
+  </div>
+
+  <div class="planetarium__roster" data-roster>
+    <h2 class="planetarium__roster-title">Las constelaciones de los Doce</h2>
+    <ol class="planetarium__cards" role="list">
+      {
+        cards.map((card) => (
+          <li class="sky-card" id={`${CONSTELLATION_ANCHOR_PREFIX}${card.id}`} data-card={card.id} data-view="intro" style={`--star: ${card.sky.color}`}>
+            <header class="sky-card__head">
+              <div class="sky-card__figure" set:html={card.figure} />
+              <div class="sky-card__identity">
+                <p class="sky-card__shape">
+                  Constelación {card.seat} de 12 · {card.sky.shape}
+                  {card.tradition === 'alt' && data.traditions !== undefined && <span class="sky-card__tradition"> · {data.traditions.alt}</span>}
+                  {card.tradition === 'main' && data.traditions !== undefined && <span class="sky-card__tradition"> · {data.traditions.main}</span>}
+                </p>
+                <h3 class="sky-card__name">
+                  <a href={paths.deity(card.id)}>{card.deity.name}</a>
+                </h3>
+                {card.deity.greekName !== undefined && (
+                  <p class="sky-card__greek">
+                    <span lang="grc">{card.deity.greekName}</span>
+                    {card.deity.transliteration !== undefined && <i>{card.deity.transliteration}</i>}
+                  </p>
+                )}
+                {card.deity.tagline !== undefined && <p class="sky-card__tagline">{card.deity.tagline}</p>}
+              </div>
+              <button type="button" class="sky-card__close" data-close>
+                <span aria-hidden="true">×</span>
+                <span class="visually-hidden">Cerrar y ver toda la bóveda</span>
+              </button>
+            </header>
+
+            <div class="sky-card__tabs" role="group" aria-label={`Estrellas de ${card.deity.name}`}>
+              {STAR_FACETS.map((facet, index) => (
+                <button type="button" class="sky-card__tab" data-facet-tab={facet} aria-pressed="false">
+                  <span class="sky-card__tab-number" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  {FACET_LABELS[facet]}
+                </button>
+              ))}
+            </div>
+
+            <section class="facet" data-facet="origin" aria-labelledby={`${card.id}-origin`}>
+              <h4 id={`${card.id}-origin`} class="facet__title">
+                {FACET_LABELS.origin}
+              </h4>
+              {card.deity.narrativeHook !== undefined && (
+                <p class="facet__lede">
+                  <MixedText text={card.deity.narrativeHook} />
+                </p>
+              )}
+              {card.origin.map((section) => (
+                <div class="facet__block">
+                  <h5 class="facet__heading">
+                    <MixedText text={section.heading} />
+                  </h5>
+                  <StoryBody body={section.body} />
+                </div>
+              ))}
+            </section>
+
+            <section class="facet" data-facet="tales" aria-labelledby={`${card.id}-tales`}>
+              <h4 id={`${card.id}-tales`} class="facet__title">
+                {FACET_LABELS.tales}
+              </h4>
+              {card.deeds.map((section) => (
+                <div class="facet__block">
+                  <h5 class="facet__heading">
+                    <MixedText text={section.heading} />
+                  </h5>
+                  <StoryBody body={section.body} />
+                </div>
+              ))}
+              {card.myths.length > 0 && (
+                <div class="facet__block">
+                  <h5 class="facet__heading">Relatos para seguir leyendo</h5>
+                  <ul class="facet__myths" role="list">
+                    {card.myths.map((myth) => (
+                      <li>
+                        <a href={paths.myth(myth.id)}>{myth.data.title}</a>
+                        {myth.data.tagline !== undefined && <span> — {myth.data.tagline}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+
+            <section class="facet" data-facet="domains" aria-labelledby={`${card.id}-domains`}>
+              <h4 id={`${card.id}-domains`} class="facet__title">
+                {FACET_LABELS.domains}
+              </h4>
+              {card.symbolism.map((section) => (
+                <div class="facet__block">
+                  <h5 class="facet__heading">
+                    <MixedText text={section.heading} />
+                  </h5>
+                  <StoryBody body={section.body} />
+                </div>
+              ))}
+              <dl class="facet__attributes">
+                {[...card.deity.domains, ...card.deity.symbols].map((attribute) => (
+                  <div>
+                    <dt>
+                      <MixedText text={attribute.label} />
+                    </dt>
+                    <dd>
+                      <MixedText text={attribute.context} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+
+            <section class="facet" data-facet="names" aria-labelledby={`${card.id}-names`}>
+              <h4 id={`${card.id}-names`} class="facet__title">
+                {FACET_LABELS.names}
+              </h4>
+              <ul class="facet__names" role="list">
+                {card.names.map((note) => (
+                  <li>
+                    {note.term !== undefined && (
+                      <p class="facet__term" lang="grc">
+                        {note.term}
+                      </p>
+                    )}
+                    <h5 class="facet__heading">
+                      <MixedText text={note.title} />
+                    </h5>
+                    <StoryBody body={note.body} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <p class="sky-card__more">
+              <a href={paths.deity(card.id)}>
+                Leer la historia completa de {card.deity.name}
+                <span aria-hidden="true">→</span>
+              </a>
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  {
+    hasTraditions && alternative !== undefined && data.traditions !== undefined && (
+      <section id="dos-tradiciones" class="why" data-why aria-labelledby="dos-tradiciones-titulo">
+        <div class="why__inner">
+          <p class="eyebrow">Una curiosidad de la bóveda</p>
+          <h2 id="dos-tradiciones-titulo" class="why__title">
+            ¿Doce dioses… o trece?
+          </h2>
+          <div class="why__text">
+            <p>
+              Los griegos hablaban de «los Doce», pero nunca firmaron una lista única. Cada ciudad, cada altar y cada artista
+              podía contar hasta doce a su manera. Por eso el duodécimo asiento de esta bóveda tiene dos dueños posibles:
+              {' '}
+              <strong>{altDeity?.name}</strong>, la diosa del hogar, y <strong>{mainDeity?.name}</strong>, el dios del vino.
+            </p>
+            {evidence !== undefined && (
+              <p>
+                Mira este relieve de mármol: doce divinidades caminan en fila. La primera por la izquierda es {altDeity?.name}, con
+                su cetro. Cuéntalas todas: {mainDeity?.name} no está.
+              </p>
+            )}
+          </div>
+
+          {evidence !== undefined && evidenceImage !== undefined && evidenceImage.type === 'image' && (
+            <figure class="why__figure">
+              <div class="why__mat">
+                <Picture
+                  src={imageAt(evidenceImage.localPath)}
+                  formats={['avif', 'webp']}
+                  widths={[480, 960, 1440, evidenceImage.width]}
+                  sizes="(min-width: 70rem) 60rem, calc(100vw - 3rem)"
+                  alt={evidenceImage.alt}
+                  loading="lazy"
+                />
+              </div>
+              <figcaption class="why__caption">
+                <span>
+                  De izquierda a derecha:{' '}
+                  {procession.map((figure, index) => (
+                    <>
+                      {index > 0 && ', '}
+                      {figure.href === undefined ? figure.name : <a href={figure.href}>{figure.name}</a>}
+                    </>
+                  ))}
+                  .
+                </span>
+                <span>
+                  Relieve de los doce dioses, {evidence.data.institution}.{' '}
+                  <a href={paths.artifact(evidence.id)}>Ver el relieve de cerca</a>
+                </span>
+              </figcaption>
+            </figure>
+          )}
+
+          <div class="why__text">
+            <p>{alternative.note}</p>
+          </div>
+          <ul class="why__choices" role="list">
+            <li>
+              <a href={paths.deity(alternative.with)} data-select={alternative.with}>
+                <span class="why__choice-label">{data.traditions.alt}</span>
+                <span>{altDeity?.tagline}</span>
+              </a>
+            </li>
+            <li>
+              <a href={paths.deity(alternative.without)} data-select={alternative.without}>
+                <span class="why__choice-label">{data.traditions.main}</span>
+                <span>{mainDeity?.tagline}</span>
+              </a>
+            </li>
+          </ul>
+          <p class="why__close">
+            <button type="button" data-why-close>
+              Volver a la bóveda
+            </button>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    rooms.length > 0 && (
+      <nav class="planetarium__rooms" aria-label="Otras salas del capítulo">
+        <ul role="list">
+          {rooms.map((room) => (
+            <li>
+              <a href={room.href}>{room.label}</a>: {room.text}.
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+
+  <script type="application/json" is:inline data-planetarium set:html={serializeForScript(data)} />
+</mythos-planetarium>
+
+<script>
+  import './planetarium.ts';
+</script>
+
+<style>
+  /* ——————————————— Común ——————————————— */
+  .planetarium {
+    position: relative;
+    display: grid;
+    gap: var(--space-48);
+    padding: var(--space-48) var(--gutter) var(--space-32);
+  }
+
+  .planetarium__sky {
+    display: none;
+  }
+
+  .planetarium__head {
+    display: grid;
+    gap: var(--space-8);
+    max-inline-size: 46rem;
+  }
+
+  .planetarium__title {
+    font-size: clamp(3rem, 1.6rem + 6vw, 7rem);
+    font-weight: 500;
+    line-height: 0.95;
+  }
+
+  .planetarium__subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+    font-style: italic;
+  }
+
+  .planetarium__hook {
+    font-size: 1.125rem;
+  }
+
+  .planetarium__help {
+    font-size: var(--font-size-small);
+  }
+
+  .planetarium__roster-title {
+    font-size: var(--font-size-h2);
+    margin-block-end: var(--space-24);
+  }
+
+  .planetarium__cards {
+    display: grid;
+    gap: var(--space-32);
+  }
+
+  /* ——— Tarjeta de constelación (lista sin JS / panel con la bóveda activa) ——— */
+  .sky-card {
+    display: grid;
+    gap: var(--space-24);
+    align-content: start;
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    border: 1px solid color-mix(in srgb, var(--star) 40%, transparent);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(90% 50% at 100% 0%, color-mix(in srgb, var(--star) 14%, transparent), transparent 70%),
+      var(--surface-glass);
+    scroll-margin-block-start: var(--anchor-offset);
+  }
+
+  .sky-card__head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-16);
+    align-items: center;
+  }
+
+  .sky-card__figure {
+    inline-size: clamp(4.5rem, 14vw, 7.5rem);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 0 0.5rem color-mix(in srgb, var(--star) 60%, transparent));
+  }
+
+  .sky-card__figure :global(svg) {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .sky-card__shape {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .sky-card__name {
+    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .sky-card__name a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .sky-card__name a:hover {
+    color: var(--star);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+
+  .sky-card__greek {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-12);
+    align-items: baseline;
+    font-size: 1.125rem;
+  }
+
+  .sky-card__greek i {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+  }
+
+  .sky-card__tagline {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-style: italic;
+    line-height: 1.25;
+  }
+
+  .sky-card__close,
+  .sky-card__tabs {
+    display: none;
+  }
+
+  .facet {
+    display: grid;
+    gap: var(--space-16);
+    align-content: start;
+  }
+
+  .facet__title {
+    font-family: var(--font-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--star);
+  }
+
+  .facet__lede {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    line-height: 1.35;
+  }
+
+  .facet__block,
+  .facet__names li {
+    display: grid;
+    gap: var(--space-8);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .facet__heading {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  .facet__myths,
+  .facet__names {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .facet__myths a,
+  .sky-card__more a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+  }
+
+  .facet__attributes {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .facet__attributes div {
+    padding-inline-start: var(--space-16);
+    border-inline-start: 2px solid color-mix(in srgb, var(--star) 70%, transparent);
+  }
+
+  .facet__attributes dt {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  .facet__attributes dd {
+    font-size: var(--font-size-small);
+  }
+
+  .facet__term {
+    font-size: 1.625rem;
+    color: var(--text-link);
+  }
+
+  .facet__names li {
+    padding: var(--space-16);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+  }
+
+  /* ——— Las dos tradiciones ——— */
+  .why {
+    scroll-margin-block-start: var(--anchor-offset);
+  }
+
+  .why__inner {
+    display: grid;
+    gap: var(--space-24);
+    max-inline-size: 64rem;
+    padding: clamp(1.5rem, 1rem + 2vw, 3rem);
+    border: 1px solid color-mix(in srgb, var(--color-bronze) 60%, transparent);
+    border-radius: var(--radius-card);
+    background:
+      radial-gradient(80% 50% at 50% 0%, rgb(217 119 6 / 0.16), transparent 70%),
+      var(--surface-stone);
+  }
+
+  .why__title {
+    font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
+  }
+
+  .why__text {
+    display: grid;
+    gap: var(--space-12);
+    max-inline-size: var(--measure);
+  }
+
+  .why__figure {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  /* Paspartú claro: el fondo blanco de la fotografía se integra con multiply, sin modificar el archivo. */
+  .why__mat {
+    padding: clamp(var(--space-8), 2vw, var(--space-24));
+    border-radius: 0.75rem;
+    background-color: var(--color-marble);
+  }
+
+  .why__mat :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    mix-blend-mode: multiply;
+  }
+
+  .why__caption {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+
+  .why__caption a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .why__choices {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  @media (min-width: 48rem) {
+    .why__choices {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .why__choices a {
+    display: grid;
+    gap: var(--space-4);
+    block-size: 100%;
+    padding: var(--space-16) var(--space-24);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: border-color var(--duration-hover) ease-out;
+  }
+
+  .why__choices a:hover {
+    border-color: var(--text-link);
+  }
+
+  .why__choice-label {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: var(--text-link);
+  }
+
+  .why__close {
+    display: none;
+  }
+
+  .planetarium__rooms ul {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+
+  .planetarium__rooms a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    font-weight: 600;
+  }
+
+  /* Sin la bóveda (sin JS o sin WebGL): facetas en dos columnas desde 64rem. */
+  @media (min-width: 64rem) {
+    .planetarium:not([data-state='live']) .sky-card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-48);
+    }
+
+    .planetarium:not([data-state='live']) .sky-card__head,
+    .planetarium:not([data-state='live']) .sky-card__more {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ——————————————— Bóveda activa ——————————————— */
+  .planetarium[data-state='live'] {
+    display: block;
+    block-size: calc(100svh - var(--topbar-block-size));
+    min-block-size: 34rem;
+    padding: 0;
+    overflow: hidden;
+    isolation: isolate;
+    /* La bóveda tiene su propio cielo: tapa la tesela de estrellas de la página. */
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 100%, rgb(217 119 6 / 0.12), transparent 70%),
+      linear-gradient(to bottom, #070b1c, #0f172a 70%, #1a2547);
+  }
+
+  .planetarium[data-state='live'] .planetarium__sky {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .planetarium__canvas {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .planetarium__canvas:active {
+    cursor: grabbing;
+  }
+
+  .planetarium[data-focus] .planetarium__canvas {
+    cursor: default;
+  }
+
+  .planetarium__layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Etiquetas del cielo y nodos estelares (creados por la isla). */
+  .planetarium :global(.sky-label),
+  .planetarium :global(.star-node) {
+    position: absolute;
+    inset: 0 auto auto 0;
+    pointer-events: auto;
+    border: 0;
+    background: none;
+    color: var(--text-primary);
+    font: inherit;
+    cursor: pointer;
+    will-change: transform;
+  }
+
+  .planetarium :global(.sky-label) {
+    display: grid;
+    justify-items: center;
+    gap: 0;
+    min-inline-size: var(--target-min);
+    min-block-size: var(--target-min);
+    padding: var(--space-4) var(--space-12);
+    border-radius: 0.75rem;
+    text-shadow: 0 0 0.75rem #050816, 0 0 0.25rem #050816;
+    transition: color var(--duration-hover) ease-out;
+  }
+
+  .planetarium :global(.sky-label[hidden]),
+  .planetarium :global(.star-node[hidden]) {
+    display: none;
+  }
+
+  .planetarium :global(.sky-label__name) {
+    font-family: var(--font-display);
+    font-size: clamp(1.125rem, 0.9rem + 0.8vw, 1.625rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .planetarium :global(.sky-label__shape) {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--star);
+  }
+
+  .planetarium :global(.sky-label:hover .sky-label__name) {
+    color: var(--star);
+  }
+
+  .planetarium :global(.star-node) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    margin: -1.375rem 0 0 -1.375rem;
+    padding: 0;
+    text-align: start;
+  }
+
+  .planetarium :global(.star-node__number) {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 2.75rem;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, var(--color-star-gold) 80%, transparent);
+    border-radius: 50%;
+    background-color: rgb(5 8 22 / 0.35);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    box-shadow: 0 0 1rem rgb(253 224 71 / 0.35);
+    transition:
+      background-color var(--duration-select) ease-out,
+      box-shadow var(--duration-select) ease-out;
+  }
+
+  .planetarium :global(.star-node__label) {
+    max-inline-size: 11rem;
+    padding: 0.25rem var(--space-12);
+    border-radius: var(--radius-pill);
+    background-color: rgb(5 8 22 / 0.72);
+    font-size: var(--font-size-meta);
+    line-height: 1.25;
+    opacity: 0;
+    transform: translateX(-0.25rem);
+    transition:
+      opacity var(--duration-select) ease-out,
+      transform var(--duration-select) ease-out;
+  }
+
+  .planetarium :global(.star-node:hover .star-node__label),
+  .planetarium :global(.star-node.is-active .star-node__label) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .planetarium :global(.star-node:hover .star-node__number),
+  .planetarium :global(.star-node.is-active .star-node__number) {
+    background-color: var(--color-star-gold);
+    color: var(--color-abyss);
+    box-shadow: 0 0 1.5rem rgb(253 224 71 / 0.75);
+  }
+
+  /* Cabecera sobre el cielo */
+  .planetarium[data-state='live'] .planetarium__head {
+    position: absolute;
+    inset: var(--space-16) auto auto clamp(var(--space-16), 3vw, var(--space-32));
+    z-index: 2;
+    gap: 0;
+    max-inline-size: min(30rem, 100% - 2rem);
+    pointer-events: none;
+    text-shadow: 0 0 1rem #050816;
+  }
+
+  .planetarium[data-state='live'] .planetarium__title {
+    font-size: clamp(1.875rem, 1.2rem + 2.6vw, 3.5rem);
+  }
+
+  .planetarium[data-state='live'] .planetarium__subtitle {
+    font-size: 1.25rem;
+  }
+
+  .planetarium[data-state='live'] .planetarium__hook {
+    display: none;
+  }
+
+  .planetarium[data-state='live'] .planetarium__help {
+    margin-block-start: var(--space-8);
+    max-inline-size: 24rem;
+  }
+
+  /* La indicación de arrastre solo tiene sentido con la bóveda 3D: la cúpula rodea al lector. */
+  .planetarium__drag {
+    display: none;
+  }
+
+  .planetarium[data-state='live'] .planetarium__drag {
+    display: block;
+    margin-block-start: var(--space-4);
+    color: var(--text-link);
+  }
+
+  .planetarium[data-state='live'][data-focus] .planetarium__help,
+  .planetarium[data-state='live'][data-focus] .planetarium__subtitle {
+    display: none;
+  }
+
+  /* Controles */
+  .planetarium__controls {
+    display: contents;
+  }
+
+  .planetarium__controls[hidden] {
+    display: none;
+  }
+
+  .tradition {
+    position: absolute;
+    inset: var(--space-16) clamp(var(--space-16), 3vw, var(--space-32)) auto auto;
+    z-index: 3;
+    display: grid;
+    justify-items: end;
+    gap: var(--space-4);
+    max-inline-size: min(38rem, 100% - 2rem);
+  }
+
+  .tradition__switch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border: 1px solid var(--rule-soft);
+    border-radius: 1.5rem;
+    background-color: rgb(5 8 22 / 0.7);
+    backdrop-filter: blur(10px);
+  }
+
+  .tradition__option {
+    min-block-size: var(--target-min);
+    padding: var(--space-4) var(--space-16);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-meta);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-select) ease-out,
+      color var(--duration-select) ease-out;
+  }
+
+  .tradition__option:hover {
+    border-color: var(--text-link);
+  }
+
+  .tradition__option[aria-pressed='true'] {
+    background-color: var(--color-pale-gold);
+    color: var(--color-abyss);
+    font-weight: 700;
+  }
+
+  .tradition__arrow {
+    color: var(--text-link);
+  }
+
+  .tradition__note {
+    padding: 0 var(--space-8);
+    font-size: var(--font-size-meta);
+    text-align: end;
+    text-shadow: 0 0 0.75rem #050816;
+  }
+
+  .tradition__why {
+    min-block-size: var(--target-min);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-link);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .travel {
+    position: absolute;
+    inset: auto 0 4.25rem;
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8) var(--space-12);
+    padding-inline: var(--space-16);
+    pointer-events: none;
+  }
+
+  .travel > * {
+    pointer-events: auto;
+  }
+
+  .travel__step,
+  .travel__overview {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-16);
+    border: 1px solid color-mix(in srgb, var(--color-bronze) 80%, transparent);
+    border-radius: var(--radius-pill);
+    background-color: rgb(5 8 22 / 0.7);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition:
+      border-color var(--duration-hover) ease-out,
+      color var(--duration-hover) ease-out;
+  }
+
+  .travel__step:hover,
+  .travel__overview:hover:not(:disabled) {
+    border-color: var(--text-link);
+    color: var(--text-link);
+  }
+
+  .travel__overview:disabled {
+    display: none;
+  }
+
+  .travel__current {
+    min-inline-size: 12rem;
+    padding: var(--space-4) var(--space-16);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 0 1rem #050816;
+  }
+
+  .orbit {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 3;
+    background: linear-gradient(to top, rgb(5 8 22 / 0.9), rgb(5 8 22 / 0.5) 70%, transparent);
+  }
+
+  .orbit__list {
+    display: flex;
+    justify-content: safe center;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--space-16);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    /* Si no caben todas, los bordes se desvanecen: se lee como una órbita que continúa, no como un corte. */
+    mask-image: linear-gradient(to right, transparent, #000 var(--space-16), #000 calc(100% - var(--space-16)), transparent);
+  }
+
+  .orbit__star {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-12);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-small);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      border-color var(--duration-hover) ease-out,
+      background-color var(--duration-hover) ease-out;
+  }
+
+  .orbit__star[hidden] {
+    display: none;
+  }
+
+  .orbit__dot {
+    inline-size: 0.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: var(--star);
+    box-shadow: 0 0 0.6rem 0.1rem var(--star);
+  }
+
+  .orbit__star:hover {
+    border-color: var(--star);
+  }
+
+  .orbit__star[aria-pressed='true'] {
+    border-color: var(--star);
+    background-color: color-mix(in srgb, var(--star) 18%, transparent);
+    font-weight: 700;
+  }
+
+  /* Panel narrativo: la constelación enfocada */
+  .planetarium[data-state='live'] .planetarium__roster {
+    position: absolute;
+    inset: auto 0 7.75rem;
+    z-index: 4;
+    display: none;
+    max-block-size: 46%;
+    padding-inline: var(--space-8);
+  }
+
+  .planetarium[data-state='live'][data-focus] .planetarium__roster {
+    display: block;
+  }
+
+  .planetarium[data-state='live'] .planetarium__roster-title {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .planetarium[data-state='live'] .planetarium__cards {
+    display: block;
+    block-size: 100%;
+  }
+
+  .planetarium[data-state='live'] .sky-card {
+    max-block-size: 46svh;
+    gap: var(--space-16);
+    padding: var(--space-16);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    background:
+      radial-gradient(90% 40% at 100% 0%, color-mix(in srgb, var(--star) 16%, transparent), transparent 70%),
+      rgb(8 12 30 / 0.86);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 0 3rem rgb(0 0 0 / 0.5);
+  }
+
+  .planetarium[data-state='live'] .sky-card[hidden] {
+    display: none;
+  }
+
+  .planetarium[data-state='live'] .sky-card__figure {
+    display: none;
+  }
+
+  .planetarium[data-state='live'] .sky-card__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .planetarium[data-state='live'] .sky-card__name {
+    font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+  }
+
+  .planetarium[data-state='live'] .sky-card__close {
+    display: grid;
+    place-items: center;
+    inline-size: var(--target-min);
+    aspect-ratio: 1;
+    border: 1px solid var(--rule-soft);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .planetarium[data-state='live'] .sky-card__close:hover {
+    border-color: var(--text-link);
+    color: var(--text-link);
+  }
+
+  .planetarium[data-state='live'] .sky-card__tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+
+  .sky-card__tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding: var(--space-4) var(--space-12);
+    border: 1px solid var(--rule-soft);
+    border-radius: 0.875rem;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-meta);
+    line-height: 1.25;
+    text-align: start;
+    cursor: pointer;
+    transition:
+      border-color var(--duration-select) ease-out,
+      background-color var(--duration-select) ease-out;
+  }
+
+  .sky-card__tab:hover {
+    border-color: var(--star);
+  }
+
+  .sky-card__tab[aria-pressed='true'] {
+    border-color: var(--star);
+    background-color: color-mix(in srgb, var(--star) 18%, transparent);
+    font-weight: 700;
+  }
+
+  .sky-card__tab-number {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 1.5rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--star);
+    border-radius: 50%;
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+
+  .planetarium[data-state='live'] .facet[hidden] {
+    display: none;
+  }
+
+  /* La explicación de las tradiciones se abre sobre la bóveda. */
+  .planetarium[data-state='live'] .why {
+    position: absolute;
+    inset: auto;
+    z-index: 5;
+  }
+
+  .planetarium[data-state='live'] .why:not(:popover-open) {
+    display: none;
+  }
+
+  .planetarium[data-state='live'] .why:popover-open {
+    position: fixed;
+    inset: 0;
+    inline-size: min(64rem, 100vw - 2rem);
+    max-block-size: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    overflow-y: auto;
+    border: 0;
+    border-radius: var(--radius-card);
+    background: transparent;
+    color: var(--text-primary);
+  }
+
+  .planetarium[data-state='live'] .why::backdrop {
+    background-color: rgb(2 4 12 / 0.78);
+    backdrop-filter: blur(4px);
+  }
+
+  .planetarium[data-state='live'] .why__close {
+    display: block;
+  }
+
+  .why__close button {
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-24);
+    border: 1px solid var(--decoration-bronze);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .why__close button:hover {
+    border-color: var(--text-link);
+    color: var(--text-link);
+  }
+
+  .planetarium[data-state='live'] .planetarium__rooms {
+    display: none;
+  }
+
+  /* Intermedio: la cabecera y la tradición no caben juntas arriba; la tradición se apoya sobre los pasos
+     de viaje y se retira mientras el panel de una constelación está abierto. */
+  @media (max-width: 71.99rem) {
+    .tradition {
+      inset: auto var(--space-16) 8.25rem;
+      justify-items: center;
+      margin-inline: auto;
+    }
+
+    .tradition__note {
+      text-align: center;
+    }
+
+    .planetarium[data-state='live'][data-focus] .tradition {
+      display: none;
+    }
+  }
+
+  /* Estrecho: los pasos se reducen a flechas y la tradición baja bajo la cabecera. */
+  @media (max-width: 47.99rem) {
+    .travel__text {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .travel__current {
+      min-inline-size: 0;
+      font-size: 1.125rem;
+    }
+
+    /* Debajo del subtítulo de la cabecera, con las dos tradiciones lado a lado en dos columnas iguales. */
+    .tradition {
+      inset: 6.5rem var(--space-8) auto;
+      justify-items: center;
+      max-inline-size: none;
+    }
+
+    .tradition__switch {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      inline-size: 100%;
+    }
+
+    .tradition__option {
+      padding-inline: var(--space-8);
+      font-size: 0.75rem;
+      line-height: 1.25;
+    }
+
+    .tradition__arrow {
+      display: none;
+    }
+
+    .tradition__note {
+      text-align: center;
+    }
+
+    .planetarium[data-state='live'][data-focus] .tradition {
+      display: none;
+    }
+
+    /* La figura enfocada vive en la franja entre la cabecera y el panel: el panel cede altura y se
+       desplaza por dentro, así la constelación se ve entera sobre él. */
+    .planetarium[data-state='live'] .sky-card {
+      max-block-size: 38svh;
+    }
+
+    .planetarium[data-state='live'] .planetarium__help {
+      display: none;
+    }
+
+    .orbit__list {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Ancho: el panel pasa al lado derecho, a toda la altura útil. */
+  @media (min-width: 64rem) {
+    .planetarium[data-state='live'] .planetarium__roster {
+      inset: 10.75rem clamp(var(--space-16), 3vw, var(--space-32)) 8.5rem auto;
+      inline-size: min(30rem, 36vw);
+      max-block-size: none;
+      padding: 0;
+    }
+
+    .planetarium[data-state='live'] .sky-card {
+      block-size: 100%;
+      max-block-size: none;
+      padding: var(--space-24);
+    }
+
+    .planetarium[data-state='live'][data-focus] .travel {
+      inset-inline-end: min(32rem, 38vw);
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+{
+  "kind": "historical",
+  "title": "Composición de la Teogonía",
+  "subject": {
+    "collection": "sources",
+    "id": "hesiod-theogony"
+  },
+  "facet": "composition",
+  "entities": [],
+  "review": {
+    "status": "draft"
+  }
+}

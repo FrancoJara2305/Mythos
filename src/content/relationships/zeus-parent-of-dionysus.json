@@ -1,0 +1,25 @@
+{
+  "subject": "zeus",
+  "object": "dionysus",
+  "kind": "parent-of",
+  "label": "padre",
+  "traditionLabel": "Hesíodo, Teogonía; Himno homérico 7",
+  "certainty": "explicit",
+  "evidence": [
+    {
+      "source": "hesiod-theogony",
+      "passageId": "semele-and-dionysus",
+      "claim": "Sémele da a luz a Dioniso unida a Zeus (vv. 940–941).",
+      "role": "supports"
+    },
+    {
+      "source": "hymn-dionysus",
+      "passageId": "dionysus-reveals-himself",
+      "claim": "Σεμέλη Διὸς ἐν φιλότητι μιγεῖσα (v. 57).",
+      "role": "supports"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}

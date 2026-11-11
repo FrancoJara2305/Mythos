@@ -1,0 +1,32 @@
+{
+  "retrievedAt": "2026-11-08",
+  "endpoint": "https://api.sketchfab.com/v3/models/c503d9dcde8e465fbb234c9dab461b90",
+  "responseSha256": "bfcf0a7ba2198168fc100f3bdcea444b775011a6b6ebef72c5d3ba7725e71e78",
+  "uid": "c503d9dcde8e465fbb234c9dab461b90",
+  "name": "Torso of Dionysus from Salamis",
+  "viewerUrl": "https://sketchfab.com/3d-models/torso-of-dionysus-from-salamis-c503d9dcde8e465fbb234c9dab461b90",
+  "publishedAt": "2019-08-13T11:59:49.308467",
+  "user": {
+    "username": "fitzwilliammuseum",
+    "displayName": "Fitzwilliam Museum",
+    "profileUrl": "https://sketchfab.com/fitzwilliammuseum"
+  },
+  "isDownloadable": true,
+  "license": {
+    "label": "CC Attribution",
+    "slug": "by",
+    "url": "http://creativecommons.org/licenses/by/4.0/"
+  },
+  "faceCount": 499592,
+  "vertexCount": 254198,
+  "tags": [
+    "cambridge",
+    "Cyprus",
+    "salamis",
+    "fitzwilliam"
+  ],
+  "descriptionExcerpts": [
+    "Object Number: GR.2.1891 (Antiquities) http://data.fitzmuseum.cam.ac.uk/id/object/66629",
+    "Model created from 112 Sony A6000 photos by Daniel Pett, processed in Metashape standard."
+  ]
+}

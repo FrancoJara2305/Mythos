@@ -1,0 +1,67 @@
+{
+  "title": "Marble head of a veiled goddess",
+  "institution": "The Metropolitan Museum of Art",
+  "externalId": "257623",
+  "accessionNumber": "2002.604",
+  "catalogueUrl": "https://www.metmuseum.org/art/collection/search/257623",
+  "date": {
+    "kind": "range",
+    "start": -330,
+    "end": -201,
+    "label": "fines del siglo IV o siglo III a. C.",
+    "precision": "approximate",
+    "basis": "Inicio -330 tomado del índice de la API para «late 4th»; fin -201 = final del siglo III a. C. según la datación textual («late 4th or 3rd century BCE»).",
+    "evidence": [
+      {
+        "kind": "catalogue",
+        "url": "https://www.metmuseum.org/art/collection/search/257623",
+        "title": "Marble head of a veiled goddess",
+        "authorOrInstitution": "The Metropolitan Museum of Art",
+        "locator": "Collection API, objects/257623 (campos objectDate, objectBeginDate, objectEndDate)",
+        "checkedAt": "2026-11-08"
+      }
+    ]
+  },
+  "material": "Mármol (ficha: «Marble»)",
+  "culture": "Griega, período helenístico (ficha: «Greek», «Hellenistic»)",
+  "findspot": "No consta en los datos de la API consultada.",
+  "provenance": {
+    "summary": "La API pública no expone el historial de propiedad y la ficha web respondió HTTP 429 el 2026-11-08: procedencia pendiente de cotejo. La línea de crédito registra solo la forma de adquisición.",
+    "catalogueUrl": "https://www.metmuseum.org/art/collection/search/257623",
+    "certainty": "unknown"
+  },
+  "creditLine": "Gift of Brian T. Aitken, 2002, and on the occasion of the reinstallation of the Greek and Roman galleries, 2007",
+  "identifications": [],
+  "catalogueNotes": [
+    "Sin identificación registrada: la API solo da «Head of a woman, veiled» y la etiqueta «Goddess».",
+    "La planificación (asset_manifest A04) anotó «posiblemente Deméter» a partir de la descripción web; cotejar la ficha antes de registrar esa identificación.",
+    "La API marca el objeto con isPublicDomain: true; según la política Open Access del Met, sus imágenes abiertas son CC0. Imagen adquirida el 2026-11-09 (references/artifacts/images.md); derechos pendientes de confirmar en la ficha web."
+  ],
+  "review": {
+    "status": "draft"
+  },
+  "media": [
+    {
+      "type": "image",
+      "assetId": "met-257623-dp143038",
+      "localPath": "src/assets/images/artifacts/met-257623-dp143038.jpg",
+      "width": 1421,
+      "height": 1600,
+      "alt": "Cabeza femenina de mármol muy erosionada, vista de frente. El museo la titula «cabeza de una diosa velada» sin nombrarla.",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC0 1.0 (Open Access de The Met), pendiente de confirmar en la ficha",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "creator": "The Metropolitan Museum of Art",
+        "institution": "The Metropolitan Museum of Art",
+        "sourceUrl": "https://images.metmuseum.org/CRDImages/gr/original/DP143038.jpg",
+        "creditLine": "The Metropolitan Museum of Art, Gift of Brian T. Aitken, 2002, and on the occasion of the reinstallation of the Greek and Roman galleries, 2007, 2002.604 (Open Access)",
+        "modifications": [
+          "Reescalado a 1600 px de lado largo y recompresión JPEG (mozjpeg, calidad 85); sin recorte ni retoque."
+        ],
+        "checkedAt": "2026-11-09",
+        "evidencePath": "references/artifacts/images.md"
+      }
+    }
+  ]
+}

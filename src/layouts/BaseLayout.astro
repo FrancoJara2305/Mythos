@@ -1,0 +1,91 @@
+---
+/**
+ * Layout base de todas las páginas: documento en español, metadatos dependientes del ambiente y
+ * landmarks semánticos (banner, main, contentinfo).
+ *
+ * Armazón (Narratorio, 2026-11-09): barra superior translúcida en todos los anchos y contenido a
+ * página completa sobre el cielo del nivel (`tier`: cosmos, Olimpo o tierra; src/styles/tokens.css).
+ * El único JavaScript común es la mejora progresiva de la navegación (src/scripts/site-nav.ts); lectura
+ * y navegación funcionan sin él.
+ *
+ * - Fuera de `production` toda página lleva `noindex, nofollow` (docs/deployment_strategy.md §6).
+ * - `canonical` y `og:url` se construyen con la URL validada del ambiente; se omiten en páginas noindex.
+ * - Valida la integridad del archivo curatorial (src/lib/content/archive.ts) antes de renderizar.
+ * - El estado de borrador ya no se anuncia con un banner: queda como indicador de depuración en el pie.
+ */
+import '../styles/global.css';
+import '../styles/print.css';
+import SiteFooter from '../components/ui/SiteFooter.astro';
+import SiteNav from '../components/ui/SiteNav.astro';
+import SkipLink from '../components/ui/SkipLink.astro';
+import type { DeityNavigation, PageSection } from '../config/navigation.ts';
+import type { Tier } from '../config/saga.ts';
+import { loadArchive } from '../lib/content/archive.ts';
+import { getPublicEnv } from '../lib/env.ts';
+
+interface Props {
+  /** Título de la página, completado con « · MYTHOS». Si se omite se usa el título de la portada. */
+  title?: string;
+  description: string;
+  /** Excluye la página de buscadores en cualquier ambiente (p. ej. 404). */
+  noindex?: boolean;
+  /** La página muestra registros sin revisión humana (`draft`/`reviewed`): indicador solo en depuración. */
+  unreviewed?: boolean;
+  /** Índice contextual «En esta página» (anclas existentes en el documento). */
+  sections?: readonly PageSection[];
+  /** Navegación entre fichas (solo en fichas de deidad). */
+  deity?: DeityNavigation;
+  /** Fuente indispensable de la primera vista que conviene precargar (como máximo una). */
+  preloadFont?: string;
+  /** Nivel de la torre al que pertenece la página: decide el cielo y las superficies. */
+  tier?: Tier;
+}
+
+const { title, description, noindex = false, unreviewed = false, sections, deity, preloadFont, tier = 'cosmos' } = Astro.props;
+
+const SITE_NAME = 'MYTHOS';
+const MAIN_ID = 'contenido';
+/** Igual a --surface-canvas de cada nivel: una meta no puede leer custom properties. */
+const THEME_COLOR: Record<Tier, string> = { cosmos: '#050816', olympus: '#0f172a', earth: '#0c1711' };
+
+const env = getPublicEnv();
+// Puerta de integridad curatorial: un contenido inconsistente detiene el build de cualquier página.
+await loadArchive();
+const documentTitle = title === undefined ? `${SITE_NAME} — Narratorio de mitología griega` : `${title} · ${SITE_NAME}`;
+const indexable = env.indexable && !noindex;
+const canonicalUrl = noindex ? undefined : new URL(Astro.url.pathname, env.siteUrl).href;
+---
+
+<!doctype html>
+<html lang="es" data-tier={tier}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{documentTitle}</title>
+    <meta name="description" content={description} />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    {canonicalUrl !== undefined && <link rel="canonical" href={canonicalUrl} />}
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content={THEME_COLOR[tier]} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl !== undefined && <meta property="og:url" content={canonicalUrl} />}
+    {preloadFont !== undefined && <link rel="preload" href={preloadFont} as="font" type="font/woff2" crossorigin />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <SkipLink href={`#${MAIN_ID}`} />
+    <SiteNav sections={sections} deity={deity} />
+    <main id={MAIN_ID}>
+      <slot />
+    </main>
+    <SiteFooter unreviewed={unreviewed} />
+    <script>
+      import '../scripts/site-nav.ts';
+    </script>
+  </body>
+</html>

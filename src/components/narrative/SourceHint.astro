@@ -1,0 +1,94 @@
+---
+/**
+ * «¿Cómo sabemos esto?»: la evidencia de una afirmación, plegada por defecto. En las pantallas de
+ * relato no se ven localizadores ni citas; quien quiera saber de dónde sale un dato abre este cajón y
+ * encuentra el pasaje antiguo (con enlace a su lugar en el Códice de las Fuentes) o la ficha del
+ * objeto. Es un `<details>` nativo: funciona sin JavaScript y las anclas internas lo abren.
+ */
+import type { ResolvedCitation, VisualCitation } from '../../lib/content/citations.ts';
+import CitationList from '../sources/CitationList.astro';
+import MixedText from '../ui/MixedText.astro';
+
+interface Props {
+  citations: readonly (ResolvedCitation | VisualCitation)[];
+  /** Texto accesible que distingue este cajón de los demás de la página, p. ej. «el epíteto ἰοχέαιρα». */
+  about?: string | undefined;
+}
+
+const { citations, about } = Astro.props;
+---
+
+{
+  citations.length > 0 && (
+    <details class="source-hint">
+      <summary class="source-hint__summary">
+        <svg class="source-hint__icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <path d="M4 3.5h9a3 3 0 0 1 3 3v10H7a3 3 0 0 1-3-3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+          <path d="M7 7.5h6M7 10.5h4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+        </svg>
+        <span>
+          ¿Cómo sabemos esto? <span class="source-hint__aside">(Ver fuente antigua)</span>
+          {
+            about !== undefined && (
+              <span class="visually-hidden">
+                : <MixedText text={about} />
+              </span>
+            )
+          }
+        </span>
+      </summary>
+      <div class="source-hint__body">
+        <CitationList citations={citations} label="Fuente antigua" />
+      </div>
+    </details>
+  )
+}
+
+<style>
+  .source-hint {
+    font-size: var(--font-size-small);
+  }
+
+  .source-hint__summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    padding-inline: var(--space-4);
+    color: var(--text-accent);
+    cursor: pointer;
+    list-style: none;
+    border-radius: 0.5rem;
+    transition: color var(--duration-hover) ease-out;
+  }
+
+  .source-hint__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .source-hint__summary:hover {
+    color: var(--text-link);
+  }
+
+  .source-hint__icon {
+    flex: none;
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+  }
+
+  .source-hint__aside {
+    color: var(--text-primary);
+  }
+
+  .source-hint[open] .source-hint__summary {
+    color: var(--text-link);
+  }
+
+  .source-hint__body {
+    margin-block-start: var(--space-4);
+    padding: var(--space-12) var(--space-16);
+    border-inline-start: 2px solid var(--color-ether-cyan);
+    border-radius: 0 0.75rem 0.75rem 0;
+    background-color: rgb(56 189 248 / 0.07);
+  }
+</style>

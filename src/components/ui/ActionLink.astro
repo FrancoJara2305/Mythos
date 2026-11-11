@@ -1,0 +1,63 @@
+---
+/**
+ * Enlace con apariencia de acción. `primary`: fondo oro pálido y texto abisal (14,42:1), con halo.
+ * `secondary`: borde bronce y texto mármol sobre vidrio oscuro. Objetivo ≥ 44 px.
+ */
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  /** Marca para un script de mejora progresiva (p. ej. la entrada por el portal de la Torre). */
+  hook?: string | undefined;
+}
+
+const { href, variant = 'primary', hook } = Astro.props;
+---
+
+<a class:list={['action-link', `action-link--${variant}`]} href={href} data-hook={hook}><slot /></a>
+
+<style>
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    min-block-size: var(--target-min);
+    min-inline-size: var(--target-min);
+    padding: var(--space-8) var(--space-24);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-control);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color var(--duration-hover) ease-out,
+      color var(--duration-hover) ease-out,
+      box-shadow var(--duration-hover) ease-out,
+      border-color var(--duration-hover) ease-out;
+  }
+
+  .action-link--primary {
+    background-color: var(--action-primary-bg);
+    color: var(--action-primary-text);
+    box-shadow:
+      0 0 0 1px rgb(253 224 71 / 0.4),
+      0 0 1.75rem var(--glow-gold);
+  }
+
+  .action-link--primary:hover {
+    background-color: var(--color-star-gold);
+    box-shadow:
+      0 0 0 1px rgb(253 224 71 / 0.7),
+      0 0 2.5rem rgb(253 224 71 / 0.55);
+  }
+
+  .action-link--secondary {
+    border: 1px solid var(--decoration-bronze);
+    background-color: var(--surface-glass);
+    color: var(--text-primary);
+  }
+
+  .action-link--secondary:hover {
+    border-color: var(--text-link);
+    color: var(--text-link);
+  }
+</style>

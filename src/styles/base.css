@@ -1,0 +1,137 @@
+/* Elementos base y tipografía. */
+@layer base {
+  html {
+    background-color: var(--surface-canvas);
+  }
+
+  /* Ningún destino de ancla queda bajo la barra fija de tableta y móvil (tokens: --anchor-offset). */
+  [id] {
+    scroll-margin-block-start: var(--anchor-offset);
+  }
+
+  /*
+   * Cielo de fondo (Narratorio): degradado del nivel de la torre (`data-tier`) y una tesela de estrellas
+   * generada en el build. Ambos son capas fijas y decorativas detrás de todo el contenido; `body` no
+   * pinta fondo propio para no taparlas (el color sólido de respaldo está en `html`).
+   */
+  body::before,
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  body::before {
+    z-index: -2;
+    background:
+      radial-gradient(ellipse 80% 55% at 82% -8%, var(--sky-haze), transparent 70%),
+      radial-gradient(ellipse 75% 55% at 8% 108%, color-mix(in srgb, var(--sky-low) 80%, transparent), transparent 72%),
+      linear-gradient(to bottom, var(--sky-top), var(--sky-mid) 55%, var(--sky-low));
+  }
+
+  body::after {
+    z-index: -1;
+    background-image: url('/sky.svg');
+    background-size: 56rem;
+    opacity: 0.85;
+  }
+
+  body {
+    min-block-size: 100svh;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-primary);
+    font-family: var(--font-text);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: var(--line-height-heading);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-weight: 600; /* Cormorant pierde cuerpo en tamaños medios */
+  }
+
+  /* Rótulo en mayúsculas espaciadas (versalitas simuladas): antetítulos de sección y de nivel. */
+  .eyebrow {
+    font-family: var(--font-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  h1 {
+    font-size: var(--font-size-h1);
+  }
+
+  h2 {
+    font-size: var(--font-size-h2);
+  }
+
+  h3 {
+    font-size: var(--font-size-h3);
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: var(--font-size-body);
+    font-weight: 600;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Los enlaces de texto conservan el subrayado: el color no es la única señal (WCAG 1.4.1). */
+  a {
+    color: var(--text-link);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-thickness var(--duration-hover) ease-out;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  /* Anillo de foco: oro de 2 px con 4 px de separación (docs/design_guidelines.md). */
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  ::selection {
+    background-color: var(--color-star-gold);
+    color: var(--color-abyss);
+  }
+
+  code,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  /* Griego antiguo: cada fragmento debe llevar lang="grc" (docs/design_guidelines.md). */
+  :lang(grc) {
+    font-family: var(--font-greek);
+  }
+}

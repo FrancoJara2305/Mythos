@@ -1,0 +1,105 @@
+---
+/**
+ * Laboratorio del inspector 3D (Phase 6): página técnica, fuera de producción y sin enlaces desde el
+ * sitio, para probar el visor con un fixture geométrico mientras los modelos reales siguen pendientes
+ * de adquisición. Nunca se presenta como objeto del archivo.
+ */
+import ArtifactInspector from '../../components/three/ArtifactInspector.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublicEnv } from '../../lib/env.ts';
+import type { InspectorConfig } from '../../lib/three/config.ts';
+import { buildFixtureGlb, FIXTURE_HOTSPOTS, fixtureTriangles } from '../../lib/three/fixture-model.ts';
+
+export function getStaticPaths() {
+  return getPublicEnv().appEnv === 'production' ? [] : [{ params: { page: 'inspector' } }];
+}
+
+const config: InspectorConfig = {
+  src: '/lab/models/fixture-plinth.glb',
+  bytes: buildFixtureGlb().byteLength,
+  coordinateVersion: 1,
+  hotspots: FIXTURE_HOTSPOTS.map(({ id, position }) => ({ id, position })),
+};
+const hotspots = FIXTURE_HOTSPOTS.map(({ id, label, description }) => ({ id, label, description, kindLabel: 'Punto de prueba' }));
+---
+
+<BaseLayout
+  title="Laboratorio del inspector 3D"
+  description="Página técnica fuera de producción: prueba del inspector 3D de MYTHOS con un fixture geométrico."
+  noindex
+>
+  <article class="container lab" aria-labelledby="lab-title">
+    <header class="lab__header">
+      <p class="lab__eyebrow">Prueba técnica · fuera de producción</p>
+      <h1 id="lab-title">Laboratorio del inspector 3D</h1>
+      <div class="lab__notice" role="note">
+        <p>
+          <strong>Esto no es un objeto del archivo.</strong> El modelo es un fixture geométrico —plinto, fuste y esfera— que
+          MYTHOS genera durante el build para probar el visor: carga bajo acción, controles de puntero y teclado,
+          anotaciones, ampliación, suspensión fuera de pantalla y liberación de recursos.
+        </p>
+        <p>
+          Los modelos previstos para el capítulo, el busto de Atenea y el torso de Dioniso de Salamina, siguen pendientes
+          de descarga con una cuenta autorizada. Ninguna ficha de objeto muestra un visor hasta disponer del archivo real
+          y de sus derechos verificados. Esta página no se genera en producción.
+        </p>
+      </div>
+    </header>
+
+    <section class="lab__section" aria-labelledby="visor-titulo">
+      <h2 id="visor-titulo">Visor</h2>
+      <ArtifactInspector id="fixture" title="fixture técnico" config={config} triangles={fixtureTriangles()} hotspots={hotspots}>
+        <svg slot="poster" viewBox="0 0 400 400" role="img" aria-label="Póster del fixture técnico: plinto, fuste y esfera">
+          <defs>
+            <linearGradient id="lab-stone" x1="0" x2="1">
+              <stop offset="0" stop-color="#a0927a"></stop>
+              <stop offset="0.55" stop-color="#c6baa2"></stop>
+              <stop offset="1" stop-color="#7d715d"></stop>
+            </linearGradient>
+            <radialGradient id="lab-metal" cx="0.38" cy="0.32" r="0.75">
+              <stop offset="0" stop-color="#e6c88f"></stop>
+              <stop offset="1" stop-color="#7a5a2c"></stop>
+            </radialGradient>
+          </defs>
+          <rect x="112" y="300" width="176" height="44" fill="url(#lab-stone)"></rect>
+          <rect x="165" y="102" width="70" height="198" fill="url(#lab-stone)"></rect>
+          <circle cx="200" cy="74" r="56" fill="url(#lab-metal)"></circle>
+        </svg>
+      </ArtifactInspector>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab {
+    display: grid;
+    gap: var(--space-32);
+    padding-block: var(--space-24) var(--space-48);
+  }
+
+  .lab__header {
+    display: grid;
+    gap: var(--space-12);
+    max-inline-size: var(--measure);
+  }
+
+  .lab__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .lab__notice {
+    display: grid;
+    gap: var(--space-8);
+    padding: var(--space-16);
+    border: 1px solid var(--border-error);
+  }
+
+  .lab__section {
+    display: grid;
+    gap: var(--space-16);
+    max-inline-size: 56rem;
+  }
+</style>

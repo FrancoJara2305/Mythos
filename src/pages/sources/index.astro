@@ -1,0 +1,406 @@
+---
+/**
+ * El Códice de las Fuentes (antes «Source Chamber»): la capa documental de MYTHOS, reunida en una
+ * pantalla secundaria a la que se llega desde el pie de página. Tres índices: las obras antiguas, los
+ * pasajes por figura y los objetos de museo. Primero, la estantería: cada obra es un volumen con identidad propia
+ * (familia de tradición, título, atribución y número de pasajes) que abre su panel de lectura
+ * (src/pages/sources/[source].astro). Debajo, el índice por divinidad, compacto. Ediciones, datación y
+ * resúmenes viven en la página de cada obra: aquí no se vuelca toda la biblioteca como una pared de
+ * texto. Sin JavaScript.
+ */
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import { DODEKATHEON, profileIds } from '../../config/chapters.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { loadArchive } from '../../lib/content/archive.ts';
+import { shortLocator } from '../../lib/content/citations.ts';
+import { getDeityArchive } from '../../lib/content/deity-archive.ts';
+import { paths } from '../../lib/routes.ts';
+import { WORK_FAMILY_LABELS, workFamily } from '../../lib/sources/identity.ts';
+
+const { visible } = await loadArchive();
+const ATTRIBUTION = { named: 'autor nombrado', traditional: 'atribución tradicional', anonymous: 'anónimo', disputed: 'atribución discutida' } as const;
+
+const works = visible.sources.map((entry) => ({
+  id: entry.id,
+  data: entry.data,
+  family: workFamily(entry.id),
+}));
+const passageCount = works.reduce((total, work) => total + work.data.passages.length, 0);
+
+const visibleIds = new Set(visible.deities.map((entry) => entry.id));
+const byDeity = profileIds(DODEKATHEON)
+  .filter((id) => visibleIds.has(id))
+  .map((id) => {
+    const archive = getDeityArchive(visible, id, DODEKATHEON);
+    return { id, name: archive.data.name, groups: archive.sources };
+  });
+const objects = visible.artifacts.map((entry) => ({
+  id: entry.id,
+  data: entry.data,
+  figures: entry.data.identifications.map((identification) => visible.deities.find((deity) => deity.id === identification.entity.id)?.data.name ?? identification.entity.id),
+}));
+const unreviewed = visible.sources.some((entry) => entry.data.review.status !== 'published');
+---
+
+<BaseLayout
+  title="El Códice de las Fuentes"
+  description="El Códice de las Fuentes: de dónde sale cada historia de MYTHOS. Obras antiguas, ediciones identificadas, pasajes localizados y objetos de museo."
+  unreviewed={unreviewed}
+>
+  <div class="container library">
+    <Breadcrumbs items={[{ label: 'La Torre', href: paths.home() }, { label: 'El Códice de las Fuentes' }]} />
+    <header class="library__header">
+      <p class="library__eyebrow">Para investigadores y lectores curiosos</p>
+      <h1>El Códice de las Fuentes</h1>
+      <p class="library__lede">
+        Los relatos de MYTHOS no se inventan: salen de poemas que tienen casi tres mil años y de objetos que guardan los museos.
+        Aquí está el repertorio completo: {works.length} obras, {passageCount} pasajes localizados y {objects.length} objetos. Cada pasaje
+        tiene un resumen propio de MYTHOS y un enlace a la edición digital que lo contiene; no se reproducen traducciones modernas
+        ni textos completos.
+      </p>
+      <nav aria-label="Índices del Códice">
+        <ul role="list" class="library__jump">
+          <li><a href="#por-obra">Las obras</a></li>
+          <li><a href="#por-divinidad">Los pasajes, por figura</a></li>
+          <li><a href="#objetos">Los objetos</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section id="por-obra" class="library__section" aria-labelledby="por-obra-titulo">
+      <h2 id="por-obra-titulo" class="library__section-title">Las obras</h2>
+      <ul role="list" class="shelf">
+        {
+          works.map((work) => (
+            <li class:list={['work', `work--${work.family}`]}>
+              <p class="work__family">{WORK_FAMILY_LABELS[work.family]}</p>
+              <h3 class="work__title">
+                <a href={paths.source(work.id)}>{work.data.title}</a>
+              </h3>
+              <p class="work__meta">
+                {work.data.attribution.name}
+                <span class="work__status"> · {ATTRIBUTION[work.data.attribution.status]}</span>
+              </p>
+              <p class="work__count">
+                <span class="work__number">{work.data.passages.length}</span>
+                <span>
+                  {work.data.passages.length === 1 ? 'pasaje' : 'pasajes'} · {work.data.editions.length}{' '}
+                  {work.data.editions.length === 1 ? 'edición' : 'ediciones'}
+                </span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section id="por-divinidad" class="library__section" aria-labelledby="por-divinidad-titulo">
+      <div class="library__section-head">
+        <h2 id="por-divinidad-titulo" class="library__section-title">Los pasajes, por figura</h2>
+        <p>Pasajes citados en cada ficha o que mencionan a la divinidad, agrupados por obra: se despliegan por figura.</p>
+      </div>
+      <div class="deities">
+        {
+          byDeity.map((deity) => (
+            <section class="deity-index" id={`figura-${deity.id}`} aria-labelledby={`indice-${deity.id}`}>
+              <h3 id={`indice-${deity.id}`} class="deity-index__name">
+                <a href={paths.deity(deity.id)}>{deity.name}</a>
+              </h3>
+              <details class="deity-index__details">
+                <summary>
+                  {deity.groups.reduce((total, group) => total + group.passages.length, 0)} pasajes en {deity.groups.length}{' '}
+                  {deity.groups.length === 1 ? 'obra' : 'obras'}
+                </summary>
+              <ul role="list">
+                {deity.groups.map((group) => (
+                  <li>
+                    <span class="deity-index__work">{group.source.data.title}:</span>{' '}
+                    {group.passages.map((passage, index) => (
+                      <>
+                        {index > 0 && ' · '}
+                        <a href={paths.passage(group.source.id, passage.id)}>{shortLocator(passage.locator)}</a>
+                      </>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+              </details>
+            </section>
+          ))
+        }
+      </div>
+    </section>
+
+    <section id="objetos" class="library__section" aria-labelledby="objetos-titulo">
+      <div class="library__section-head">
+        <h2 id="objetos-titulo" class="library__section-title">Los objetos</h2>
+        <p>Piezas de museo cuyas fichas identifican a una figura. Cada una tiene su página, con datación, procedencia y derechos de imagen.</p>
+      </div>
+      <ul role="list" class="objects-index">
+        {
+          objects.map((object) => (
+            <li>
+              <a href={paths.artifact(object.id)} lang="en">
+                {object.data.title}
+              </a>
+              <span>
+                {object.data.institution}, {object.data.accessionNumber} · {object.figures.join(', ')}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .objects-index {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .objects-index li {
+    display: grid;
+    gap: 0;
+    padding: var(--space-8) var(--space-16);
+    border-inline-start: 1px solid var(--decoration-bronze);
+    font-size: var(--font-size-small);
+  }
+
+  .objects-index a {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  .deity-index:target {
+    outline: 1px solid var(--text-link);
+    outline-offset: var(--space-8);
+  }
+
+  .library {
+    display: grid;
+    gap: var(--space-64);
+    padding-block: var(--space-24) var(--space-48);
+  }
+
+  .library__header,
+  .library__section {
+    display: grid;
+    gap: var(--space-24);
+    align-content: start;
+    scroll-margin-block-start: var(--space-16);
+  }
+
+  .library__header {
+    gap: var(--space-16);
+  }
+
+  .library__header h1 {
+    font-size: clamp(3rem, 1.8rem + 4.5vw, 6.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+  }
+
+  .library__lede {
+    max-inline-size: 42rem;
+    font-size: 1.125rem;
+  }
+
+  .library__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .library__jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-24);
+  }
+
+  .library a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  .library__section-title {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    font-weight: 500;
+  }
+
+  .library__section-head {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .library__section-head p {
+    font-size: var(--font-size-small);
+    color: var(--text-link);
+  }
+
+  /*
+   * Estantería: cada obra es un volumen con el material de su familia (cuero teñido con filetes
+   * dorados). El título es el enlace; toda la cubierta es su área de clic.
+   */
+  .shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+    gap: var(--space-16);
+    padding: var(--space-24);
+    background:
+      linear-gradient(to bottom, transparent calc(100% - 14px), rgb(0 0 0 / 0.45) calc(100% - 14px)),
+      var(--surface-stone);
+    border-block-end: 3px solid var(--decoration-bronze);
+  }
+
+  .work {
+    --cover: #5a4126;
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    gap: var(--space-8);
+    min-block-size: 12rem;
+    padding: var(--space-24) var(--space-16) var(--space-16);
+    color: #f3ece0;
+    background:
+      linear-gradient(to bottom, transparent 0 14px, rgb(214 182 120 / 0.6) 14px 15px, transparent 15px 19px, rgb(214 182 120 / 0.35) 19px 20px, transparent 20px),
+      linear-gradient(to top, transparent 0 14px, rgb(214 182 120 / 0.6) 14px 15px, transparent 15px),
+      repeating-linear-gradient(100deg, rgb(255 255 255 / 0.025) 0 2px, transparent 2px 7px),
+      linear-gradient(160deg, color-mix(in srgb, var(--cover) 100%, #fff 8%), color-mix(in srgb, var(--cover) 70%, #000));
+    box-shadow:
+      inset 6px 0 10px -6px rgb(0 0 0 / 0.6),
+      0 10px 20px -12px rgb(0 0 0 / 0.8);
+    transition: transform var(--duration-hover) ease-out;
+  }
+
+  @media (min-width: 48rem) {
+    .work {
+      min-block-size: 17rem;
+    }
+  }
+
+  .work--hesiod {
+    --cover: #5f421e;
+  }
+
+  .work--iliad {
+    --cover: #6b2a22;
+  }
+
+  .work--odyssey {
+    --cover: #1d4652;
+  }
+
+  .work--hymn {
+    --cover: #3f4e2f;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .work:hover,
+    .work:focus-within {
+      transform: translateY(-4px);
+    }
+  }
+
+  .work__family {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #e6cf9c;
+  }
+
+  .work__title {
+    align-self: center;
+    font-size: clamp(1.5rem, 1.2rem + 0.8vw, 1.875rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .library .work__title a {
+    color: #f8f2e6;
+    text-decoration: none;
+  }
+
+
+  .work__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .work:hover .work__title a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+
+  .work__meta {
+    font-size: var(--font-size-small);
+  }
+
+  .work__status {
+    opacity: 0.85;
+  }
+
+  .work__count {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-8);
+    padding-block-start: var(--space-8);
+    border-block-start: 1px solid rgb(214 182 120 / 0.35);
+    font-size: var(--font-size-meta);
+  }
+
+  .work__number {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1;
+    color: #e6cf9c;
+  }
+
+  /* Índice por divinidad: compacto, en columnas. */
+  .deities {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-24) var(--space-32);
+  }
+
+  .deity-index {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding-block-start: var(--space-8);
+    border-block-start: 1px solid var(--rule-soft);
+    font-size: var(--font-size-small);
+  }
+
+  .deity-index__name {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .deity-index ul {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-8);
+  }
+
+  .deity-index__details summary {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    color: var(--text-link);
+    text-decoration: underline dotted;
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+  }
+
+  .deity-index__work {
+    font-weight: 600;
+  }
+</style>

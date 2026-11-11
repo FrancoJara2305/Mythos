@@ -1,0 +1,19 @@
+---
+/** Cuerpo de un bloque de relato: un `<p>` por párrafo, con el griego marcado (`lang="grc"`). */
+import { paragraphs } from '../../lib/text/paragraphs.ts';
+import MixedText from '../ui/MixedText.astro';
+
+interface Props {
+  body: string;
+}
+
+const items = paragraphs(Astro.props.body);
+---
+
+{
+  items.map((paragraph) => (
+    <p>
+      <MixedText text={paragraph} />
+    </p>
+  ))
+}

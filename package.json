@@ -1,0 +1,32 @@
+{
+  "name": "mythos",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "build:staging": "astro build --mode staging",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "test:unit": "node --test \"tests/unit/**/*.test.ts\"",
+    "test:content": "node --test \"tests/content/**/*.test.ts\"",
+    "test:dist": "node tests/build/verify-dist.ts",
+    "test:e2e": "playwright test",
+    "validate": "npm run check && npm run test:unit && npm run test:content && npm run build:staging && npm run test:dist -- --app-env staging && npm run test:e2e"
+  },
+  "dependencies": {
+    "astro": "7.4.7",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "@types/three": "0.187.0",
+    "typescript": "6.0.3"
+  }
+}

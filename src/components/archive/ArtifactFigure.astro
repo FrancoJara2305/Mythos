@@ -1,0 +1,120 @@
+---
+/**
+ * Fotografía de un objeto con su cartela: título de la institución, inventario, fecha y derechos de la
+ * imagen (separados de la narración mítica). El texto alternativo viene del registro y conserva la
+ * incertidumbre de la identificación («posiblemente…»).
+ */
+import { Picture } from 'astro:assets';
+import { RIGHTS_LABELS } from '../../lib/content/labels.ts';
+import { imageAt } from '../../lib/media.ts';
+import { paths } from '../../lib/routes.ts';
+import { sentence } from '../../lib/text/format.ts';
+import type { ArtifactData, ArtifactMedia } from '../../types/content.ts';
+
+type ImageMedia = Extract<ArtifactMedia, { type: 'image' }>;
+
+interface Props {
+  artifactId: string;
+  artifact: ArtifactData;
+  media: ImageMedia;
+  sizes: string;
+  /** Solo la imagen principal de una página (LCP) se carga sin diferir. */
+  eager?: boolean;
+  /** Enlaza el título a la ficha del objeto (desactivar en la propia ficha). */
+  linkToRecord?: boolean;
+  /** Línea adicional, p. ej. la certeza de la identificación. */
+  note?: string | undefined;
+  /** Fondo claro para fotografías con fondo blanco. */
+  mat?: boolean;
+}
+
+const { artifactId, artifact, media, sizes, eager = false, linkToRecord = true, note, mat = false } = Astro.props;
+const widths = [360, 640, 960, 1280, media.width].filter((width, index, all) => width <= media.width && all.indexOf(width) === index);
+---
+
+<figure class="artifact-figure">
+  <div class:list={['artifact-figure__frame', { 'artifact-figure__frame--mat': mat }]}>
+    <Picture
+      src={imageAt(media.localPath)}
+      formats={['avif', 'webp']}
+      widths={widths}
+      sizes={sizes}
+      alt={media.alt}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+    />
+  </div>
+  <figcaption class="artifact-figure__caption">
+    {
+      linkToRecord ? (
+        <a class="artifact-figure__title" href={paths.artifact(artifactId)} lang="en">
+          {artifact.title}
+        </a>
+      ) : (
+        <span class="artifact-figure__title" lang="en">
+          {artifact.title}
+        </span>
+      )
+    }
+    {note !== undefined && <span class="artifact-figure__note">{note}</span>}
+    <span>
+      {artifact.institution}, {artifact.accessionNumber}. {sentence(artifact.date.label)}
+    </span>
+    <span class="artifact-figure__rights">
+      Imagen: {sentence(media.rights.creditLine)} {media.rights.licenseName} ({RIGHTS_LABELS[media.rights.status]}).
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .artifact-figure {
+    display: grid;
+    gap: var(--space-8);
+    align-content: start;
+  }
+
+  .artifact-figure__frame {
+    background-color: var(--surface-raised);
+  }
+
+  .artifact-figure__frame :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .artifact-figure__frame--mat {
+    padding: var(--space-16);
+    background-color: var(--color-marble);
+  }
+
+  .artifact-figure__frame--mat :global(img) {
+    mix-blend-mode: multiply;
+  }
+
+  .artifact-figure__caption {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+  }
+
+  .artifact-figure__title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-style: italic;
+  }
+
+  a.artifact-figure__title {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    min-block-size: var(--target-min);
+  }
+
+  .artifact-figure__note {
+    font-weight: 600;
+  }
+
+  .artifact-figure__rights {
+    font-size: var(--font-size-meta);
+  }
+</style>

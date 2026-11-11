@@ -1,0 +1,122 @@
+{
+  "title": "Himno homérico 7, a Dioniso",
+  "workUrn": "urn:cts:greekLit:tlg0013.tlg007",
+  "corpus": "homeric-hymns",
+  "attribution": {
+    "name": "Anónimo (Himnos homéricos)",
+    "status": "anonymous",
+    "note": "La colección se transmitió asociada a Homero; la cabecera TEI la registra como «Anonymous». No se asigna autor ni fecha única al conjunto."
+  },
+  "compositionDate": {
+    "kind": "unknown",
+    "label": "Sin intervalo registrado: MYTHOS aún no ha cotejado una referencia académica que lo date."
+  },
+  "editions": [
+    {
+      "id": "perseus-grc2",
+      "editor": "Hugh G. Evelyn-White",
+      "language": "grc",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-grc2.xml",
+      "urn": "urn:cts:greekLit:tlg0013.tlg007.perseus-grc2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-grc2.xml",
+        "creditLine": "Hymn 7 To Dionysus, ed. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    },
+    {
+      "id": "perseus-eng2",
+      "translator": "Hugh G. Evelyn-White",
+      "language": "en",
+      "title": "Hesiod, the Homeric Hymns and Homerica",
+      "publisher": "William Heinemann Ltd. (Londres); The Macmillan Co. (Nueva York). Loeb Classical Library",
+      "year": 1914,
+      "url": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-eng2.xml",
+      "urn": "urn:cts:greekLit:tlg0013.tlg007.perseus-eng2",
+      "rights": {
+        "status": "unverified",
+        "licenseName": "CC BY-SA 4.0 (declaración general del repositorio; la cabecera TEI no incluye licencia específica)",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "creator": "Perseus Digital Library (codificación TEI)",
+        "institution": "Perseus Digital Library, Tufts University",
+        "sourceUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-eng2.xml",
+        "creditLine": "Hymn 7 To Dionysus, trad. H. G. Evelyn-White (Loeb, 1914). TEI: Perseus Digital Library, canonical-greekLit @282e6f5.",
+        "modifications": [],
+        "checkedAt": "2026-11-08",
+        "evidencePath": "references/sources/perseus-license.md"
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": "dionysus-on-the-shore",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 7,
+        "lineStart": 1,
+        "lineEnd": 8,
+        "display": "Himno a Dioniso 1–8",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg007.perseus-grc2:1-8/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-grc2.xml",
+      "summary": "Dioniso, hijo de Sémele, aparece en un promontorio de la costa con aspecto de joven; se acercan en su nave unos piratas tirrenos.",
+      "relatedEntities": [
+        "dionysus",
+        "semele"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "wonders-on-the-ship",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 7,
+        "lineStart": 34,
+        "lineEnd": 42,
+        "display": "Himno a Dioniso 34–42",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg007.perseus-grc2:34-42/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-grc2.xml",
+      "summary": "Prodigios en la nave: corre un vino dulce y fragante, una vid cargada de racimos se extiende por la vela y una hiedra oscura, en flor, se enrosca en el mástil.",
+      "relatedEntities": [
+        "dionysus"
+      ],
+      "verifiedAt": "2026-11-08"
+    },
+    {
+      "id": "dionysus-reveals-himself",
+      "editionId": "perseus-grc2",
+      "locator": {
+        "hymn": 7,
+        "lineStart": 55,
+        "lineEnd": 57,
+        "display": "Himno a Dioniso 55–57",
+        "scheme": "hymn.line"
+      },
+      "canonicalUrl": "https://scaife.perseus.org/reader/urn:cts:greekLit:tlg0013.tlg007.perseus-grc2:55-57/",
+      "backupUrl": "https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/282e6f5a3ec12e6ca67e44cd4fa3487526e3b421/data/tlg0013/tlg007/tlg0013.tlg007.perseus-grc2.xml",
+      "summary": "El dios se revela al timonel: es Dioniso, a quien dio a luz Sémele, hija de Cadmo, unida a Zeus.",
+      "relatedEntities": [
+        "dionysus",
+        "semele",
+        "zeus"
+      ],
+      "verifiedAt": "2026-11-08"
+    }
+  ],
+  "review": {
+    "status": "draft"
+  }
+}
